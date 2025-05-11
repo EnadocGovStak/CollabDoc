@@ -1,0 +1,21 @@
+{
+  "id": "afc59902-d192-4e8e-8d5d-31e13ddbd809",
+  "title": "GAtepass",
+  "createdAt": "2025-05-10T15:22:19.774Z",
+  "modifiedAt": "2025-05-10T15:22:19.774Z",
+  "currentVersion": 1,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2025-05-10T15:22:19.774Z",
+      "comment": "Initial version"
+    }
+  ],
+  "recordsManagement": {
+    "classification": "Public",
+    "documentType": "Standard Document",
+    "retentionPeriod": "1 Year",
+    "recordNumber": "2233",
+    "notes": ""
+  }
+}

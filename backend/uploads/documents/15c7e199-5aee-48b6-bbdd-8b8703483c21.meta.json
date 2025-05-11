@@ -1,0 +1,46 @@
+{
+  "id": "15c7e199-5aee-48b6-bbdd-8b8703483c21",
+  "title": "Leave Policy",
+  "createdAt": "2025-05-10T15:40:47.707Z",
+  "modifiedAt": "2025-05-10T16:04:50.945Z",
+  "currentVersion": 6,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2025-05-10T15:40:47.707Z",
+      "comment": "Initial version"
+    },
+    {
+      "version": 2,
+      "timestamp": "2025-05-10T15:40:59.378Z",
+      "comment": "Version 2"
+    },
+    {
+      "version": 3,
+      "timestamp": "2025-05-10T15:41:41.246Z",
+      "comment": "Version 3"
+    },
+    {
+      "version": 4,
+      "timestamp": "2025-05-10T16:04:17.760Z",
+      "comment": "Version 4"
+    },
+    {
+      "version": 5,
+      "timestamp": "2025-05-10T16:04:31.214Z",
+      "comment": "Version 5"
+    },
+    {
+      "version": 6,
+      "timestamp": "2025-05-10T16:04:50.945Z",
+      "comment": "Version 6"
+    }
+  ],
+  "recordsManagement": {
+    "classification": "Internal",
+    "documentType": "Policy",
+    "retentionPeriod": "1 Year",
+    "recordNumber": "122",
+    "notes": "Policy for temp employees"
+  }
+}

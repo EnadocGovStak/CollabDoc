@@ -1,0 +1,76 @@
+{
+  "name": "collabdoc-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@azure/msal-browser": "^2.39.0",
+    "@azure/msal-react": "^1.5.11",
+    "@syncfusion/ej2-base": "^22.2.5",
+    "@syncfusion/ej2-react-base": "^22.2.5",
+    "@syncfusion/ej2-react-buttons": "^22.2.5",
+    "@syncfusion/ej2-react-documenteditor": "^22.2.5",
+    "@syncfusion/ej2-react-popups": "^22.2.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.41",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "axios": "^1.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.1",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:unit": "react-scripts test --testMatch='**/__tests__/**/*.unit.[jt]s?(x),**/?(*.)+(unit.spec|unit.test).[jt]s?(x),**/tests/unit/**/*.[jt]s?(x)'",
+    "test:integration": "react-scripts test --testMatch='**/__tests__/**/*.integration.[jt]s?(x),**/?(*.)+(integration.spec|integration.test).[jt]s?(x),**/tests/integration/**/*.[jt]s?(x)'",
+    "test:all": "react-scripts test --watchAll=false",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/index.tsx",
+      "!src/reportWebVitals.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 50,
+        "branches": 50,
+        "functions": 50,
+        "lines": 50
+      }
+    },
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
+  }
+}

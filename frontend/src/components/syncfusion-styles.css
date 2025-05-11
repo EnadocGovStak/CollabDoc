@@ -1,0 +1,100 @@
+/* Import Syncfusion Document Editor styles - use material theme for modern look */
+@import '@syncfusion/ej2-base/styles/material.css';
+@import '@syncfusion/ej2-buttons/styles/material.css';
+@import '@syncfusion/ej2-inputs/styles/material.css';
+@import '@syncfusion/ej2-lists/styles/material.css';
+@import '@syncfusion/ej2-navigations/styles/material.css';
+@import '@syncfusion/ej2-popups/styles/material.css';
+@import '@syncfusion/ej2-splitbuttons/styles/material.css';
+@import '@syncfusion/ej2-dropdowns/styles/material.css';
+@import '@syncfusion/ej2-react-documenteditor/styles/material.css';
+
+/* Custom styles for modern look */
+.e-de-ctn-title {
+  background-color: #6632a8 !important;
+  color: white !important;
+  font-size: 16px;
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+/* Fix horizontal toolbar layout */
+.e-documenteditor-container .e-toolbar {
+  display: flex !important;
+  visibility: visible !important;
+  height: auto !important;
+  min-height: 40px;
+  flex-direction: row !important;
+  border-bottom: 1px solid #e0e0e0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.e-documenteditor-container .e-toolbar-items {
+  display: flex !important;
+  visibility: visible !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  width: 100%;
+}
+
+.e-documenteditor-container .e-toolbar-item {
+  display: flex !important;
+  visibility: visible !important;
+  float: none !important;
+}
+
+/* Make toolbar items horizontal */
+.e-toolbar .e-toolbar-items {
+  flex-direction: row !important;
+  display: flex !important;
+}
+
+.e-toolbar .e-toolbar-item {
+  height: auto !important;
+  display: inline-flex !important;
+}
+
+/* Force horizontal layout for toolbar groups */
+.e-toolbar-items.e-toolbar-multirow {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  flex-direction: row !important;
+}
+
+/* Button styling */
+.e-tbar-btn {
+  margin: 0 2px;
+}
+
+/* Format panel (right side) */
+.e-documenteditor-container .e-de-prop-pane {
+  visibility: visible !important;
+  display: block !important;
+  border-left: 1px solid #e0e0e0;
+}
+
+/* Tab styling */
+.e-tab.e-js .e-header .e-item .e-tab-text, 
+.e-tab.e-js .e-header .e-item .e-tab-icon {
+  display: inline-block;
+}
+
+/* Button styling */
+.e-btn {
+  text-transform: none;
+}
+
+.e-de-property-header {
+  background-color: #f0f0f0;
+  padding: 8px 16px;
+  font-weight: 500;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Better responsive layout */
+@media screen and (max-width: 768px) {
+  .e-documenteditor-container .e-toolbar {
+    flex-wrap: wrap;
+  }
+} 

@@ -1,0 +1,283 @@
+/* Main container */
+.document-editor-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure the editor takes full height */
+.e-documenteditorcontainer {
+    height: 100% !important;
+}
+
+/* Fix text color issues */
+.e-de-viewer-target-content,
+.e-de-viewer-target-content p,
+.e-de-viewer-target-content span,
+.e-de-viewer-target-content div,
+.e-documenteditor-contenteditor,
+.e-documenteditor-contenteditor p,
+.e-documenteditor-contenteditor span {
+    color: black !important;
+}
+
+/* Ensure proper background */
+#container_editor_viewerContainer {
+    background: white !important;
+}
+
+/* Toolbar styling */
+.e-toolbar {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.e-toolbar .e-toolbar-items {
+    background: #f8f9fa;
+}
+
+/* Add Syncfusion icons font */
+@font-face {
+    font-family: 'e-icons';
+    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Style the content area */
+.e-documenteditor {
+  flex: 1 !important;
+  height: auto !important;
+  background-color: #fff !important;
+}
+
+/* Ensure the editor container fills available space */
+.document-editor-wrapper {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Make sure editor fills the container */
+.e-documenteditor-containerouterwrap {
+  flex: 1;
+  min-height: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative;
+}
+
+/* Fix the toolbar */
+.e-toolbar {
+  flex-shrink: 0;
+  min-height: 40px !important;
+  height: auto !important;
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  z-index: 1000;
+}
+
+/* Fix the content container */
+#container_editor_viewerContainer {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: white !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure proper sizing of the editor body */
+#documenteditor_container_body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Properties pane sizing */
+.e-de-prop-pane {
+  width: 300px !important;
+  border-left: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  position: relative;
+  height: 100% !important;
+  overflow: auto;
+}
+
+/* Customize toolbar appearance */
+.e-toolbar {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+/* Add custom styles for better integration with our app */
+.e-control {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+}
+
+/* Hide license validation message */
+.e-de-ctn-info {
+  display: none !important;
+}
+
+/* Hide any warning/license banners */
+.e-de-ctn-warning,
+.e-de-ctn-info {
+  display: none !important;
+}
+
+/* Ensure content area is white */
+.e-de-content,
+.e-de-content-wrapper {
+  background-color: white !important;
+  background-image: none !important;
+}
+
+/* Ensure proper z-index stacking */
+.e-documenteditor-container {
+  z-index: 1;
+}
+
+.e-toolbar {
+  z-index: 2;
+}
+
+.e-de-prop-pane {
+  z-index: 3;
+}
+
+/* Document list styling */
+.document-list {
+    padding: 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.document-list h3 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+.document-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 5px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.document-item span {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.document-item button {
+    padding: 4px 12px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.document-item button:hover {
+    background: #0056b3;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-overlay span {
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Save button styling */
+.e-save-icon::before {
+    content: '\e74e';
+    font-family: 'e-icons';
+}
+
+/* Ensure proper layout with document list */
+.document-editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.e-documenteditorcontainer {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Override Syncfusion styles for better UI */
+.e-de-ctn {
+    border: none !important;
+}
+
+.e-de-toolbar {
+    border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.e-toolbar .e-toolbar-items {
+    background: #fff !important;
+}
+
+.e-toolbar .e-tbar-btn {
+    border-radius: 4px !important;
+}
+
+.e-toolbar .e-tbar-btn:hover {
+    background-color: #f5f5f5 !important;
+}
+
+/* Improve visibility of toolbar buttons */
+.e-toolbar .e-tbar-btn .e-icons {
+    color: #333 !important;
+}
+
+/* Style the editor container */
+.e-documenteditor-container {
+    background: #fff !important;
+}
+
+/* Style scrollbars */
+.e-documenteditor-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.e-documenteditor-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.e-documenteditor-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.e-documenteditor-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

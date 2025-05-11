@@ -1,0 +1,31 @@
+{
+  "id": "4630053b-7fa2-4893-9cee-6068a5575551",
+  "title": "Bus Feee",
+  "createdAt": "2025-05-10T15:33:50.404Z",
+  "modifiedAt": "2025-05-10T16:09:06.921Z",
+  "currentVersion": 3,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2025-05-10T15:33:50.404Z",
+      "comment": "Initial version"
+    },
+    {
+      "version": 2,
+      "timestamp": "2025-05-10T16:08:51.313Z",
+      "comment": "Version 2"
+    },
+    {
+      "version": 3,
+      "timestamp": "2025-05-10T16:09:06.921Z",
+      "comment": "Version 3"
+    }
+  ],
+  "recordsManagement": {
+    "classification": "Confidential",
+    "documentType": "Policy",
+    "retentionPeriod": "1 Year",
+    "recordNumber": "12",
+    "notes": "New rules"
+  }
+}

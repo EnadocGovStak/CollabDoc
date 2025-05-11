@@ -1,0 +1,110 @@
+/* Icons for document editor toolbar */
+@font-face {
+    font-family: 'e-icons';
+    src: url('https://cdn.syncfusion.com/ej2/20.4.38/material/e-icons.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Toolbar item icons */
+.e-de-icon-New::before {
+    content: '\e914';
+}
+
+.e-de-icon-Open::before {
+    content: '\e910';
+}
+
+.e-de-icon-Undo::before {
+    content: '\e752';
+}
+
+.e-de-icon-Redo::before {
+    content: '\e751';
+}
+
+.e-de-icon-Image::before {
+    content: '\e908';
+}
+
+.e-de-icon-Table::before {
+    content: '\e912';
+}
+
+.e-de-icon-Hyperlink::before {
+    content: '\e913';
+}
+
+.e-de-icon-Bookmark::before {
+    content: '\e904';
+}
+
+.e-de-icon-Header::before {
+    content: '\e907';
+}
+
+.e-de-icon-Footer::before {
+    content: '\e906';
+}
+
+.e-de-icon-PageSetup::before {
+    content: '\e90f';
+}
+
+.e-de-icon-Find::before {
+    content: '\e905';
+}
+
+.e-de-icon-Comments::before {
+    content: '\e90c';
+}
+
+.e-de-icon-TrackChanges::before {
+    content: '\e900';
+}
+
+.e-de-icon-Print::before {
+    content: '\e911';
+}
+
+/* Toolbar style improvements */
+.e-de-toolbar {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.e-toolbar-item {
+    margin: 0 2px;
+}
+
+/* Ensure toolbar icons display properly */
+.e-de-toolbar .e-toolbar-item .e-tbar-btn {
+    display: flex;
+    align-items: center;
+    min-width: 30px;
+}
+
+.e-de-toolbar .e-toolbar-item .e-tbar-btn-text {
+    display: none;
+}
+
+.e-de-toolbar .e-toolbar-item button[aria-label] {
+    position: relative;
+    padding: 5px;
+    min-width: 30px;
+}
+
+.e-de-toolbar .e-toolbar-item [class^="e-de-icon-"],
+.e-de-toolbar .e-toolbar-item [class*=" e-de-icon-"] {
+    font-family: 'e-icons';
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    display: inline-block;
+} 

@@ -1,0 +1,204 @@
+/* Root level containers */
+html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.control-pane {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.control-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.e-de-ctn-title {
+    font-size: 16px;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 500;
+}
+
+.e-de-title-bar-docname {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Title bar */
+#documenteditor_titlebar {
+    height: 36px;
+    line-height: 36px;
+    width: 100%;
+    font-size: 16px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+}
+
+/* Main editor container */
+#documenteditor_container_body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Document editor container */
+#container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Syncfusion specific containers */
+.e-documenteditorcontainer,
+.e-documenteditor-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+}
+
+.e-de-cnt {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+}
+
+/* Toolbar */
+.e-de-ctnr-toolbar {
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+    z-index: 10 !important;
+}
+
+/* Content area */
+.e-content-area {
+    flex: 1 !important;
+    min-height: 0 !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Editor viewport */
+#container_editor_viewerContainer {
+    flex: 1 !important;
+    min-height: 0 !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: white !important;
+    overflow: hidden !important;
+    color: #333 !important;
+}
+
+/* Properties pane */
+.e-de-prop-pane.e-pane {
+    width: 300px !important;
+    border-left: 1px solid #e0e0e0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .e-de-prop-pane.e-pane {
+        position: fixed;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 1000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .e-de-prop-pane.e-pane.show {
+        transform: translateX(0);
+    }
+}
+
+/* Document editor specific styles */
+.e-documenteditor-container {
+    height: 100% !important;
+}
+
+.e-de-content {
+    background: white !important;
+}
+
+/* Editor content area */
+.e-content-area {
+    background: white !important;
+    color: #333 !important;
+}
+
+#container_editor_viewerContainer {
+    background: white !important;
+    color: #333 !important;
+}
+
+.e-de-viewer-target-content {
+    background: white !important;
+    color: #333 !important;
+}
+
+.e-de-viewer-target-container {
+    background: white !important;
+    color: #333 !important;
+}
+
+.e-de-viewer-container {
+    background: white !important;
+    color: #333 !important;
+}
+
+/* Ensure text is visible in the editor */
+.e-documenteditor p {
+    color: #333 !important;
+}
+
+.e-documenteditor span {
+    color: #333 !important;
+}
+
+/* Toolbar styles */
+.e-toolbar {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.e-toolbar .e-toolbar-items {
+    background: #f8f9fa !important;
+}
+
+.e-toolbar .e-tbar-btn {
+    color: #333 !important;
+}
+
+/* Fix for Syncfusion font loading */
+@font-face {
+    font-family: 'e-icons';
+    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+} 

@@ -1,0 +1,514 @@
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.App-header {
+  background-color: #1976d2;
+  min-height: 64px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.App-header h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.content-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Buttons and Links */
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.button.primary {
+  background-color: #1976d2;
+  color: white;
+}
+
+.button.primary:hover {
+  background-color: #1565c0;
+}
+
+.button.secondary {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.button.secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.button.small {
+  padding: 4px 8px;
+  font-size: 0.875rem;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.back-link {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Login Page */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+}
+
+.login-container h1 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+}
+
+.login-container p {
+  margin-bottom: 32px;
+  color: #666;
+}
+
+.login-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+}
+
+/* Documents Page */
+.documents-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.actions-bar {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.documents-table th {
+  background-color: #f9f9f9;
+  font-weight: 500;
+}
+
+.documents-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.draft {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.status-badge.completed {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status-badge.in-review {
+  background-color: #fff8e1;
+  color: #ff6f00;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  color: #666;
+}
+
+/* Templates Page */
+.templates-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.template-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.template-preview {
+  height: 120px;
+  background-color: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.template-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #1976d2;
+  color: white;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.template-info {
+  padding: 16px;
+}
+
+.template-info h3 {
+  margin-bottom: 4px;
+  font-size: 1.125rem;
+}
+
+.template-category {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.template-info p {
+  color: #666;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+/* Document Editor Page */
+.editor-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+.editor-header-left,
+.editor-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.editor-header-right {
+  gap: 15px;
+}
+
+.save-status {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.editor-container {
+  flex: 1;
+  display: flex;
+  background-color: #f5f7fa;
+  overflow: hidden;
+  height: calc(100vh - 64px);
+}
+
+.document-info-panel {
+  width: 280px;
+  background-color: white;
+  padding: 20px;
+  border-right: 1px solid #eee;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.03);
+}
+
+.document-info-item {
+  margin-bottom: 20px;
+}
+
+.document-info-item label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.document-info-item input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.document-editor-wrapper {
+  flex: 1;
+  padding: 0;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin: 20px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: calc(100vh - 200px);
+}
+
+.loading-editor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+}
+
+.syncfusion-editor-placeholder {
+  padding: 30px;
+  background-color: #f9f9f9;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.syncfusion-editor-placeholder pre {
+  text-align: left;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: auto;
+  font-size: 0.875rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .documents-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .templates-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .editor-container {
+    flex-direction: column;
+  }
+  
+  .document-info-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+}
+
+/* Add global styles for document editor background fixes */
+
+/* Target the main document editor container */
+#container_editor_viewerContainer {
+  background: white !important;
+  background-image: none !important;
+  background-color: white !important;
+}
+
+/* Make sure any pseudo-elements are also white */
+#container_editor_viewerContainer::before,
+#container_editor_viewerContainer::after {
+  background: none !important;
+  background-image: none !important;
+}
+
+/* Target any element with editor or viewer in the ID */
+div[id*="_editor_"],
+div[id*="_viewer_"] {
+  background: white !important;
+  background-image: none !important;
+}
+
+/* Target Syncfusion classes that could have background styling */
+.e-de-cnt,
+.e-de-content-wrapper,
+.e-document-editor,
+.e-de-viewer-target-container,
+.e-de-content {
+  background: white !important;
+  background-image: none !important;
+}
+
+/* Ensure any container background is white */
+.e-document-editor-container,
+.e-control,
+.e-lib,
+.e-documenteditor-container {
+  background: white !important;
+}
+
+/* Fix parent containers */
+.control-pane {
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.control-section {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#documenteditor_container_body {
+  flex: 1 !important;
+  position: relative !important;
+}
+
+/* Target canvas elements inside the editor */
+#container_editor_pageContainer canvas {
+  background-color: white !important;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 60px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.app-logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.app-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  color: #495057;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.nav-link:hover {
+  color: #007bff;
+  background-color: #f1f8ff;
+  text-decoration: none;
+}
+
+.active-nav-link {
+  color: #007bff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  background-color: #f1f8ff;
+}
+
+.app-main {
+  flex: 1;
+} 

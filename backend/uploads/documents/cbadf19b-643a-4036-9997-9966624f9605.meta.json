@@ -1,0 +1,17 @@
+{
+  "id": "cbadf19b-643a-4036-9997-9966624f9605",
+  "title": "Wasa Sala",
+  "createdAt": "2025-05-10T16:48:39.799Z",
+  "modifiedAt": "2025-05-10T16:48:39.799Z",
+  "recordsManagement": {
+    "classification": "Internal",
+    "documentType": "Salary Advance",
+    "retentionPeriod": "3 Years",
+    "notes": "Created from template: Salary Advance",
+    "isFinal": true,
+    "finalizedDate": "2025-05-10T16:54:50.656Z",
+    "finalizedBy": "System",
+    "finalizedNotes": "Merged with template df2ad06b-f75c-40c6-a84b-52b1318e8273 and sent for signing"
+  },
+  "version": 1
+}

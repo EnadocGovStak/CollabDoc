@@ -1,0 +1,270 @@
+.version-history {
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 5px;
+}
+
+.version-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.version-history h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.version-count {
+  font-size: 11px;
+  color: #666;
+}
+
+.version-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.version-timeline {
+  position: relative;
+}
+
+/* Compact version item styles */
+.version-item-compact {
+  display: flex;
+  padding: 4px 0;
+  margin-bottom: 1px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.version-item-compact:hover {
+  background-color: #f0f7ff;
+}
+
+.version-item-compact.current {
+  background-color: #e6f0fa;
+}
+
+.version-item-left {
+  width: 18px;
+  position: relative;
+}
+
+.version-marker {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.version-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #aaa;
+  border: 2px solid #fff;
+  z-index: 2;
+}
+
+.version-item-compact.current .version-dot {
+  background-color: #0066cc;
+}
+
+.version-line {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  bottom: -8px;
+  width: 1px;
+  background-color: #ddd;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.version-item-content {
+  flex: 1;
+  padding: 0 4px;
+}
+
+.version-item-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.version-number {
+  font-weight: 600;
+  font-size: 12px;
+  color: #444;
+}
+
+.version-date-time {
+  font-size: 11px;
+  color: #666;
+}
+
+.version-current-badge {
+  font-size: 9px;
+  background-color: #0066cc;
+  color: white;
+  padding: 1px 4px;
+  border-radius: 8px;
+}
+
+.version-comment {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  margin-top: 2px;
+  margin-left: 2px;
+}
+
+.version-item-compact.expanded {
+  background-color: #f0f7ff;
+  padding: 4px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 4px;
+}
+
+.version-records-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.record-tag {
+  background-color: #eff3f7;
+  color: #495057;
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.version-actions {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+/* Version actions outside timeline */
+.sidebar-section .version-actions {
+  background-color: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-section .viewing-version {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0066cc;
+  margin-bottom: 2px;
+}
+
+.version-view-btn,
+.version-restore-btn {
+  padding: 2px 6px;
+  border: none;
+  border-radius: 3px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.version-view-btn {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.version-view-btn:hover {
+  background-color: #dee2e6;
+}
+
+.version-restore-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.version-restore-btn:hover {
+  background-color: #0069d9;
+}
+
+.restore-button, 
+.cancel-button {
+  width: 100%;
+  padding: 4px;
+  border: none;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.restore-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.restore-button:hover {
+  background-color: #0069d9;
+}
+
+.cancel-button {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.cancel-button:hover {
+  background-color: #dee2e6;
+}
+
+.version-restore-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.version-history-loading,
+.version-history-error,
+.version-history-empty {
+  padding: 8px;
+  text-align: center;
+  color: #666;
+  font-size: 11px;
+}
+
+.version-history-error {
+  color: #e74c3c;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 6px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+} 
