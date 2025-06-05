@@ -1,0 +1,1197 @@
+@page "/templates"
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data
+@using Collabdoc.Web.Data.Entities
+@using Collabdoc.Web.Components
+@using static Collabdoc.Web.Services.IMergeFieldService
+@inject IDocumentApiService DocumentApi
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+@inject IDocumentRepository DocumentRepository
+@inject IMergeFieldService MergeFieldService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Templates - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Templates</li>
+                </ol>
+            </nav>
+            
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 text-primary">
+                        <i class="fas fa-layer-group me-3"></i>
+                        Document Templates
+                    </h1>
+                    <p class="lead">Create and manage document templates for consistent formatting and content</p>
+                </div>
+                <div class="btn-group">
+                    <div class="d-flex gap-2 mb-4">
+                        <SfButton CssClass="btn btn-primary" OnClick="CreateWithVisualEditor" IsPrimary="true">
+                            <i class="fas fa-edit me-2"></i>Create with Visual Editor
+                        </SfButton>
+                        <SfButton CssClass="btn btn-outline-primary" OnClick="CreateWithMergeFields">
+                            <i class="fas fa-magic me-2"></i>Create with Merge Fields
+                        </SfButton>
+                        <SfButton CssClass="btn btn-outline-secondary" OnClick="QuickCreate">
+                            <i class="fas fa-plus me-2"></i>Quick Create
+                        </SfButton>
+                        <SfButton CssClass="btn btn-outline-warning" OnClick="NavigateToDebug">
+                            <i class="fas fa-bug me-2"></i>Debug Tool
+                        </SfButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Categories -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardContent>
+                    <div class="text-center">
+                        <i class="fas fa-file-contract fa-2x text-primary mb-2"></i>
+                        <h5>Business Documents</h5>
+                        <p class="text-muted small">Letters, proposals, reports</p>
+                        <span class="badge bg-primary">@businessTemplateCount</span>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardContent>
+                    <div class="text-center">
+                        <i class="fas fa-envelope fa-2x text-success mb-2"></i>
+                        <h5>Mail Merge</h5>
+                        <p class="text-muted small">Customer communications</p>
+                        <span class="badge bg-success">@mailMergeTemplateCount</span>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardContent>
+                    <div class="text-center">
+                        <i class="fas fa-chart-bar fa-2x text-warning mb-2"></i>
+                        <h5>Reports</h5>
+                        <p class="text-muted small">Analytics and summaries</p>
+                        <span class="badge bg-warning">@reportTemplateCount</span>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardContent>
+                    <div class="text-center">
+                        <i class="fas fa-cog fa-2x text-info mb-2"></i>
+                        <h5>Custom</h5>
+                        <p class="text-muted small">User-defined templates</p>
+                        <span class="badge bg-info">@customTemplateCount</span>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+
+    <!-- Templates Grid -->
+    <div class="row">
+        <div class="col-12">
+            <SfCard>
+                <CardHeader Title="Available Templates" />
+                <CardContent>
+                    <!-- Debug Information -->
+                    <div class="alert alert-info mb-3">
+                        <strong>Debug Info:</strong>
+                        <br />Templates Loaded: @templates.Count
+                        <br />Selected Template: @(selectedTemplate?.Name ?? "None")  
+                        <br />Merge Fields: @(templateMergeFields?.Count ?? 0)
+                        <br />Modal Visible: @templateMergeModalVisible
+                        <br />Mail Merge Dialog Visible: @mailMergeDialogVisible
+                        <br />Create Template Dialog Visible: @createTemplateDialogVisible
+                        <br />Last Action: @lastDebugAction
+                        <br />
+                        <div class="mt-2">
+                            <SfButton CssClass="btn-sm btn-warning me-2" OnClick="PopulateExistingTemplatesWithMergeFields">
+                                <i class="fas fa-magic me-1"></i>Add Merge Fields to Existing Templates
+                            </SfButton>
+                            <small class="text-muted">For testing: adds merge fields to templates that don't have them</small>
+                        </div>
+                    </div>
+
+                    @if (isLoading)
+                    {
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">Loading templates...</p>
+                        </div>
+                    }
+                    else if (templates?.Any() == true)
+                    {
+                        <div class="row">
+                            @foreach (var template in templates)
+                            {
+                                <div class="col-md-4 col-lg-3 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="card-title">@template.Name</h6>
+                                                <span class="badge bg-secondary">@template.Category</span>
+                                            </div>
+                                            <p class="card-text small text-muted">@template.Description</p>
+                                            <div class="small text-muted mb-3">
+                                                <i class="fas fa-user me-1"></i>@template.CreatedBy<br>
+                                                <i class="fas fa-calendar me-1"></i>@template.CreatedAt.ToString("MMM dd, yyyy")
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <div class="d-flex gap-1">
+                                                <SfButton CssClass="btn-sm btn-primary flex-fill" 
+                                                        OnClick="() => UseTemplate(template.Id)">
+                                                    <i class="fas fa-plus me-1"></i>Use
+                                                </SfButton>
+                                                <SfButton CssClass="btn-sm btn-outline-info" 
+                                                        OnClick="() => EditTemplateVisually(template.Id)"
+                                                        title="Edit with Visual Editor">
+                                                    <i class="fas fa-paint-brush"></i>
+                                                </SfButton>
+                                                <SfButton CssClass="btn-sm btn-outline-secondary" 
+                                                        OnClick="() => EditTemplate(template.Id)"
+                                                        title="Edit Properties">
+                                                    <i class="fas fa-edit"></i>
+                                                </SfButton>
+                                                <SfButton CssClass="btn-sm btn-outline-danger" 
+                                                        OnClick="() => DeleteTemplate(template.Id)">
+                                                    <i class="fas fa-trash"></i>
+                                                </SfButton>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-layer-group fa-3x text-muted mb-3"></i>
+                            <h5>No Templates Found</h5>
+                            <p class="text-muted">Create your first template to get started</p>
+                            <SfButton IsPrimary="true" 
+                                    OnClick="ShowCreateTemplateDialog"
+                                    IconCss="fas fa-plus">
+                                Create Your First Template
+                            </SfButton>
+                        </div>
+                    }
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+</div>
+
+<!-- Create Template Dialog -->
+<SfDialog @bind-Visible="createTemplateDialogVisible" Header="Create New Template" Width="600px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Template Name <span class="text-danger">*</span></label>
+                <SfTextBox @bind-Value="newTemplate.Name" Placeholder="Enter template name"></SfTextBox>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <SfDropDownList @bind-Value="newTemplate.Category" 
+                              DataSource="templateCategories" 
+                              Placeholder="Select category">
+                </SfDropDownList>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <SfTextBox @bind-Value="newTemplate.Description" 
+                         Multiline="true" 
+                         Placeholder="Enter template description"
+                         FloatLabelType="FloatLabelType.Auto"></SfTextBox>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Template File</label>
+                <SfUploader AllowedExtensions=".docx,.doc" 
+                          AutoUpload="false" 
+                          ShowFileList="true"
+                          MaxFileSize="10485760">
+                    <UploaderEvents ValueChange="OnTemplateFileSelected"></UploaderEvents>
+                </SfUploader>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(validationMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @validationMessage
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Create" IsPrimary="true" OnClick="CreateTemplate"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => createTemplateDialogVisible = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+<!-- Mail Merge Dialog -->
+<SfDialog @bind-Visible="mailMergeDialogVisible" Header="Mail Merge Document" Width="700px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Merge Data (JSON Format)</label>
+                <SfTextBox @bind-Value="mailMergeData" 
+                         Multiline="true" 
+                         RowCount="10"
+                         Placeholder='{"CustomerName": "John Doe", "CompanyName": "Acme Corp", "Date": "2024-01-15"}'
+                         FloatLabelType="FloatLabelType.Auto"></SfTextBox>
+            </div>
+            
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" @bind="removeEmptyParagraphs" id="removeEmptyParagraphs">
+                    <label class="form-check-label" for="removeEmptyParagraphs">
+                        Remove empty paragraphs
+                    </label>
+                </div>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(mailMergeResult))
+            {
+                <div class="alert alert-success" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Mail merge completed successfully! The document has been generated.
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Generate Document" IsPrimary="true" OnClick="PerformMailMerge"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => mailMergeDialogVisible = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+<!-- Template Merge Modal -->
+<TemplateMergeModal @bind-IsVisible="templateMergeModalVisible"
+                   Template="selectedTemplate"
+                   MergeFields="templateMergeFields"
+                   OnMergeRequested="HandleTemplateMerge" />
+
+@code {
+    private List<TemplateInfo> templates = new();
+    private bool isLoading = true;
+    private bool createTemplateDialogVisible = false;
+    private bool mailMergeDialogVisible = false;
+    
+    private int businessTemplateCount = 0;
+    private int mailMergeTemplateCount = 0;
+    private int reportTemplateCount = 0;
+    private int customTemplateCount = 0;
+
+    private TemplateCreateRequest newTemplate = new();
+    private string validationMessage = string.Empty;
+    private string mailMergeData = string.Empty;
+    private string mailMergeResult = string.Empty;
+    private bool removeEmptyParagraphs = true;
+    private int selectedTemplateId = 0;
+
+    private List<string> templateCategories = new()
+    {
+        "Business Documents",
+        "Mail Merge",
+        "Reports",
+        "Custom"
+    };
+
+    // Template merge modal fields
+    private bool templateMergeModalVisible = false;
+    private TemplateInfo? selectedTemplate = null;
+    private List<MergeField> templateMergeFields = new();
+    
+    // Debug tracking
+    private string lastDebugAction = "None";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTemplates();
+    }
+
+    private async Task LoadTemplates()
+    {
+        isLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            // Load real templates from database
+            var dbTemplates = await DocumentRepository.GetTemplatesAsync();
+            templates = dbTemplates.Select(doc => new TemplateInfo
+            {
+                Id = doc.Id,
+                Name = doc.Name,
+                Description = doc.Description ?? "",
+                Category = doc.Category ?? "Custom",
+                CreatedBy = doc.CreatedBy ?? "System",
+                CreatedAt = doc.CreatedAt,
+                IsActive = doc.Status == "Active"
+            }).ToList();
+            
+            // Debug: Show what templates were loaded
+            var templateSummary = string.Join(", ", templates.Select(t => $"{t.Name} (ID:{t.Id}, Category:{t.Category})"));
+            Console.WriteLine($"[DEBUG] Loaded {templates.Count} templates from database: {templateSummary}");
+            
+            UpdateTemplateCounts();
+            
+            if (!templates.Any())
+            {
+                Console.WriteLine("[DEBUG] No templates found in database");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to load templates: {ex.Message}");
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load templates: {ex.Message}");
+            // Fallback to mock templates if database fails
+            templates = GetMockTemplates();
+            UpdateTemplateCounts();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private List<TemplateInfo> GetMockTemplates()
+    {
+        return new List<TemplateInfo>
+        {
+            new() { Id = 1, Name = "Business Letter", Description = "Professional business letter template", Category = "Business Documents", CreatedBy = "System", CreatedAt = DateTime.Now.AddDays(-10), IsActive = true },
+            new() { Id = 2, Name = "Invoice Template", Description = "Standard invoice format", Category = "Business Documents", CreatedBy = "Admin", CreatedAt = DateTime.Now.AddDays(-8), IsActive = true },
+            new() { Id = 3, Name = "Customer Welcome", Description = "Welcome email for new customers", Category = "Mail Merge", CreatedBy = "Marketing", CreatedAt = DateTime.Now.AddDays(-5), IsActive = true },
+            new() { Id = 4, Name = "Monthly Report", Description = "Monthly performance report template", Category = "Reports", CreatedBy = "Manager", CreatedAt = DateTime.Now.AddDays(-3), IsActive = true },
+            new() { Id = 5, Name = "Meeting Notes", Description = "Standard meeting minutes template", Category = "Custom", CreatedBy = "User", CreatedAt = DateTime.Now.AddDays(-1), IsActive = true }
+        };
+    }
+
+    private void UpdateTemplateCounts()
+    {
+        businessTemplateCount = templates.Count(t => t.Category == "Business Documents");
+        mailMergeTemplateCount = templates.Count(t => t.Category == "Mail Merge");
+        reportTemplateCount = templates.Count(t => t.Category == "Reports");
+        customTemplateCount = templates.Count(t => t.Category == "Custom");
+    }
+
+    private void ShowCreateTemplateDialog()
+    {
+        newTemplate = new TemplateCreateRequest();
+        validationMessage = string.Empty;
+        createTemplateDialogVisible = true;
+    }
+
+    private async Task CreateTemplate()
+    {
+        validationMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(newTemplate.Name))
+        {
+            validationMessage = "Template name is required.";
+            return;
+        }
+
+        try
+        {
+            // Create sample merge fields based on template category
+            var sampleMergeFields = GenerateSampleMergeFields(newTemplate.Category ?? "Custom");
+            
+            // Create metadata JSON with merge fields
+            var metadata = new Dictionary<string, object>
+            {
+                ["MergeFields"] = sampleMergeFields,
+                ["CreatedVia"] = "Templates Index Page",
+                ["TemplateVersion"] = "1.0"
+            };
+            var metadataJson = System.Text.Json.JsonSerializer.Serialize(metadata);
+
+            // Create proper SFDT content with merge fields
+            var properContent = CreateSampleContentWithMergeFields(newTemplate.Name, sampleMergeFields);
+
+            // Create the document in database
+            var document = new Document
+            {
+                DocumentId = Guid.NewGuid().ToString(),
+                Name = newTemplate.Name,
+                Description = newTemplate.Description ?? "",
+                Category = newTemplate.Category ?? "Custom",
+                IsTemplate = true,
+                Content = properContent,
+                Metadata = metadataJson,
+                CreatedBy = "Current User",
+                CreatedAt = DateTime.Now,
+                LastModified = DateTime.Now,
+                Status = "Active",
+                Size = System.Text.Encoding.UTF8.GetByteCount(properContent)
+            };
+
+            var savedDocument = await DocumentRepository.CreateDocumentAsync(document);
+            
+            if (savedDocument != null)
+            {
+                // Update local templates list
+                var newTemplateInfo = new TemplateInfo
+                {
+                    Id = savedDocument.Id,
+                    Name = savedDocument.Name,
+                    Description = savedDocument.Description ?? "",
+                    Category = savedDocument.Category ?? "Custom",
+                    CreatedBy = savedDocument.CreatedBy ?? "Current User",
+                    CreatedAt = savedDocument.CreatedAt,
+                    IsActive = savedDocument.Status == "Active"
+                };
+
+                templates.Add(newTemplateInfo);
+                UpdateTemplateCounts();
+
+                await NotificationService.ShowSuccessAsync("Success", 
+                    $"Template '{savedDocument.Name}' created successfully with {sampleMergeFields.Count} merge fields!");
+                createTemplateDialogVisible = false;
+                StateHasChanged();
+            }
+            else
+            {
+                validationMessage = "Failed to save template to database.";
+            }
+        }
+        catch (Exception ex)
+        {
+            validationMessage = $"Failed to create template: {ex.Message}";
+        }
+    }
+
+    private List<MergeField> GenerateSampleMergeFields(string category)
+    {
+        return category switch
+        {
+            "Mail Merge" => new List<MergeField>
+            {
+                new() { Name = "CustomerName", DisplayName = "Customer Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Full name of the customer" },
+                new() { Name = "CompanyName", DisplayName = "Company Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Customer's company name" },
+                new() { Name = "Email", DisplayName = "Email Address", Type = MergeFieldType.Email, IsRequired = true, Description = "Customer's email address" },
+                new() { Name = "Date", DisplayName = "Date", Type = MergeFieldType.Date, IsRequired = true, Description = "Document date" }
+            },
+            "Business Documents" => new List<MergeField>
+            {
+                new() { Name = "RecipientName", DisplayName = "Recipient Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Name of the recipient" },
+                new() { Name = "CompanyName", DisplayName = "Company Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Recipient's company" },
+                new() { Name = "DocumentDate", DisplayName = "Document Date", Type = MergeFieldType.Date, IsRequired = true, Description = "Date of the document" },
+                new() { Name = "ReferenceNumber", DisplayName = "Reference Number", Type = MergeFieldType.Text, IsRequired = false, Description = "Reference number for tracking" }
+            },
+            "Reports" => new List<MergeField>
+            {
+                new() { Name = "ReportTitle", DisplayName = "Report Title", Type = MergeFieldType.Text, IsRequired = true, Description = "Title of the report" },
+                new() { Name = "ReportPeriod", DisplayName = "Report Period", Type = MergeFieldType.Text, IsRequired = true, Description = "Period covered by the report" },
+                new() { Name = "GeneratedBy", DisplayName = "Generated By", Type = MergeFieldType.Text, IsRequired = true, Description = "Person who generated the report" },
+                new() { Name = "ReportDate", DisplayName = "Report Date", Type = MergeFieldType.Date, IsRequired = true, Description = "Date the report was generated" }
+            },
+            _ => new List<MergeField>
+            {
+                new() { Name = "CustomerName", DisplayName = "Customer Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Customer's full name" },
+                new() { Name = "CompanyName", DisplayName = "Company Name", Type = MergeFieldType.Text, IsRequired = true, Description = "Company name" },
+                new() { Name = "DocumentDate", DisplayName = "Document Date", Type = MergeFieldType.Date, IsRequired = true, Description = "Date of the document" }
+            }
+        };
+    }
+
+    // Helper method to save merge fields to an existing template
+    private async Task SaveMergeFieldsToTemplate(int templateId, List<MergeField> mergeFields)
+    {
+        try
+        {
+            var document = await DocumentRepository.GetDocumentByIdAsync(templateId);
+            if (document != null)
+            {
+                // Parse existing metadata or create new
+                var metadata = new Dictionary<string, object>();
+                if (!string.IsNullOrEmpty(document.Metadata))
+                {
+                    try
+                    {
+                        metadata = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(document.Metadata) ?? new Dictionary<string, object>();
+                    }
+                    catch
+                    {
+                        // If parsing fails, start with empty metadata
+                        metadata = new Dictionary<string, object>();
+                    }
+                }
+
+                // Update merge fields
+                metadata["MergeFields"] = mergeFields;
+                metadata["LastUpdated"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                // Save updated metadata
+                document.Metadata = System.Text.Json.JsonSerializer.Serialize(metadata);
+                document.LastModified = DateTime.Now;
+
+                await DocumentRepository.UpdateDocumentAsync(document);
+                Console.WriteLine($"[DEBUG] Saved {mergeFields.Count} merge fields to template {templateId}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to save merge fields: {ex.Message}");
+        }
+    }
+
+    private void OnTemplateFileSelected(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)
+    {
+        // Handle template file selection
+        // This would upload the file when backend is implemented
+    }
+
+    private async Task UseTemplate(int templateId)
+    {
+        lastDebugAction = $"UseTemplate called with ID: {templateId}";
+        Console.WriteLine($"[DEBUG] UseTemplate method called with templateId: {templateId}");
+        StateHasChanged(); // Force UI update immediately
+        
+        var template = templates.FirstOrDefault(t => t.Id == templateId);
+        if (template == null) 
+        {
+            Console.WriteLine($"[DEBUG] Template {templateId} not found in templates list");
+            lastDebugAction = $"Template {templateId} not found";
+            StateHasChanged();
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine($"[DEBUG] Loading template: {template.Name} (ID: {template.Id}, Category: {template.Category})");
+            lastDebugAction = $"Loading template: {template.Name}";
+            StateHasChanged();
+            
+            // Set selected template
+            selectedTemplate = template;
+            lastDebugAction = $"Selected template set: {template.Name}";
+            Console.WriteLine($"[DEBUG] Selected template set to: {selectedTemplate.Name}");
+            StateHasChanged();
+            
+            // Load merge fields for the template
+            templateMergeFields = await LoadTemplateMergeFields(templateId);
+            
+            Console.WriteLine($"[DEBUG] Found {templateMergeFields?.Count ?? 0} merge fields");
+            lastDebugAction = $"Loaded {templateMergeFields?.Count ?? 0} merge fields";
+            StateHasChanged();
+            
+            // Show the merge modal if there are merge fields
+            if (templateMergeFields?.Any() == true)
+            {
+                Console.WriteLine($"[DEBUG] About to show template merge modal...");
+                Console.WriteLine($"[DEBUG] Current modal state: templateMergeModalVisible = {templateMergeModalVisible}");
+                Console.WriteLine($"[DEBUG] Selected template: {selectedTemplate?.Name}");
+                Console.WriteLine($"[DEBUG] Merge fields count: {templateMergeFields.Count}");
+                
+                lastDebugAction = "Setting modal visible to true";
+                StateHasChanged();
+                
+                // Ensure all other modals are closed first
+                createTemplateDialogVisible = false;
+                mailMergeDialogVisible = false;
+                
+                // Small delay to ensure UI is ready
+                await Task.Delay(100);
+                
+                templateMergeModalVisible = true;
+                lastDebugAction = $"Modal visible set to: {templateMergeModalVisible}";
+                StateHasChanged(); // Force UI update
+                Console.WriteLine($"[DEBUG] Modal visibility set to: {templateMergeModalVisible}");
+                
+                // Force another state update after a brief delay
+                await Task.Delay(50);
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine($"[DEBUG] No merge fields found in template");
+                lastDebugAction = "No merge fields found";
+                StateHasChanged();
+                
+                // Show notification about no merge fields and offer options
+                var result = await NotificationService.ShowConfirmAsync("No Merge Fields Found", 
+                    $"The template '{template.Name}' doesn't contain any merge fields. " +
+                    "Would you like to create a document directly from this template?");
+                
+                if (result)
+                {
+                    // User chose to create document directly
+                    await CreateDocumentDirectly(templateId, template.Name);
+                }
+                else
+                {
+                    // User chose to add merge fields - navigate to template editor
+                    Navigation.NavigateTo($"/templates/edit/{templateId}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Failed to load template: {ex.Message}");
+            Console.WriteLine($"[ERROR] Stack trace: {ex.StackTrace}");
+            lastDebugAction = $"ERROR: {ex.Message}";
+            StateHasChanged();
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load template: {ex.Message}");
+        }
+    }
+
+    private async Task<List<MergeField>> LoadTemplateMergeFields(int templateId)
+    {
+        try
+        {
+            Console.WriteLine($"[DEBUG] LoadTemplateMergeFields called for template ID: {templateId}");
+            
+            // Use the MergeFieldService to get actual merge fields from the template
+            var response = await MergeFieldService.GetTemplateMergeFieldsAsync(templateId);
+            
+            if (response.Success && response.Data?.Any() == true)
+            {
+                Console.WriteLine($"[DEBUG] Found {response.Data.Count} actual merge fields from MergeFieldService: {string.Join(", ", response.Data.Select(f => f.DisplayName))}");
+                return response.Data.ToList();
+            }
+            
+            Console.WriteLine($"[DEBUG] MergeFieldService returned no fields or failed. Success: {response.Success}, Error: {response.Error}");
+            
+            // If MergeFieldService fails, try to extract from document content directly
+            var document = await DocumentRepository.GetDocumentByIdAsync(templateId);
+            if (document == null)
+            {
+                Console.WriteLine($"[DEBUG] Document {templateId} not found in LoadTemplateMergeFields");
+                return new List<MergeField>();
+            }
+
+            Console.WriteLine($"[DEBUG] Trying to extract merge fields from document content for: '{document.Name}'");
+
+            // Try to parse merge fields from metadata first
+            if (!string.IsNullOrEmpty(document.Metadata))
+            {
+                try
+                {
+                    var metadata = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(document.Metadata);
+                    if (metadata?.ContainsKey("MergeFields") == true)
+                    {
+                        var fieldsJson = metadata["MergeFields"].ToString();
+                        if (!string.IsNullOrEmpty(fieldsJson))
+                        {
+                            var mergeFields = System.Text.Json.JsonSerializer.Deserialize<List<MergeField>>(fieldsJson);
+                            if (mergeFields?.Any() == true)
+                            {
+                                Console.WriteLine($"[DEBUG] Found {mergeFields.Count} merge fields in metadata: {string.Join(", ", mergeFields.Select(f => f.DisplayName))}");
+                                return mergeFields;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[DEBUG] Failed to parse metadata: {ex.Message}");
+                }
+            }
+
+            // Extract merge fields from document content using regex patterns
+            var extractedFields = new List<MergeField>();
+            
+            if (!string.IsNullOrEmpty(document.Content))
+            {
+                // Look for Syncfusion DocIO merge field patterns like <<FieldName>>
+                var syncfusionPattern = @"<<(\w+)>>";
+                var syncfusionMatches = System.Text.RegularExpressions.Regex.Matches(document.Content, syncfusionPattern);
+
+                foreach (System.Text.RegularExpressions.Match match in syncfusionMatches)
+                {
+                    var fieldName = match.Groups[1].Value;
+                    if (!extractedFields.Any(f => f.Name == fieldName))
+                    {
+                        extractedFields.Add(new MergeField
+                        {
+                            Name = fieldName,
+                            DisplayName = fieldName.Replace("_", " ").Replace("-", " "),
+                            Type = MergeFieldType.Text,
+                            Category = "Extracted",
+                            IsRequired = false
+                        });
+                    }
+                }
+
+                // Look for legacy patterns like {{< FieldName >}} or {{FieldName}}
+                var legacyPattern = @"\{\{<?(\w+)>?\}\}";
+                var legacyMatches = System.Text.RegularExpressions.Regex.Matches(document.Content, legacyPattern);
+
+                foreach (System.Text.RegularExpressions.Match match in legacyMatches)
+                {
+                    var fieldName = match.Groups[1].Value;
+                    if (!extractedFields.Any(f => f.Name == fieldName))
+                    {
+                        extractedFields.Add(new MergeField
+                        {
+                            Name = fieldName,
+                            DisplayName = fieldName.Replace("_", " ").Replace("-", " "),
+                            Type = MergeFieldType.Text,
+                            Category = "Extracted",
+                            IsRequired = false
+                        });
+                    }
+                }
+
+                // Look for Word MERGEFIELD patterns
+                var wordPattern = @"MERGEFIELD\s+(\w+)";
+                var wordMatches = System.Text.RegularExpressions.Regex.Matches(document.Content, wordPattern, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                foreach (System.Text.RegularExpressions.Match match in wordMatches)
+                {
+                    var fieldName = match.Groups[1].Value;
+                    if (!extractedFields.Any(f => f.Name == fieldName))
+                    {
+                        extractedFields.Add(new MergeField
+                        {
+                            Name = fieldName,
+                            DisplayName = fieldName.Replace("_", " ").Replace("-", " "),
+                            Type = MergeFieldType.Text,
+                            Category = "Extracted",
+                            IsRequired = false
+                        });
+                    }
+                }
+            }
+
+            if (extractedFields.Any())
+            {
+                Console.WriteLine($"[DEBUG] Extracted {extractedFields.Count} merge fields from content: {string.Join(", ", extractedFields.Select(f => f.DisplayName))}");
+                return extractedFields;
+            }
+
+            Console.WriteLine($"[DEBUG] No merge fields found in template content. Template may not contain merge fields.");
+            
+            // Return empty list instead of mock fields - let user know template has no merge fields
+            return new List<MergeField>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR] Error in LoadTemplateMergeFields: {ex.Message}");
+            return new List<MergeField>();
+        }
+    }
+
+    private async Task CreateDocumentDirectly(int templateId, string templateName)
+    {
+        try
+        {
+            // TODO: Replace with actual document creation API call
+            await NotificationService.ShowSuccessAsync("Success", $"Document created from template '{templateName}'!");
+            
+            // Navigate to editor with the new document
+            Navigation.NavigateTo($"/editor?template={templateId}&direct=true");
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to create document: {ex.Message}");
+        }
+    }
+
+    private async Task HandleTemplateMerge(TemplateMergeModal.TemplateMergeRequest request)
+    {
+        try
+        {
+            Console.WriteLine($"[TEMPLATES DEBUG] HandleTemplateMerge called");
+            Console.WriteLine($"[TEMPLATES DEBUG] Request: {System.Text.Json.JsonSerializer.Serialize(request)}");
+            Console.WriteLine($"[TEMPLATES DEBUG] Selected template: {selectedTemplate?.Name} (ID: {selectedTemplate?.Id})");
+            
+            lastDebugAction = $"Creating document: {request.DocumentName}";
+            StateHasChanged();
+            
+            // Use MergeFieldService to perform the actual template merge
+            if (selectedTemplate != null)
+            {
+                Console.WriteLine($"[TEMPLATES DEBUG] Calling MergeFieldService.MergeTemplateAsync...");
+                Console.WriteLine($"[TEMPLATES DEBUG] Template ID: {selectedTemplate.Id}");
+                Console.WriteLine($"[TEMPLATES DEBUG] Document Name: {request.DocumentName}");
+                Console.WriteLine($"[TEMPLATES DEBUG] Merge Data: {System.Text.Json.JsonSerializer.Serialize(request.MergeData)}");
+                
+                var mergeResponse = await MergeFieldService.MergeTemplateAsync(
+                    selectedTemplate.Id, 
+                    request.MergeData, 
+                    request.DocumentName, 
+                    selectedTemplate.Category);
+                
+                Console.WriteLine($"[TEMPLATES DEBUG] MergeFieldService response received");
+                Console.WriteLine($"[TEMPLATES DEBUG] Success: {mergeResponse.Success}");
+                Console.WriteLine($"[TEMPLATES DEBUG] Error: {mergeResponse.Error}");
+                Console.WriteLine($"[TEMPLATES DEBUG] Message: {mergeResponse.Message}");
+                
+                if (mergeResponse.Success && mergeResponse.Data != null)
+                {
+                    Console.WriteLine($"[TEMPLATES DEBUG] Document merged successfully: {mergeResponse.Data.Name}");
+                    Console.WriteLine($"[TEMPLATES DEBUG] New DocumentId: {mergeResponse.Data.DocumentId}");
+                    Console.WriteLine($"[TEMPLATES DEBUG] Database Id: {mergeResponse.Data.Id}");
+                    
+                    lastDebugAction = $"Document merged successfully: {mergeResponse.Data.Name}";
+                    StateHasChanged();
+                    
+                    await NotificationService.ShowSuccessAsync("Document Merged Successfully!", 
+                        $"✅ '{request.DocumentName}' has been created from template '{selectedTemplate.Name}' and saved to your documents.\n\n" +
+                        $"📂 You can find it in:\n" +
+                        $"• Documents page (main dashboard)\n" +
+                        $"• Document Editor (click 'New' then browse your documents)\n\n" +
+                        $"💡 The document contains your merged data and is ready to edit!");
+                    
+                    // Close the modal
+                    templateMergeModalVisible = false;
+                    lastDebugAction = "Document created and saved - modal closed";
+                    StateHasChanged();
+                    
+                    // Optional: Refresh the templates list to show recent activity
+                    await LoadTemplates();
+                }
+                else
+                {
+                    Console.WriteLine($"[TEMPLATES ERROR] Merge service failed: {mergeResponse.Error}");
+                    lastDebugAction = $"Merge service failed: {mergeResponse.Error}";
+                    StateHasChanged();
+                    await NotificationService.ShowErrorAsync("Error", $"Failed to merge template: {mergeResponse.Error}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"[TEMPLATES ERROR] No selected template");
+                lastDebugAction = "No selected template";
+                StateHasChanged();
+                await NotificationService.ShowErrorAsync("Error", "No template selected for merging");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[TEMPLATES ERROR] Exception in HandleTemplateMerge: {ex.Message}");
+            Console.WriteLine($"[TEMPLATES ERROR] Stack trace: {ex.StackTrace}");
+            lastDebugAction = $"ERROR in HandleTemplateMerge: {ex.Message}";
+            StateHasChanged();
+            await NotificationService.ShowErrorAsync("Error", $"Failed to generate document: {ex.Message}");
+        }
+    }
+
+    private void EditTemplate(int templateId)
+    {
+        // Navigate to template editor
+        Navigation.NavigateTo($"/templates/edit/{templateId}");
+    }
+
+    private async Task DeleteTemplate(int templateId)
+    {
+        var template = templates.FirstOrDefault(t => t.Id == templateId);
+        if (template == null)
+        {
+            await NotificationService.ShowErrorAsync("Error", "Template not found.");
+            return;
+        }
+
+        // Use a simple JavaScript confirm for now since NotificationService.ShowConfirmAsync might not exist
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete the template '{template.Name}'? This action cannot be undone.");
+        
+        if (confirmed)
+        {
+            try
+            {
+                // Delete from database
+                var success = await DocumentRepository.DeleteDocumentAsync(templateId);
+                
+                if (success)
+                {
+                    // Remove from UI list
+                    templates.RemoveAll(t => t.Id == templateId);
+                    UpdateTemplateCounts();
+                    
+                    await NotificationService.ShowSuccessAsync("Success", $"Template '{template.Name}' deleted successfully!");
+                    StateHasChanged();
+                }
+                else
+                {
+                    await NotificationService.ShowErrorAsync("Error", "Failed to delete template from database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await NotificationService.ShowErrorAsync("Error", $"Failed to delete template: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task PerformMailMerge()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(mailMergeData))
+            {
+                await NotificationService.ShowWarningAsync("Warning", "Please provide merge data in JSON format.");
+                return;
+            }
+
+            // For now, simulate mail merge success
+            mailMergeResult = "Mail merge completed successfully!";
+            
+            await NotificationService.ShowSuccessAsync("Success", "Mail merge document generated successfully!");
+            
+            // In real implementation, this would call the backend API
+            // and then navigate to the editor with the generated document
+            await Task.Delay(2000);
+            mailMergeDialogVisible = false;
+            Navigation.NavigateTo("/editor?source=mailmerge");
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Mail merge failed: {ex.Message}");
+        }
+    }
+
+    private void CreateWithVisualEditor()
+    {
+        Navigation.NavigateTo("/templates/editor");
+    }
+
+    private void CreateWithMergeFields()
+    {
+        Navigation.NavigateTo("/templates/create");
+    }
+
+    private void QuickCreate()
+    {
+        ShowCreateTemplateDialog();
+    }
+
+    private void EditTemplateVisually(int templateId)
+    {
+        Navigation.NavigateTo($"/templates/editor/{templateId}");
+    }
+
+    private void NavigateToDebug()
+    {
+        Navigation.NavigateTo("/templates/debug");
+    }
+
+    private async Task PopulateExistingTemplatesWithMergeFields()
+    {
+        try
+        {
+            lastDebugAction = "Adding merge fields to existing templates";
+            StateHasChanged();
+            
+            var templatesUpdated = 0;
+            
+            foreach (var template in templates.Where(t => t.Category != null))
+            {
+                // Create sample merge fields based on template category
+                var sampleMergeFields = template.Category switch
+                {
+                    "Mail Merge" => new List<MergeField>
+                    {
+                        new() { Name = "CustomerName", DisplayName = "Customer Name", Type = MergeFieldType.Text, IsRequired = true },
+                        new() { Name = "CompanyName", DisplayName = "Company Name", Type = MergeFieldType.Text, IsRequired = true },
+                        new() { Name = "Email", DisplayName = "Email Address", Type = MergeFieldType.Email, IsRequired = true },
+                        new() { Name = "Date", DisplayName = "Date", Type = MergeFieldType.Date, IsRequired = true }
+                    },
+                    "Business Documents" => new List<MergeField>
+                    {
+                        new() { Name = "RecipientName", DisplayName = "Recipient Name", Type = MergeFieldType.Text, IsRequired = true },
+                        new() { Name = "CompanyName", DisplayName = "Company Name", Type = MergeFieldType.Text, IsRequired = true },
+                        new() { Name = "DocumentDate", DisplayName = "Document Date", Type = MergeFieldType.Date, IsRequired = true },
+                        new() { Name = "ReferenceNumber", DisplayName = "Reference Number", Type = MergeFieldType.Text, IsRequired = false }
+                    },
+                    _ => new List<MergeField>
+                    {
+                        new() { Name = "CustomerName", DisplayName = "Customer Name", Type = MergeFieldType.Text, IsRequired = true },
+                        new() { Name = "DocumentDate", DisplayName = "Document Date", Type = MergeFieldType.Date, IsRequired = true },
+                        new() { Name = "Amount", DisplayName = "Amount", Type = MergeFieldType.Currency, IsRequired = false }
+                    }
+                };
+
+                // Get the document from database
+                var document = await DocumentRepository.GetDocumentByIdAsync(template.Id);
+                if (document != null)
+                {
+                    // Create content with merge fields
+                    var contentWithMergeFields = CreateSampleContentWithMergeFields(template.Name, sampleMergeFields);
+                    
+                    // Update document content and metadata
+                    document.Content = contentWithMergeFields;
+                    document.LastModified = DateTime.UtcNow;
+                    
+                    // Add merge fields to metadata
+                    var metadata = new Dictionary<string, object>();
+                    if (!string.IsNullOrEmpty(document.Metadata))
+                    {
+                        try
+                        {
+                            metadata = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(document.Metadata) ?? new Dictionary<string, object>();
+                        }
+                        catch
+                        {
+                            metadata = new Dictionary<string, object>();
+                        }
+                    }
+                    
+                    metadata["MergeFields"] = sampleMergeFields;
+                    document.Metadata = System.Text.Json.JsonSerializer.Serialize(metadata);
+                    
+                    // Update in database
+                    await DocumentRepository.UpdateDocumentAsync(document);
+                    templatesUpdated++;
+                }
+            }
+            
+            lastDebugAction = $"Updated {templatesUpdated} templates with merge fields";
+            StateHasChanged();
+            
+            await NotificationService.ShowSuccessAsync("Success", 
+                $"Added merge fields to {templatesUpdated} existing templates. Try using a template now!");
+            
+            // Reload templates to reflect changes
+            await LoadTemplates();
+        }
+        catch (Exception ex)
+        {
+            lastDebugAction = $"Error updating templates: {ex.Message}";
+            StateHasChanged();
+            await NotificationService.ShowErrorAsync("Error", $"Failed to update templates: {ex.Message}");
+        }
+    }
+
+    private string CreateSampleContentWithMergeFields(string templateName, List<MergeField> mergeFields)
+    {
+        // Create merge field inline elements
+        var mergeFieldInlines = new List<string>();
+        
+        foreach (var field in mergeFields)
+        {
+            // Add label for the field
+            mergeFieldInlines.Add($@"{{ ""text"": ""{field.DisplayName}: "" }}");
+            
+            // Add the actual merge field using Syncfusion's MERGEFIELD structure
+            mergeFieldInlines.Add($@"{{
+                ""fieldType"": 0,
+                ""hasFieldEnd"": true,
+                ""fieldCodeType"": ""FieldMergeField"",
+                ""characterFormat"": {{}},
+                ""fieldCode"": ""MERGEFIELD {field.Name} \\* MERGEFORMAT"",
+                ""text"": ""<<{field.Name}>>"" 
+            }}");
+            
+            // Add line break
+            mergeFieldInlines.Add(@"{ ""text"": ""\n"" }");
+        }
+        
+        var mergeFieldInlinesJson = string.Join(",\n                        ", mergeFieldInlines);
+        
+        return $@"{{
+            ""sfdt"": {{
+                ""sections"": [{{
+                    ""sectionFormat"": {{
+                        ""pageWidth"": 612,
+                        ""pageHeight"": 792,
+                        ""leftMargin"": 72,
+                        ""rightMargin"": 72,
+                        ""topMargin"": 72,
+                        ""bottomMargin"": 72
+                    }},
+                    ""blocks"": [
+                        {{
+                            ""paragraphFormat"": {{ ""styleName"": ""Heading 1"", ""textAlignment"": ""Center"" }},
+                            ""inlines"": [{{ ""text"": ""{templateName}"" }}]
+                        }},
+                        {{
+                            ""paragraphFormat"": {{}},
+                            ""inlines"": [{{ ""text"": ""\n\nDear Sir/Madam,\n\n"" }}]
+                        }},
+                        {{
+                            ""paragraphFormat"": {{}},
+                            ""inlines"": [{{ ""text"": ""This is a template document with merge fields. The following information will be merged:\n\n"" }}]
+                        }},
+                        {{
+                            ""paragraphFormat"": {{}},
+                            ""inlines"": [
+                                {mergeFieldInlinesJson}
+                            ]
+                        }},
+                        {{
+                            ""paragraphFormat"": {{}},
+                            ""inlines"": [{{ ""text"": ""\n\nThank you for your attention.\n\nSincerely,\nYour Team"" }}]
+                        }}
+                    ],
+                    ""headersFooters"": {{}}
+                }}],
+                ""characterFormat"": {{
+                    ""fontSize"": 11,
+                    ""fontFamily"": ""Calibri""
+                }},
+                ""paragraphFormat"": {{
+                    ""afterSpacing"": 8,
+                    ""lineSpacing"": 1.08,
+                    ""lineSpacingType"": ""Multiple""
+                }},
+                ""styles"": [
+                    {{
+                        ""name"": ""Normal"",
+                        ""type"": ""Paragraph"",
+                        ""paragraphFormat"": {{}},
+                        ""characterFormat"": {{
+                            ""fontSize"": 11,
+                            ""fontFamily"": ""Calibri""
+                        }}
+                    }},
+                    {{
+                        ""name"": ""Heading 1"",
+                        ""type"": ""Paragraph"",
+                        ""basedOn"": ""Normal"",
+                        ""paragraphFormat"": {{
+                            ""beforeSpacing"": 12,
+                            ""afterSpacing"": 6,
+                            ""textAlignment"": ""Center""
+                        }},
+                        ""characterFormat"": {{
+                            ""fontSize"": 16,
+                            ""fontFamily"": ""Calibri"",
+                            ""bold"": true
+                        }}
+                    }}
+                ]
+            }}
+        }}";
+    }
+
+    // DTO classes
+    public class TemplateCreateRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? Category { get; set; }
+    }
+} 

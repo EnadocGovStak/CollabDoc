@@ -1,0 +1,6 @@
+{
+    "name": "Bracket Test Template",
+    "content": "{\"sections\":[{\"sectionFormat\":{\"pageWidth\":612,\"pageHeight\":792,\"leftMargin\":72,\"rightMargin\":72,\"topMargin\":72,\"bottomMargin\":72},\"blocks\":[{\"paragraphFormat\":{\"styleName\":\"Normal\"},\"characterFormat\":{},\"inlines\":[{\"characterFormat\":{\"fontSize\":12,\"fontFamily\":\"Calibri\"},\"text\":\"Dear [FirstName] [LastName], Welcome to [Company]! Email: [Email] Phone: [Phone] Date: [Date]\"}]}]}]}",
+    "description": "Simple bracket pattern test template",
+    "category": "Test"
+}

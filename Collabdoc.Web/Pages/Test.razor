@@ -1,0 +1,141 @@
+@page "/test"
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IMergeFieldService MergeFieldService
+@inject IJSRuntime JS
+
+<h3>Bundle Test Page</h3>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Current State:</h5>
+                    <pre class="bg-light p-2">
+Selected Bundle: @_selectedBundle
+Available Bundles: @availableBundles.Count
+Current Fields: @currentBundleFields.Count
+                    </pre>
+
+                    <div class="mb-3">
+                        <label class="form-label">Select Bundle:</label>
+                        <select class="form-select" @onchange="OnBundleChanged" value="@_selectedBundle">
+                            <option value="">Choose a bundle...</option>
+                            @foreach (var bundle in availableBundles)
+                            {
+                                <option value="@bundle.Id">@bundle.Name (@bundle.Id)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <h5 class="mt-4">Fields:</h5>
+                    @if (!currentBundleFields.Any())
+                    {
+                        <div class="alert alert-info">
+                            No fields loaded yet. Select a bundle to see its fields.
+                        </div>
+                    }
+                    <div class="list-group">
+                        @foreach (var field in currentBundleFields)
+                        {
+                            <div class="list-group-item">
+                                <h6>@field.DisplayName</h6>
+                                <small class="text-muted">@field.Type (@field.Name)</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? _selectedBundle;
+    private List<MergeFieldBundle> availableBundles = new();
+    private List<MergeField> currentBundleFields = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JS.InvokeVoidAsync("console.log", "Test page initialized");
+        await LoadBundles();
+    }
+
+    private async Task LoadBundles()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("console.log", "Loading bundles...");
+            var bundles = await MergeFieldService.GetAvailableBundlesAsync();
+            availableBundles = bundles?.ToList() ?? new();
+            await JS.InvokeVoidAsync("console.log", $"Loaded {availableBundles.Count} bundles");
+            
+            foreach (var bundle in availableBundles)
+            {
+                await JS.InvokeVoidAsync("console.log", $"Bundle: {bundle.Id} - {bundle.Name}");
+            }
+            
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("console.error", $"Error loading bundles: {ex.Message}");
+        }
+    }
+
+    private async Task OnBundleChanged(Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+        try
+        {
+            var newBundle = e.Value?.ToString();
+            await JS.InvokeVoidAsync("console.log", $"Bundle selection changed to: {newBundle}");
+            
+            if (string.IsNullOrEmpty(newBundle))
+            {
+                currentBundleFields.Clear();
+                StateHasChanged();
+                return;
+            }
+
+            _selectedBundle = newBundle;
+            await LoadFields();
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("console.error", $"Error in bundle change: {ex.Message}");
+        }
+    }
+
+    private async Task LoadFields()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("console.log", $"Loading fields for bundle: {_selectedBundle}");
+            currentBundleFields.Clear();
+            StateHasChanged();
+            
+            if (!string.IsNullOrEmpty(_selectedBundle))
+            {
+                var fields = await MergeFieldService.GetMergeFieldsForBundleAsync(_selectedBundle);
+                if (fields != null)
+                {
+                    currentBundleFields = fields.ToList();
+                    await JS.InvokeVoidAsync("console.log", $"Loaded {currentBundleFields.Count} fields");
+                    
+                    foreach (var field in currentBundleFields)
+                    {
+                        await JS.InvokeVoidAsync("console.log", $"Field: {field.Name} ({field.Type})");
+                    }
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JS.InvokeVoidAsync("console.error", $"Error loading fields: {ex.Message}");
+        }
+    }
+} 

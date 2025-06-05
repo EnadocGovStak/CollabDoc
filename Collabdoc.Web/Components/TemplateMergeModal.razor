@@ -1,0 +1,259 @@
+@using Microsoft.AspNetCore.Components
+@using Collabdoc.Web.Data.Entities
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+@inject INotificationService NotificationService
+
+<SfDialog @bind-Visible="IsVisible" Header="TEMPLATE MERGE MODAL - Fill Template Fields" Width="600px" IsModal="true" CssClass="template-merge-modal">
+    <DialogTemplates>
+        <Content>
+            <!-- MODAL IDENTIFIER DEBUG -->
+            <div class="alert alert-success mb-3">
+                <strong>🎯 TEMPLATE MERGE MODAL - This is the correct modal!</strong><br />
+                Modal ID: TemplateMergeModal<br />
+                IsVisible: @IsVisible<br />
+                Template: @(Template?.Name ?? "NULL")<br />
+                Fields Count: @(MergeFields?.Count ?? 0)
+            </div>
+            
+            @if (Template != null && MergeFields?.Any() == true)
+            {
+                <div class="mb-3">
+                    <h6 class="text-primary">
+                        <i class="fas fa-layer-group me-2"></i>
+                        @Template.Name
+                    </h6>
+                    <p class="text-muted small">@Template.Description</p>
+                </div>
+
+                <!-- DEBUG: Show what fields are actually being received -->
+                <div class="alert alert-warning mb-3">
+                    <strong>DEBUG - Received Fields (@MergeFields.Count):</strong><br />
+                    @foreach (var field in MergeFields)
+                    {
+                        <span class="badge bg-secondary me-1">@field.DisplayName (@field.Type)</span>
+                    }
+                </div>
+
+                <form @onsubmit="HandleSubmit" @onsubmit:preventDefault="true">
+                    @foreach (var field in MergeFields.OrderBy(f => f.IsRequired ? 0 : 1))
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">
+                                @field.DisplayName
+                                @if (field.IsRequired)
+                                {
+                                    <span class="text-danger">*</span>
+                                }
+                            </label>
+
+                            @switch (field.Type)
+                            {
+                                case MergeFieldType.Text:
+                                    <input type="text" class="form-control" 
+                                           value="@GetFieldValue(field.Name)"
+                                           @oninput="@(e => SetFieldValue(field.Name, e.Value?.ToString()))"
+                                           placeholder="@field.DefaultValue" />
+                                    break;
+
+                                case MergeFieldType.Date:
+                                    <input type="date" class="form-control" 
+                                           value="@GetDateFieldValue(field.Name)"
+                                           @onchange="@(e => SetFieldValue(field.Name, e.Value?.ToString()))" />
+                                    break;
+
+                                case MergeFieldType.Currency:
+                                case MergeFieldType.Number:
+                                    <input type="number" class="form-control" 
+                                           value="@GetFieldValue(field.Name)"
+                                           @oninput="@(e => SetFieldValue(field.Name, e.Value?.ToString()))"
+                                           step="0.01" />
+                                    break;
+
+                                case MergeFieldType.Boolean:
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" 
+                                               checked="@GetBoolFieldValue(field.Name)"
+                                               @onchange="@(e => SetFieldValue(field.Name, e.Value?.ToString()))"
+                                               id="@field.Name" />
+                                        <label class="form-check-label" for="@field.Name">
+                                            Yes/True
+                                        </label>
+                                    </div>
+                                    break;
+
+                                default:
+                                    <input type="text" class="form-control" 
+                                           value="@GetFieldValue(field.Name)"
+                                           @oninput="@(e => SetFieldValue(field.Name, e.Value?.ToString()))"
+                                           placeholder="@field.DefaultValue" />
+                                    break;
+                            }
+
+                            @if (!string.IsNullOrEmpty(field.Description))
+                            {
+                                <small class="form-text text-muted">@field.Description</small>
+                            }
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(ValidationMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            @ValidationMessage
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label class="form-label">Document Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" 
+                               @bind="DocumentName" 
+                               placeholder="@($"{Template.Name} - {DateTime.Now:yyyy-MM-dd}")" />
+                        <small class="form-text text-muted">Name for the generated document</small>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading template fields...</p>
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Cancel" OnClick="HandleCancel" />
+        <DialogButton Content="Generate Document" IsPrimary="true" OnClick="HandleSubmit" />
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public TemplateInfo? Template { get; set; }
+    [Parameter] public List<MergeField>? MergeFields { get; set; }
+    [Parameter] public EventCallback<TemplateMergeRequest> OnMergeRequested { get; set; }
+
+    private Dictionary<string, object> mergeData = new();
+    private string ValidationMessage = string.Empty;
+    private string DocumentName = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (Template != null && string.IsNullOrEmpty(DocumentName))
+        {
+            DocumentName = $"{Template.Name} - {DateTime.Now:yyyy-MM-dd}";
+        }
+    }
+
+    private string GetFieldValue(string fieldName)
+    {
+        return mergeData.TryGetValue(fieldName, out var value) ? value?.ToString() ?? string.Empty : string.Empty;
+    }
+
+    private string GetDateFieldValue(string fieldName)
+    {
+        if (mergeData.TryGetValue(fieldName, out var value) && value is DateTime dateTime)
+        {
+            return dateTime.ToString("yyyy-MM-dd");
+        }
+        return string.Empty;
+    }
+
+    private bool GetBoolFieldValue(string fieldName)
+    {
+        if (mergeData.TryGetValue(fieldName, out var value))
+        {
+            if (value is bool boolValue)
+                return boolValue;
+            if (bool.TryParse(value?.ToString(), out var parsedBool))
+                return parsedBool;
+        }
+        return false;
+    }
+
+    private void SetFieldValue(string fieldName, string? value)
+    {
+        if (value != null)
+        {
+            mergeData[fieldName] = value;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        ValidationMessage = string.Empty;
+
+        // Validate required fields
+        var missingFields = new List<string>();
+        
+        if (MergeFields != null)
+        {
+            foreach (var field in MergeFields.Where(f => f.IsRequired))
+            {
+                if (!mergeData.ContainsKey(field.Name) || 
+                    string.IsNullOrWhiteSpace(mergeData[field.Name]?.ToString()))
+                {
+                    missingFields.Add(field.DisplayName);
+                }
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(DocumentName))
+        {
+            missingFields.Add("Document Name");
+        }
+
+        if (missingFields.Any())
+        {
+            ValidationMessage = $"Please fill in the following required fields: {string.Join(", ", missingFields)}";
+            return;
+        }
+
+        try
+        {
+            var mergeRequest = new TemplateMergeRequest
+            {
+                TemplateId = Template?.Id ?? 0,
+                DocumentName = DocumentName,
+                MergeData = new Dictionary<string, object>(mergeData),
+                CreatedBy = "Current User" // TODO: Get from authentication
+            };
+
+            await OnMergeRequested.InvokeAsync(mergeRequest);
+            await CloseModal();
+        }
+        catch (Exception ex)
+        {
+            ValidationMessage = $"Error generating document: {ex.Message}";
+        }
+    }
+
+    private async Task HandleCancel()
+    {
+        await CloseModal();
+    }
+
+    private async Task CloseModal()
+    {
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(false);
+        
+        // Reset form
+        mergeData.Clear();
+        ValidationMessage = string.Empty;
+        DocumentName = string.Empty;
+    }
+
+    public class TemplateMergeRequest
+    {
+        public int TemplateId { get; set; }
+        public string DocumentName { get; set; } = string.Empty;
+        public Dictionary<string, object> MergeData { get; set; } = new();
+        public string CreatedBy { get; set; } = string.Empty;
+    }
+} 

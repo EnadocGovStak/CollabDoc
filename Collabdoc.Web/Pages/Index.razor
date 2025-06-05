@@ -1,0 +1,231 @@
+@page "/"
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Charts
+@using Collabdoc.Web.Services
+@inject IDocumentApiService DocumentApi
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+
+<PageTitle>Dashboard - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-primary">
+                <i class="fas fa-tachometer-alt me-3"></i>
+                Dashboard
+            </h1>
+            <p class="lead">Welcome to Collabdoc Document Management System</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Total Documents" />
+                <CardContent>
+                    <div class="text-center">
+                        <h2 class="text-primary">@totalDocuments</h2>
+                        <p class="text-muted">Documents managed</p>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Templates" />
+                <CardContent>
+                    <div class="text-center">
+                        <h2 class="text-success">@totalTemplates</h2>
+                        <p class="text-muted">Available templates</p>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Records" />
+                <CardContent>
+                    <div class="text-center">
+                        <h2 class="text-warning">@totalRecords</h2>
+                        <p class="text-muted">Managed records</p>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Processing" />
+                <CardContent>
+                    <div class="text-center">
+                        <h2 class="text-info">@processingJobs</h2>
+                        <p class="text-muted">Active jobs</p>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <SfCard>
+                <CardHeader Title="Quick Actions" />
+                <CardContent>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <SfButton CssClass="btn btn-primary w-100" @onclick="NavigateToEditor">
+                                <i class="fas fa-plus me-2"></i>
+                                New Document
+                            </SfButton>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <SfButton CssClass="btn btn-success w-100" @onclick="NavigateToUpload">
+                                <i class="fas fa-upload me-2"></i>
+                                Upload Document
+                            </SfButton>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <SfButton CssClass="btn btn-info w-100" @onclick="NavigateToTemplates">
+                                <i class="fas fa-layer-group me-2"></i>
+                                Browse Templates
+                            </SfButton>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <SfButton CssClass="btn btn-warning w-100" @onclick="NavigateToDirectDocx">
+                                <i class="fas fa-cogs me-2"></i>
+                                Direct DOCX Tools
+                            </SfButton>
+                        </div>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-md-8">
+            <SfCard>
+                <CardHeader Title="Recent Documents" />
+                <CardContent>
+                    @if (recentDocuments?.Any() == true)
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var doc in recentDocuments.Take(5))
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            <a href="/editor/@doc.DocumentId" class="text-decoration-none text-primary">
+                                                <i class="fas fa-file-alt me-2"></i>@doc.Name
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted">Modified @doc.LastModified.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-primary rounded-pill">@doc.Type</span>
+                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenDocument(doc.DocumentId)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No recent documents found.</p>
+                    }
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-4">
+            <SfCard>
+                <CardHeader Title="System Status" />
+                <CardContent>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>API Status</span>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Syncfusion License</span>
+                            <span class="badge bg-success">Valid</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Storage</span>
+                            <span class="badge bg-info">85% Used</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Performance</span>
+                            <span class="badge bg-success">Optimal</span>
+                        </div>
+                    </div>
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+</div>
+
+@code {
+    private int totalDocuments = 0;
+    private int totalTemplates = 0;
+    private int totalRecords = 0;
+    private int processingJobs = 0;
+    private List<DocumentInfo>? recentDocuments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            // Load dashboard statistics
+            var stats = await DocumentApi.GetDashboardStatsAsync();
+            if (stats.Success)
+            {
+                totalDocuments = stats.Data?.TotalDocuments ?? 0;
+                totalTemplates = stats.Data?.TotalTemplates ?? 0;
+                totalRecords = stats.Data?.TotalRecords ?? 0;
+                processingJobs = stats.Data?.ProcessingJobs ?? 0;
+            }
+
+            // Load recent documents
+            var recent = await DocumentApi.GetRecentDocumentsAsync(5);
+            if (recent.Success)
+            {
+                recentDocuments = recent.Data?.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Failed to load dashboard data", ex.Message);
+        }
+    }
+
+    private void NavigateToEditor() => Navigation.NavigateTo("/editor");
+    private void NavigateToUpload() => Navigation.NavigateTo("/documents/upload");
+    private void NavigateToTemplates() => Navigation.NavigateTo("/templates");
+    private void NavigateToDirectDocx() => Navigation.NavigateTo("/direct-docx");
+
+    private void OpenDocument(string documentId)
+    {
+        Navigation.NavigateTo($"/editor/{documentId}");
+    }
+} 

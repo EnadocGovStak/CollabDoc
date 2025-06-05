@@ -1,0 +1,313 @@
+@page "/templates/debug"
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data
+@using Collabdoc.Web.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@using Newtonsoft.Json
+@inject CollabdocDbContext DbContext
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Template Debug</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Template Debugging Tool</h3>
+            <p>This tool helps diagnose template saving and loading issues.</p>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Database Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" @onclick="CheckDatabaseStatus">Check Database</button>
+                            @if (databaseStatus != null)
+                            {
+                                <div class="mt-3">
+                                    <strong>Database Status:</strong><br/>
+                                    @databaseStatus
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Templates in Database</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary" @onclick="LoadTemplates">Load Templates</button>
+                            @if (templates != null)
+                            {
+                                <div class="mt-3">
+                                    <strong>Found @templates.Count templates:</strong>
+                                    @foreach (var template in templates)
+                                    {
+                                        <div class="mt-2 p-2 border rounded">
+                                            <strong>@template.Name</strong> (ID: @template.Id)<br/>
+                                            <small>Content Length: @(template.Content?.Length ?? 0) chars</small><br/>
+                                            <small>Created: @template.CreatedAt</small><br/>
+                                            <small>Updated: @template.LastModified</small><br/>
+                                            @if (!string.IsNullOrEmpty(template.Content))
+                                            {
+                                                <button class="btn btn-sm btn-secondary mt-1" @onclick="() => ShowTemplateContent(template)">
+                                                    View Content
+                                                </button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>SFDT Format Test</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Test different SFDT formats to see what works:</p>
+                            <button class="btn btn-success" @onclick="TestMinimalSfdt">Test Minimal SFDT</button>
+                            <button class="btn btn-info" @onclick="TestComplexSfdt">Test Complex SFDT</button>
+                            <button class="btn btn-warning" @onclick="TestActualDocumentEditor">Test Real DocumentEditor Content</button>
+                            
+                            @if (sfdtTestResult != null)
+                            {
+                                <div class="mt-3 alert @(sfdtTestResult.Contains("Error") ? "alert-danger" : "alert-success")">
+                                    @sfdtTestResult
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (selectedTemplateContent != null)
+            {
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Template Content Analysis</h5>
+                                <button class="btn btn-sm btn-secondary float-end" @onclick="() => selectedTemplateContent = null">Close</button>
+                            </div>
+                            <div class="card-body">
+                                <h6>Raw Content (@selectedTemplateContent.Length characters):</h6>
+                                <textarea class="form-control" rows="10" readonly>@selectedTemplateContent</textarea>
+                                
+                                <h6 class="mt-3">JSON Validation:</h6>
+                                <div class="alert @(isValidJson ? "alert-success" : "alert-danger")">
+                                    @jsonValidationResult
+                                </div>
+
+                                @if (isValidJson && parsedContent != null)
+                                {
+                                    <h6 class="mt-3">Parsed Structure:</h6>
+                                    <pre>@JsonConvert.SerializeObject(parsedContent, Formatting.Indented)</pre>
+                                }
+
+                                <button class="btn btn-primary mt-3" @onclick="TestLoadInDocumentEditor">
+                                    Test Load in DocumentEditor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string? databaseStatus;
+    private List<Document>? templates;
+    private string? selectedTemplateContent;
+    private bool isValidJson;
+    private string? jsonValidationResult;
+    private object? parsedContent;
+    private string? sfdtTestResult;
+
+    private async Task CheckDatabaseStatus()
+    {
+        try
+        {
+            // Check if database exists and tables are created
+            var canConnect = await DbContext.Database.CanConnectAsync();
+            var documentsCount = await DbContext.Documents.CountAsync();
+            var templatesCount = await DbContext.Documents.Where(d => d.IsTemplate).CountAsync();
+            
+            databaseStatus = $"Can Connect: {canConnect}\n" +
+                           $"Total Documents: {documentsCount}\n" +
+                           $"Templates: {templatesCount}";
+        }
+        catch (Exception ex)
+        {
+            databaseStatus = $"Error: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private async Task LoadTemplates()
+    {
+        try
+        {
+            templates = await DbContext.Documents
+                .Where(d => d.IsTemplate)
+                .OrderByDescending(d => d.LastModified)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            databaseStatus = $"Error loading templates: {ex.Message}";
+        }
+        StateHasChanged();
+    }
+
+    private void ShowTemplateContent(Document template)
+    {
+        selectedTemplateContent = template.Content;
+        
+        // Validate JSON
+        try
+        {
+            if (string.IsNullOrEmpty(selectedTemplateContent))
+            {
+                isValidJson = false;
+                jsonValidationResult = "Content is empty";
+                parsedContent = null;
+            }
+            else
+            {
+                parsedContent = JsonConvert.DeserializeObject(selectedTemplateContent);
+                isValidJson = parsedContent != null;
+                jsonValidationResult = isValidJson ? "Valid JSON" : "Invalid JSON - null result";
+            }
+        }
+        catch (Exception ex)
+        {
+            isValidJson = false;
+            jsonValidationResult = $"Invalid JSON: {ex.Message}";
+            parsedContent = null;
+        }
+        
+        StateHasChanged();
+    }
+
+    private Task TestMinimalSfdt()
+    {
+        try
+        {
+            var minimalSfdt = JsonConvert.SerializeObject(new
+            {
+                sections = new[]
+                {
+                    new
+                    {
+                        blocks = new[]
+                        {
+                            new
+                            {
+                                inlines = new[]
+                                {
+                                    new { text = "Test Template" }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            sfdtTestResult = $"Minimal SFDT created successfully:\nLength: {minimalSfdt.Length} characters\nContent: {minimalSfdt}";
+        }
+        catch (Exception ex)
+        {
+            sfdtTestResult = $"Error creating minimal SFDT: {ex.Message}";
+        }
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private Task TestComplexSfdt()
+    {
+        try
+        {
+            var complexSfdt = JsonConvert.SerializeObject(new
+            {
+                sections = new[]
+                {
+                    new
+                    {
+                        sectionFormat = new
+                        {
+                            pageWidth = 612.0,
+                            pageHeight = 792.0,
+                            leftMargin = 72.0,
+                            rightMargin = 72.0,
+                            topMargin = 72.0,
+                            bottomMargin = 72.0
+                        },
+                        blocks = new[]
+                        {
+                            new
+                            {
+                                paragraphFormat = new
+                                {
+                                    styleName = "Normal"
+                                },
+                                inlines = new[]
+                                {
+                                    new { text = "Complex Test Template" }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            sfdtTestResult = $"Complex SFDT created successfully:\nLength: {complexSfdt.Length} characters";
+        }
+        catch (Exception ex)
+        {
+            sfdtTestResult = $"Error creating complex SFDT: {ex.Message}";
+        }
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private Task TestActualDocumentEditor()
+    {
+        sfdtTestResult = "This test would require a DocumentEditor component to get real SFDT content. " +
+                        "In a real scenario, we'd serialize the current document editor content here.";
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task TestLoadInDocumentEditor()
+    {
+        if (string.IsNullOrEmpty(selectedTemplateContent))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "No content to test");
+            return;
+        }
+
+        try
+        {
+            // This would require a DocumentEditor component on this page to actually test
+            await JSRuntime.InvokeVoidAsync("alert", 
+                $"Content appears to be {(isValidJson ? "valid" : "invalid")} JSON. " +
+                $"To fully test, this content would need to be loaded into a DocumentEditor component.");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error: {ex.Message}");
+        }
+    }
+} 

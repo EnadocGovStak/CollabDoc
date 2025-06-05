@@ -1,0 +1,10 @@
+# Test Data Directory
+
+This directory contains sample documents for testing:
+
+- sample-document.docx - Basic test document
+- template-document.docx - Template with placeholders
+- complex-document.docx - Document with tables, images, formatting
+- empty-document.docx - Minimal document for edge case testing
+
+Note: Actual .docx files will be created programmatically in tests or added manually. 

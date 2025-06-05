@@ -1,0 +1,659 @@
+@page "/editor"
+@page "/editor/{DocumentId}"
+@using Microsoft.JSInterop
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data.Entities
+@using Syncfusion.Blazor.DocumentEditor
+@inject IDocumentApiService DocumentApiService
+@inject IDocumentStorageService DocumentStorageService
+@inject IDocumentRepository DocumentRepository
+@inject INotificationService NotificationService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Document Editor - Collabdoc</PageTitle>
+
+<div class="document-editor-container">
+    <div class="toolbar-container">
+        <div class="editor-toolbar">
+            <SfButton CssClass="e-primary" OnClick="SaveDocument" IconCss="e-icons e-save" Disabled="@isSaving">
+                @if (isSaving)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                }
+                Save
+            </SfButton>
+            <SfButton CssClass="e-normal" OnClick="NewDocument" IconCss="e-icons e-file-new" Disabled="@isLoading">
+                New
+            </SfButton>
+            <SfButton CssClass="e-normal" OnClick="ExportDocument" IconCss="e-icons e-export" Disabled="@isExporting">
+                @if (isExporting)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                }
+                Export DOCX
+            </SfButton>
+            <SfButton CssClass="e-info" OnClick="LoadSampleDocument" IconCss="e-icons e-folder-open" Disabled="@isLoading">
+                Load Sample
+            </SfButton>
+            <SfButton CssClass="e-normal" OnClick="GoToDocuments" IconCss="e-icons e-back">
+                Back to Documents
+            </SfButton>
+        </div>
+        <div class="document-info">
+            <span class="badge bg-secondary">@currentDocumentName</span>
+            @if (!string.IsNullOrEmpty(lastSaved))
+            {
+                <small class="text-muted ms-2">Last saved: @lastSaved</small>
+            }
+        </div>
+    </div>
+
+    <div class="editor-content">
+        @if (isLoading)
+        {
+            <div class="loading-container">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading document...</span>
+                </div>
+                <p class="mt-2">Loading document editor...</p>
+            </div>
+        }
+        else
+        {
+            <SfDocumentEditorContainer @ref="documentEditor" 
+                                     Height="600px" 
+                                     EnableToolbar="true">
+                <DocumentEditorContainerEvents Created="OnEditorCreated"></DocumentEditorContainerEvents>
+            </SfDocumentEditorContainer>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? DocumentId { get; set; }
+
+    private SfDocumentEditorContainer? documentEditor;
+    
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private bool isExporting = false;
+    private string currentDocumentName = "Untitled Document";
+    private string currentDocumentId = "";
+    private string lastSaved = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // If DocumentId is provided, load that specific document
+            if (!string.IsNullOrEmpty(DocumentId))
+            {
+                currentDocumentId = DocumentId;
+                await LoadDocument(DocumentId);
+            }
+            else
+            {
+                // Create a new blank document
+                currentDocumentName = "New Document";
+                currentDocumentId = Guid.NewGuid().ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error initializing editor: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async void OnEditorCreated(object args)
+    {
+        try
+        {
+            // Editor is created and ready
+            if (!string.IsNullOrEmpty(DocumentId) && documentEditor?.DocumentEditor != null)
+            {
+                // If we have a document ID, try to load it
+                await LoadDocumentContent();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error creating editor: {ex.Message}");
+        }
+    }
+
+    private async Task LoadDocument(string documentId)
+    {
+        try
+        {
+            // Try to load document from API
+            var response = await DocumentApiService.GetDocumentAsync(documentId);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                currentDocumentName = $"Document_{documentId}";
+                currentDocumentId = documentId;
+            }
+            else
+            {
+                await NotificationService.ShowWarningAsync("Document not found, creating new document");
+                await NewDocument();
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error loading document: {ex.Message}");
+            await NewDocument();
+        }
+    }
+
+    private async Task LoadDocumentContent()
+    {
+        try
+        {
+            Console.WriteLine($"[EDITOR DEBUG] LoadDocumentContent called with DocumentId: {currentDocumentId}");
+            
+            if (documentEditor?.DocumentEditor != null && !string.IsNullOrEmpty(currentDocumentId))
+            {
+                Console.WriteLine($"[EDITOR DEBUG] Attempting to load document from database: {currentDocumentId}");
+                
+                // First, try to load from database using DocumentRepository
+                var documentEntity = await DocumentRepository.GetDocumentByDocumentIdAsync(currentDocumentId);
+                
+                // If document not found, try a few more times with delays (for recently created documents)
+                int retryCount = 0;
+                int maxRetries = 3;
+                
+                while (documentEntity == null && retryCount < maxRetries)
+                {
+                    Console.WriteLine($"[EDITOR DEBUG] Document not found, retry {retryCount + 1}/{maxRetries}");
+                    await Task.Delay(1000); // Wait 1 second before retry
+                    documentEntity = await DocumentRepository.GetDocumentByDocumentIdAsync(currentDocumentId);
+                    retryCount++;
+                }
+                
+                if (documentEntity != null)
+                {
+                    Console.WriteLine($"[EDITOR DEBUG] Document found in database: {documentEntity.Name}");
+                    Console.WriteLine($"[EDITOR DEBUG] Content length: {documentEntity.Content?.Length ?? 0}");
+                    
+                    // Document found in database
+                    currentDocumentName = documentEntity.Name;
+                    
+                    // Check if there's actual content (SFDT) stored
+                    if (!string.IsNullOrEmpty(documentEntity.Content))
+                    {
+                        Console.WriteLine($"[EDITOR DEBUG] Loading SFDT content from database");
+                        // Load the SFDT content directly from database
+                        await documentEditor.DocumentEditor.OpenAsync(documentEntity.Content);
+                        await NotificationService.ShowSuccessAsync($"Document '{currentDocumentName}' loaded successfully from database");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[EDITOR DEBUG] Document found but no content, checking file storage");
+                        // Document exists in database but no content, check file storage
+                        var storageResult = await DocumentStorageService.LoadDocumentAsync(currentDocumentId);
+                        
+                        if (storageResult.Success && !string.IsNullOrEmpty(storageResult.Content))
+                        {
+                            Console.WriteLine($"[EDITOR DEBUG] Content found in file storage");
+                            await documentEditor.DocumentEditor.OpenAsync(storageResult.Content);
+                            await NotificationService.ShowSuccessAsync($"Document '{currentDocumentName}' loaded successfully from file storage");
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[EDITOR DEBUG] No content found in file storage either");
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"[EDITOR DEBUG] Document not found in database, trying file storage");
+                    // Document not found in database, try file storage
+                    var storageResult = await DocumentStorageService.LoadDocumentAsync(currentDocumentId);
+                    
+                    if (storageResult.Success && !string.IsNullOrEmpty(storageResult.Content))
+                    {
+                        Console.WriteLine($"[EDITOR DEBUG] Document found in file storage");
+                        await documentEditor.DocumentEditor.OpenAsync(storageResult.Content);
+                        currentDocumentName = storageResult.DocumentName ?? currentDocumentName;
+                        await NotificationService.ShowSuccessAsync($"Document '{currentDocumentName}' loaded successfully from file storage");
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[EDITOR DEBUG] Document not found in file storage either");
+                    }
+                }
+                
+                Console.WriteLine($"[EDITOR DEBUG] Document not found anywhere, loading sample content");
+                // If we get here, document wasn't found anywhere - load sample content
+                var sampleSfdt = await GetSampleSfdtContent();
+                await documentEditor.DocumentEditor.OpenAsync(sampleSfdt);
+                await NotificationService.ShowInfoAsync("Document not found, loaded sample content");
+            }
+            else
+            {
+                Console.WriteLine($"[EDITOR DEBUG] DocumentEditor not ready or no DocumentId provided");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[EDITOR ERROR] Error loading document content: {ex.Message}");
+            await NotificationService.ShowErrorAsync($"Error loading document content: {ex.Message}");
+            // Fallback to sample content on error
+            try
+            {
+                var sampleSfdt = await GetSampleSfdtContent();
+                if (documentEditor?.DocumentEditor != null)
+                {
+                    await documentEditor.DocumentEditor.OpenAsync(sampleSfdt);
+                }
+            }
+            catch (Exception fallbackEx)
+            {
+                Console.WriteLine($"[EDITOR ERROR] Error loading fallback content: {fallbackEx.Message}");
+                await NotificationService.ShowErrorAsync($"Error loading fallback content: {fallbackEx.Message}");
+            }
+        }
+    }
+
+    private async Task SaveDocument()
+    {
+        if (isSaving) return;
+        
+        try
+        {
+            isSaving = true;
+            StateHasChanged();
+
+            if (documentEditor?.DocumentEditor != null)
+            {
+                // Get document content as SFDT
+                var sfdtContent = await documentEditor.DocumentEditor.SerializeAsync();
+                
+                // Save to both database and file storage for redundancy
+                
+                // 1. Save to database using DocumentRepository
+                var existingDocument = await DocumentRepository.GetDocumentByDocumentIdAsync(currentDocumentId);
+                if (existingDocument != null)
+                {
+                    // Update existing document
+                    existingDocument.Name = currentDocumentName;
+                    existingDocument.Content = sfdtContent;
+                    existingDocument.LastModified = DateTime.UtcNow;
+                    existingDocument.Status = "Active";
+                    
+                    await DocumentRepository.UpdateDocumentAsync(existingDocument);
+                }
+                else
+                {
+                    // Create new document in database
+                    var newDocument = new Collabdoc.Web.Data.Entities.Document
+                    {
+                        DocumentId = currentDocumentId,
+                        Name = currentDocumentName,
+                        Content = sfdtContent,
+                        FileType = "SFDT",
+                        Status = "Active",
+                        IsTemplate = false,
+                        CreatedBy = "system", // TODO: Use actual user ID when authentication is implemented
+                        CreatedAt = DateTime.UtcNow,
+                        LastModified = DateTime.UtcNow,
+                        Description = $"Document created in Collabdoc editor at {DateTime.Now:yyyy-MM-dd HH:mm}",
+                        Size = System.Text.Encoding.UTF8.GetByteCount(sfdtContent)
+                    };
+                    
+                    await DocumentRepository.CreateDocumentAsync(newDocument);
+                }
+                
+                // 2. Also save to file storage as backup
+                await DocumentStorageService.SaveDocumentAsync(currentDocumentId, currentDocumentName, sfdtContent);
+                
+                lastSaved = DateTime.Now.ToString("HH:mm:ss");
+                await NotificationService.ShowSuccessAsync($"Document '{currentDocumentName}' saved successfully to database and file storage");
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error saving document: {ex.Message}");
+        }
+        finally
+        {
+            isSaving = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ExportDocument()
+    {
+        if (isExporting) return;
+        
+        try
+        {
+            isExporting = true;
+            StateHasChanged();
+
+            if (documentEditor?.DocumentEditor != null)
+            {
+                // Export as DOCX
+                await documentEditor.DocumentEditor.SaveAsync($"{currentDocumentName}.docx", FormatType.Docx);
+                await NotificationService.ShowSuccessAsync("Document exported successfully");
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error exporting document: {ex.Message}");
+        }
+        finally
+        {
+            isExporting = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task NewDocument()
+    {
+        try
+        {
+            currentDocumentName = $"New Document {DateTime.Now:yyyyMMdd_HHmmss}";
+            currentDocumentId = Guid.NewGuid().ToString();
+            lastSaved = "";
+            
+            if (documentEditor?.DocumentEditor != null)
+            {
+                // Create a new blank document with welcome content
+                var blankSfdt = await GetBlankSfdtContent();
+                await documentEditor.DocumentEditor.OpenAsync(blankSfdt);
+                
+                // Auto-save the new document
+                var sfdtContent = await documentEditor.DocumentEditor.SerializeAsync();
+                await DocumentStorageService.SaveDocumentAsync(currentDocumentId, currentDocumentName, sfdtContent);
+            }
+            
+            await NotificationService.ShowInfoAsync($"New document '{currentDocumentName}' created");
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error creating new document: {ex.Message}");
+        }
+    }
+
+    private async Task LoadSampleDocument()
+    {
+        try
+        {
+            currentDocumentName = $"Sample Document {DateTime.Now:yyyyMMdd_HHmmss}";
+            currentDocumentId = Guid.NewGuid().ToString();
+            lastSaved = "";
+            
+            if (documentEditor?.DocumentEditor != null)
+            {
+                var sampleSfdt = await GetSampleSfdtContent();
+                await documentEditor.DocumentEditor.OpenAsync(sampleSfdt);
+                
+                // Auto-save the sample document
+                var sfdtContent = await documentEditor.DocumentEditor.SerializeAsync();
+                await DocumentStorageService.SaveDocumentAsync(currentDocumentId, currentDocumentName, sfdtContent);
+            }
+            
+            await NotificationService.ShowInfoAsync($"Sample document '{currentDocumentName}' loaded and saved");
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync($"Error loading sample document: {ex.Message}");
+        }
+    }
+
+    private async Task<string> GetBlankSfdtContent()
+    {
+        // Return a basic SFDT document structure
+        await Task.Delay(1); // Simulate async operation
+        return @"{
+            ""sfdt"": ""UEsDBAoAAAAAABxeU1YAAAAAAAAAAAAAAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbPEBAAAAAAAAAAAAAAAAAAAAALTU3W6CQBQF4Fey901mfnDaJE0am7RtFU01bZqm7QPIyAw2AIDMKL766wqmadI2aW8h3+Tcs2fPPN8X3n6ELl8nPaHNTe7d3bz+b+xvP3wr/Uqlv3n9ny+n7vrmNfgF3XfNT7S+N8f7Xy++9f3z/OPNYfyL9f3dK9xz3/6vfHvTfrvJpn7f/L/yf+T+ZX/+uO+n9w=="",
+            ""sections"": [
+                {
+                    ""sectionFormat"": {
+                        ""pageWidth"": 612,
+                        ""pageHeight"": 792,
+                        ""leftMargin"": 72,
+                        ""rightMargin"": 72,
+                        ""topMargin"": 72,
+                        ""bottomMargin"": 72,
+                        ""differentFirstPage"": false,
+                        ""differentOddAndEvenPages"": false,
+                        ""headerDistance"": 36,
+                        ""footerDistance"": 36,
+                        ""bidi"": false
+                    },
+                    ""blocks"": [
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal"",
+                                ""listFormat"": {}
+                            },
+                            ""characterFormat"": {},
+                            ""inlines"": [
+                                {
+                                    ""characterFormat"": {},
+                                    ""text"": ""Welcome to Collabdoc! Start typing to create your document.""
+                                }
+                            ]
+                        }
+                    ],
+                    ""headersFooters"": {}
+                }
+            ],
+            ""characterFormat"": {
+                ""bold"": false,
+                ""italic"": false,
+                ""fontSize"": 11,
+                ""fontFamily"": ""Calibri"",
+                ""underline"": ""None"",
+                ""strikethrough"": ""None"",
+                ""baselineAlignment"": ""Normal"",
+                ""highlightColor"": ""NoColor"",
+                ""fontColor"": ""#000000"",
+                ""fontSizeBidi"": 11,
+                ""fontFamilyBidi"": ""Calibri"",
+                ""allCaps"": false
+            },
+            ""paragraphFormat"": {
+                ""leftIndent"": 0,
+                ""rightIndent"": 0,
+                ""firstLineIndent"": 0,
+                ""textAlignment"": ""Left"",
+                ""beforeSpacing"": 0,
+                ""afterSpacing"": 8,
+                ""lineSpacing"": 1.0799999237060547,
+                ""lineSpacingType"": ""Multiple"",
+                ""listFormat"": {},
+                ""bidi"": false
+            },
+            ""defaultTabWidth"": 36,
+            ""trackChanges"": false,
+            ""enforcement"": false,
+            ""hashValue"": """",
+            ""saltValue"": """",
+            ""formatting"": false,
+            ""protectionType"": ""NoProtection"",
+            ""dontUseHTMLParagraphAutoSpacing"": false,
+            ""formFieldShading"": true,
+            ""styles"": [
+                {
+                    ""name"": ""Normal"",
+                    ""type"": ""Paragraph"",
+                    ""paragraphFormat"": {
+                        ""listFormat"": {}
+                    },
+                    ""characterFormat"": {
+                        ""fontSize"": 11,
+                        ""fontFamily"": ""Calibri"",
+                        ""fontSizeBidi"": 11,
+                        ""fontFamilyBidi"": ""Calibri""
+                    },
+                    ""next"": ""Normal""
+                }
+            ],
+            ""lists"": [],
+            ""abstractLists"": [],
+            ""comments"": [],
+            ""revisions"": [],
+            ""customXml"": []
+        }";
+    }
+
+    private async Task<string> GetSampleSfdtContent()
+    {
+        // Return a sample document with more content
+        await Task.Delay(1); // Simulate async operation
+        return @"{
+            ""sfdt"": ""Sample SFDT Content"",
+            ""sections"": [
+                {
+                    ""sectionFormat"": {
+                        ""pageWidth"": 612,
+                        ""pageHeight"": 792,
+                        ""leftMargin"": 72,
+                        ""rightMargin"": 72,
+                        ""topMargin"": 72,
+                        ""bottomMargin"": 72
+                    },
+                    ""blocks"": [
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Heading 1""
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""Sample Document""
+                                }
+                            ]
+                        },
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal""
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""This is a sample document loaded in Collabdoc. You can edit, format, and save this document.""
+                                }
+                            ]
+                        },
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal""
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""Features available:""
+                                }
+                            ]
+                        },
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal"",
+                                ""leftIndent"": 36
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""• Rich text editing""
+                                }
+                            ]
+                        },
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal"",
+                                ""leftIndent"": 36
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""• Document formatting""
+                                }
+                            ]
+                        },
+                        {
+                            ""paragraphFormat"": {
+                                ""styleName"": ""Normal"",
+                                ""leftIndent"": 36
+                            },
+                            ""inlines"": [
+                                {
+                                    ""text"": ""• Save and export functionality""
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }";
+    }
+
+    private void GoToDocuments()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
+
+<style>
+    .document-editor-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .toolbar-container {
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .editor-toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .document-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .editor-content {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 400px;
+        text-align: center;
+    }
+
+    /* Override default Syncfusion styles for better integration */
+    .e-documenteditor-container {
+        height: 100% !important;
+    }
+
+    .e-documenteditor {
+        height: calc(100vh - 120px) !important;
+    }
+
+    .spinner-border-sm {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+</style> 

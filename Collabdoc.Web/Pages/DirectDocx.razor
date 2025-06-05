@@ -1,0 +1,559 @@
+@page "/direct-docx"
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Popups
+@using Collabdoc.Web.Services
+@inject IDocumentApiService DocumentApi
+@inject INotificationService NotificationService
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Direct DOCX Tools - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-primary">
+                <i class="fas fa-cogs me-3"></i>
+                Direct DOCX Tools
+            </h1>
+            <p class="lead">High-performance document processing without conversion</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Create Document" />
+                <CardContent>
+                    <p class="text-muted">Generate a new DOCX document with sample content</p>
+                    <SfButton CssClass="btn btn-primary w-100" @onclick="CreateNewDocument" IsPrimary="true">
+                        <i class="fas fa-plus me-2"></i>
+                        Create New
+                    </SfButton>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Modify Document" />
+                <CardContent>
+                    <p class="text-muted">Upload and modify documents with text replacements</p>
+                    <SfButton CssClass="btn btn-success w-100" @onclick="@(() => ShowModal("modify"))">
+                        <i class="fas fa-edit me-2"></i>
+                        Modify
+                    </SfButton>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Extract Text" />
+                <CardContent>
+                    <p class="text-muted">Extract text content and metadata from documents</p>
+                    <SfButton CssClass="btn btn-info w-100" @onclick="@(() => ShowModal("extract"))">
+                        <i class="fas fa-search me-2"></i>
+                        Extract
+                    </SfButton>
+                </CardContent>
+            </SfCard>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <SfCard>
+                <CardHeader Title="Analyze Document" />
+                <CardContent>
+                    <p class="text-muted">Analyze document structure and properties</p>
+                    <SfButton CssClass="btn btn-warning w-100" @onclick="@(() => ShowModal("analyze"))">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Analyze
+                    </SfButton>
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+
+    <!-- Demo Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <SfCard>
+                <CardHeader Title="Demo Operations" />
+                <CardContent>
+                    <div class="d-flex gap-2 mb-3">
+                        <SfButton CssClass="btn btn-outline-primary" @onclick="RunDemo">
+                            <i class="fas fa-play me-2"></i>
+                            Run Full Demo
+                        </SfButton>
+                        <SfButton CssClass="btn btn-outline-info" @onclick="GetCapabilities">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Get Capabilities
+                        </SfButton>
+                        <SfButton CssClass="btn btn-outline-success" @onclick="CheckHealth">
+                            <i class="fas fa-heartbeat me-2"></i>
+                            Health Check
+                        </SfButton>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(demoResults))
+                    {
+                        <div class="alert alert-info">
+                            <h6>Demo Results:</h6>
+                            <pre class="mb-0">@demoResults</pre>
+                        </div>
+                    }
+                </CardContent>
+            </SfCard>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    @if (operationResults.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <SfCard>
+                    <CardHeader Title="Operation Results" />
+                    <CardContent>
+                        <SfGrid DataSource="@operationResults" AllowPaging="true" PageSize="10">
+                            <GridColumns>
+                                <GridColumn Field="@nameof(OperationResult.Timestamp)" HeaderText="Time" Width="150" Format="HH:mm:ss"></GridColumn>
+                                <GridColumn Field="@nameof(OperationResult.Operation)" HeaderText="Operation" Width="120"></GridColumn>
+                                <GridColumn Field="@nameof(OperationResult.Status)" HeaderText="Status" Width="100">
+                                    <Template>
+                                        @{
+                                            var result = (context as OperationResult);
+                                            var badgeClass = result?.Success == true ? "bg-success" : "bg-danger";
+                                            var statusText = result?.Success == true ? "Success" : "Failed";
+                                        }
+                                        <span class="badge @badgeClass">@statusText</span>
+                                    </Template>
+                                </GridColumn>
+                                <GridColumn Field="@nameof(OperationResult.Message)" HeaderText="Message" Width="300"></GridColumn>
+                                <GridColumn Field="@nameof(OperationResult.Duration)" HeaderText="Duration" Width="100" Format="N0"></GridColumn>
+                            </GridColumns>
+                        </SfGrid>
+                    </CardContent>
+                </SfCard>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- File Upload Modals -->
+<!-- Modify Document Modal -->
+<SfDialog @bind-Visible="modifyDialogVisible" Header="Modify Document" Width="500px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Select Document</label>
+                <SfUploader AllowedExtensions=".docx,.doc" AutoUpload="false">
+                    <UploaderEvents ValueChange="OnModifyFileSelected"></UploaderEvents>
+                </SfUploader>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Find Text</label>
+                <SfTextBox @bind-Value="findText" Placeholder="Enter text to find"></SfTextBox>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Replace With</label>
+                <SfTextBox @bind-Value="replaceText" Placeholder="Enter replacement text"></SfTextBox>
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Process" IsPrimary="true" OnClick="ModifyDocument"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => modifyDialogVisible = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+<!-- Extract Text Modal -->
+<SfDialog @bind-Visible="extractDialogVisible" Header="Extract Text from Document" Width="500px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Select Document</label>
+                <SfUploader AllowedExtensions=".docx,.doc" AutoUpload="false">
+                    <UploaderEvents ValueChange="OnExtractFileSelected"></UploaderEvents>
+                </SfUploader>
+            </div>
+            @if (!string.IsNullOrEmpty(extractedText))
+            {
+                <div class="mb-3">
+                    <label class="form-label">Extracted Text</label>
+                    <textarea class="form-control" rows="10" readonly>@extractedText</textarea>
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Extract" IsPrimary="true" OnClick="ExtractText"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => extractDialogVisible = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+<!-- Analyze Document Modal -->
+<SfDialog @bind-Visible="analyzeDialogVisible" Header="Analyze Document" Width="600px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Select Document</label>
+                <SfUploader AllowedExtensions=".docx,.doc" AutoUpload="false">
+                    <UploaderEvents ValueChange="OnAnalyzeFileSelected"></UploaderEvents>
+                </SfUploader>
+            </div>
+            @if (!string.IsNullOrEmpty(analysisResults))
+            {
+                <div class="mb-3">
+                    <label class="form-label">Analysis Results</label>
+                    <pre class="bg-light p-3" style="max-height: 300px; overflow-y: auto;">@analysisResults</pre>
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Analyze" IsPrimary="true" OnClick="AnalyzeDocument"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => analyzeDialogVisible = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    private bool modifyDialogVisible = false;
+    private bool extractDialogVisible = false;
+    private bool analyzeDialogVisible = false;
+    
+    // Text replacement variables
+    private string findText = string.Empty;
+    private string replaceText = string.Empty;
+    
+    private string extractedText = string.Empty;
+    private string analysisResults = string.Empty;
+    private string demoResults = string.Empty;
+    
+    private List<OperationResult> operationResults = new();
+    
+    private byte[]? modifyFileData;
+    private byte[]? extractFileData;
+    private byte[]? analyzeFileData;
+
+    private void ShowModal(string type)
+    {
+        switch (type)
+        {
+            case "modify":
+                modifyDialogVisible = true;
+                break;
+            case "extract":
+                extractDialogVisible = true;
+                break;
+            case "analyze":
+                analyzeDialogVisible = true;
+                break;
+        }
+    }
+
+    private void CloseModals()
+    {
+        modifyDialogVisible = false;
+        extractDialogVisible = false;
+        analyzeDialogVisible = false;
+    }
+
+    private async Task CreateNewDocument()
+    {
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.CreateDirectDocxAsync();
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success && result.Data != null)
+            {
+                await DownloadFile(result.Data, "new-document.docx");
+                AddOperationResult("Create", true, "Document created successfully", duration);
+                await NotificationService.ShowSuccessAsync("Document created and downloaded successfully");
+            }
+            else
+            {
+                AddOperationResult("Create", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Failed to create document", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Create", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error creating document", ex.Message);
+        }
+    }
+
+    private async Task ModifyDocument()
+    {
+        if (modifyFileData == null)
+        {
+            await NotificationService.ShowWarningAsync("Please select a file to modify");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(findText))
+        {
+            await NotificationService.ShowWarningAsync("Please enter text to find");
+            return;
+        }
+
+        var startTime = DateTime.Now;
+        try
+        {
+            var replacements = new Dictionary<string, string> { { findText, replaceText ?? string.Empty } };
+            var result = await DocumentApi.ModifyDirectDocxAsync(modifyFileData, "document.docx", replacements);
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success && result.Data != null)
+            {
+                await DownloadFile(result.Data, "modified-document.docx");
+                AddOperationResult("Modify", true, "Document modified successfully", duration);
+                await NotificationService.ShowSuccessAsync("Document modified and downloaded successfully");
+                modifyDialogVisible = false;
+            }
+            else
+            {
+                AddOperationResult("Modify", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Failed to modify document", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Modify", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error modifying document", ex.Message);
+        }
+    }
+
+    private async Task ExtractText()
+    {
+        if (extractFileData == null)
+        {
+            await NotificationService.ShowWarningAsync("Please select a file to extract text from");
+            return;
+        }
+
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.ExtractTextFromDirectDocxAsync(extractFileData, "document.docx");
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success && result.Data != null)
+            {
+                extractedText = result.Data.TextContent?.FullText ?? "No text extracted";
+                AddOperationResult("Extract", true, $"Extracted {result.Data.TextContent?.WordCount} words", duration);
+                await NotificationService.ShowSuccessAsync("Text extracted successfully");
+            }
+            else
+            {
+                AddOperationResult("Extract", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Failed to extract text", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Extract", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error extracting text", ex.Message);
+        }
+    }
+
+    private async Task AnalyzeDocument()
+    {
+        if (analyzeFileData == null)
+        {
+            await NotificationService.ShowWarningAsync("Please select a file to analyze");
+            return;
+        }
+
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.AnalyzeDirectDocxAsync(analyzeFileData, "document.docx");
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success && result.Data != null)
+            {
+                analysisResults = System.Text.Json.JsonSerializer.Serialize(result.Data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                AddOperationResult("Analyze", true, "Document analyzed successfully", duration);
+                await NotificationService.ShowSuccessAsync("Document analyzed successfully");
+            }
+            else
+            {
+                AddOperationResult("Analyze", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Failed to analyze document", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Analyze", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error analyzing document", ex.Message);
+        }
+    }
+
+    private async Task RunDemo()
+    {
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.RunDirectDocxDemoAsync();
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success)
+            {
+                demoResults = result.Message ?? "Demo completed successfully";
+                AddOperationResult("Demo", true, "Demo completed successfully", duration);
+                await NotificationService.ShowSuccessAsync("Demo completed successfully");
+            }
+            else
+            {
+                AddOperationResult("Demo", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Demo failed", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Demo", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error running demo", ex.Message);
+        }
+    }
+
+    private async Task GetCapabilities()
+    {
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.GetDirectDocxCapabilitiesAsync();
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success && result.Data != null)
+            {
+                demoResults = System.Text.Json.JsonSerializer.Serialize(result.Data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                AddOperationResult("Capabilities", true, "Capabilities retrieved successfully", duration);
+                await NotificationService.ShowSuccessAsync("Capabilities retrieved successfully");
+            }
+            else
+            {
+                AddOperationResult("Capabilities", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Failed to get capabilities", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Capabilities", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error getting capabilities", ex.Message);
+        }
+    }
+
+    private async Task CheckHealth()
+    {
+        var startTime = DateTime.Now;
+        try
+        {
+            var result = await DocumentApi.CheckDirectDocxHealthAsync();
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            
+            if (result.Success)
+            {
+                // Success is enough - don't require Data to be non-null
+                demoResults = result.Data != null 
+                    ? System.Text.Json.JsonSerializer.Serialize(result.Data, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })
+                    : "Health check completed successfully";
+                    
+                AddOperationResult("Health", true, "Health check completed", duration);
+                await NotificationService.ShowSuccessAsync("Service is healthy");
+            }
+            else
+            {
+                AddOperationResult("Health", false, result.Error ?? "Unknown error", duration);
+                await NotificationService.ShowErrorAsync("Health check failed", result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            var duration = (DateTime.Now - startTime).TotalMilliseconds;
+            AddOperationResult("Health", false, ex.Message, duration);
+            await NotificationService.ShowErrorAsync("Error checking health", ex.Message);
+        }
+    }
+
+    private async Task OnModifyFileSelected(UploadChangeEventArgs args)
+    {
+        if (args.Files.Count > 0)
+        {
+            var file = args.Files[0];
+            using var memoryStream = new MemoryStream();
+            await file.File.OpenReadStream().CopyToAsync(memoryStream);
+            modifyFileData = memoryStream.ToArray();
+        }
+    }
+
+    private async Task OnExtractFileSelected(UploadChangeEventArgs args)
+    {
+        if (args.Files.Count > 0)
+        {
+            var file = args.Files[0];
+            using var memoryStream = new MemoryStream();
+            await file.File.OpenReadStream().CopyToAsync(memoryStream);
+            extractFileData = memoryStream.ToArray();
+        }
+    }
+
+    private async Task OnAnalyzeFileSelected(UploadChangeEventArgs args)
+    {
+        if (args.Files.Count > 0)
+        {
+            var file = args.Files[0];
+            using var memoryStream = new MemoryStream();
+            await file.File.OpenReadStream().CopyToAsync(memoryStream);
+            analyzeFileData = memoryStream.ToArray();
+        }
+    }
+
+    private async Task DownloadFile(byte[] fileData, string fileName)
+    {
+        var base64 = Convert.ToBase64String(fileData);
+        await JSRuntime.InvokeVoidAsync("downloadFile", base64, fileName, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    }
+
+    private void AddOperationResult(string operation, bool success, string message, double duration)
+    {
+        operationResults.Insert(0, new OperationResult
+        {
+            Timestamp = DateTime.Now,
+            Operation = operation,
+            Success = success,
+            Message = message,
+            Duration = (int)duration
+        });
+        
+        // Keep only last 50 results
+        if (operationResults.Count > 50)
+        {
+            operationResults.RemoveRange(50, operationResults.Count - 50);
+        }
+        
+        StateHasChanged();
+    }
+
+    public class OperationResult
+    {
+        public DateTime Timestamp { get; set; }
+        public string Operation { get; set; } = string.Empty;
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int Duration { get; set; }
+        public string Status => Success ? "Success" : "Failed";
+    }
+} 

@@ -1,0 +1,5 @@
+{
+    "name": "Bracket Pattern Test Template",
+    "content": "{\"sections\":[{\"sectionFormat\":{\"pageWidth\":612,\"pageHeight\":792,\"leftMargin\":72,\"rightMargin\":72,\"topMargin\":72,\"bottomMargin\":72},\"blocks\":[{\"paragraphFormat\":{\"styleName\":\"Normal\"},\"characterFormat\":{},\"inlines\":[{\"characterFormat\":{\"fontSize\":12,\"fontFamily\":\"Calibri\"},\"text\":\"Dear [FirstName] [LastName],\\n\\nThank you for your interest in [Company]. We are pleased to confirm your contact details:\\n\\nEmail: [Email]\\nPhone: [Phone]\\n\\nDate: [Date]\\n\\nBest regards,\\nCollabdoc Team\"}]}]}]}",
+    "description": "Test template with bracket merge fields"
+}

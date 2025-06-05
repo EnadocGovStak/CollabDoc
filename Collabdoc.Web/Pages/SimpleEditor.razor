@@ -1,0 +1,103 @@
+@page "/simple-editor"
+@using Syncfusion.Blazor.DocumentEditor
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Simple Document Editor - Collabdoc</PageTitle>
+
+<div style="height: 100vh; width: 100%;">
+    <h3>Collabdoc Document Editor</h3>
+    
+    <div style="margin: 10px 0;">
+        <button class="btn btn-primary" @onclick="SaveDocument">Save</button>
+        <button class="btn btn-secondary" @onclick="LoadSample">Load Sample</button>
+        <button class="btn btn-info" @onclick="ExportDocx">Export DOCX</button>
+    </div>
+    
+    <div style="height: calc(100vh - 150px); border: 1px solid #ccc;">
+        <SfDocumentEditorContainer @ref="documentEditor" 
+                                 Height="100%" 
+                                 EnableToolbar="true">
+            <DocumentEditorContainerEvents Created="OnEditorCreated"></DocumentEditorContainerEvents>
+        </SfDocumentEditorContainer>
+    </div>
+</div>
+
+@code {
+    private SfDocumentEditorContainer? documentEditor;
+    private bool isReady = false;
+
+    private async void OnEditorCreated(object args)
+    {
+        try
+        {
+            isReady = true;
+            // Load a simple sample document
+            await LoadDefaultContent();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Editor creation error: {ex.Message}");
+        }
+    }
+
+    private async Task LoadDefaultContent()
+    {
+        if (documentEditor?.DocumentEditor != null)
+        {
+            // Simple SFDT content for a basic document
+            var sampleSfdt = @"{""sfdt"":""UEsDBBQAAAAIAOe8ClcAAAAAAAAAAAAAAAAaAAAAd29yZC9fcmVscy9kb2N1bWVudC54bWwucmVsc6zPwQrCMAwG4FeR3JsWL4hIW70IeqNv8ANa0iZZSSaNyftbe9CTQhfG/v+bb15yWKYvKFLNJPNB0SooXtHGe6E+8PdWGNLZNmb+3bw0L4LPbNqJCAA+H80aJVPp0i6VTrOnU0lHjKJwV/xjmOe1yhlJqJqxOHQp4Y8j4GWa3rPD3Qb8VRe4kqhIkFlW7wH8Ag=="",""isReadOnly"":false}";
+            
+            await documentEditor.DocumentEditor.OpenAsync(sampleSfdt);
+        }
+    }
+
+    private async Task SaveDocument()
+    {
+        if (documentEditor?.DocumentEditor != null && isReady)
+        {
+            try
+            {
+                var sfdt = await documentEditor.DocumentEditor.SerializeAsync();
+                // For now, just show a message
+                await JSRuntime.InvokeVoidAsync("alert", "Document saved! (SFDT content captured)");
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Save error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task LoadSample()
+    {
+        if (documentEditor?.DocumentEditor != null && isReady)
+        {
+            try
+            {
+                await LoadDefaultContent();
+                await JSRuntime.InvokeVoidAsync("alert", "Sample document loaded!");
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Load error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task ExportDocx()
+    {
+        if (documentEditor?.DocumentEditor != null && isReady)
+        {
+            try
+            {
+                await documentEditor.DocumentEditor.SaveAsync("my-document.docx", FormatType.Docx);
+                await JSRuntime.InvokeVoidAsync("alert", "Document exported as DOCX!");
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"Export error: {ex.Message}");
+            }
+        }
+    }
+} 

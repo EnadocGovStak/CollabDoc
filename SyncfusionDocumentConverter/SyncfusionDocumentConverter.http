@@ -1,0 +1,6 @@
+@SyncfusionDocumentConverter_HostAddress = http://localhost:5181
+
+GET {{SyncfusionDocumentConverter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

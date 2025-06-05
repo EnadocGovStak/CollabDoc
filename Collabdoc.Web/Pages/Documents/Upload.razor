@@ -1,0 +1,254 @@
+@page "/documents/upload"
+@using Collabdoc.Web.Services
+@inject IDocumentApiService DocumentApi
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+
+<PageTitle>Upload Documents - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Upload Documents</li>
+                </ol>
+            </nav>
+            
+            <h1 class="display-5 text-primary">
+                <i class="fas fa-upload me-3"></i>
+                Upload Documents
+            </h1>
+            <p class="lead">Import Word documents (.docx, .doc) into Collabdoc for editing and collaboration</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Document Upload</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <InputFile OnChange="OnFileSelect" multiple accept=".docx,.doc" class="form-control"></InputFile>
+                    </div>
+
+                    @if (selectedFiles.Any())
+                    {
+                        <div class="mt-4">
+                            <h5>Selected Files (@selectedFiles.Count)</h5>
+                            <div class="list-group">
+                                @foreach (var file in selectedFiles)
+                                {
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">
+                                                    <i class="fas fa-file-word text-primary me-2"></i>
+                                                    @file.Name
+                                                </h6>
+                                                <small class="text-muted">@FormatFileSize(file.Size)</small>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if (uploadProgress.ContainsKey(file.Name))
+                                                {
+                                                    <div class="progress" style="width: 100px;">
+                                                        <div class="progress-bar" role="progressbar" 
+                                                             style="width: @(uploadProgress[file.Name])%" 
+                                                             aria-valuenow="@uploadProgress[file.Name]" 
+                                                             aria-valuemin="0" aria-valuemax="100">
+                                                            @uploadProgress[file.Name]%
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if (uploadStatus.ContainsKey(file.Name))
+                                                {
+                                                    @if (uploadStatus[file.Name] == "success")
+                                                    {
+                                                        <span class="badge bg-success">
+                                                            <i class="fas fa-check"></i> Uploaded
+                                                        </span>
+                                                    }
+                                                    else if (uploadStatus[file.Name] == "error")
+                                                    {
+                                                        <span class="badge bg-danger">
+                                                            <i class="fas fa-times"></i> Failed
+                                                        </span>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="mt-3 d-flex gap-2">
+                                <button class="btn btn-primary" @onclick="UploadFiles" disabled="@isUploading">
+                                    @if (isUploading)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        <span>Uploading...</span>
+                                    }
+                                    else
+                                    {
+                                        <span><i class="fas fa-upload me-2"></i>Upload All Files</span>
+                                    }
+                                </button>
+                                
+                                <button class="btn btn-secondary" @onclick="ClearFiles" disabled="@isUploading">
+                                    <i class="fas fa-trash me-2"></i>Clear All
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Upload Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="fas fa-check-circle text-success me-2"></i>Supported Formats</h6>
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="fas fa-file-word text-primary me-2"></i>Microsoft Word (.docx)</li>
+                            <li><i class="fas fa-file-word text-primary me-2"></i>Word 97-2003 (.doc)</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6><i class="fas fa-info-circle text-info me-2"></i>File Requirements</h6>
+                        <ul class="list-unstyled ms-3">
+                            <li><small>Maximum file size: 10 MB</small></li>
+                            <li><small>Multiple files supported</small></li>
+                            <li><small>Drag & drop enabled</small></li>
+                        </ul>
+                    </div>
+
+                    @if (uploadedDocuments.Any())
+                    {
+                        <div class="mt-4">
+                            <h6><i class="fas fa-history text-primary me-2"></i>Recently Uploaded</h6>
+                            <div class="list-group list-group-flush">
+                                @foreach (var doc in uploadedDocuments.Take(3))
+                                {
+                                    <div class="list-group-item border-0 px-0 py-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">@doc.Name</h6>
+                                                <small class="text-muted">@doc.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenDocument(doc.DocumentId)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<IBrowserFile> selectedFiles = new();
+    private Dictionary<string, int> uploadProgress = new();
+    private Dictionary<string, string> uploadStatus = new();
+    private List<DocumentInfo> uploadedDocuments = new();
+    private bool isUploading = false;
+
+    private void OnFileSelect(InputFileChangeEventArgs e)
+    {
+        selectedFiles = e.GetMultipleFiles().ToList();
+        uploadProgress.Clear();
+        uploadStatus.Clear();
+        StateHasChanged();
+    }
+
+    private async Task UploadFiles()
+    {
+        if (!selectedFiles.Any()) return;
+
+        isUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            foreach (var file in selectedFiles)
+            {
+                uploadProgress[file.Name] = 0;
+                StateHasChanged();
+
+                // Call the import API
+                var result = await DocumentApi.ImportDocumentAsync(file.OpenReadStream(), file.Name);
+                
+                if (result.Success)
+                {
+                    uploadProgress[file.Name] = 100;
+                    uploadStatus[file.Name] = "success";
+                    
+                    // Add to uploaded documents list
+                    uploadedDocuments.Add(new DocumentInfo
+                    {
+                        Name = file.Name,
+                        DocumentId = result.Data?.ToString() ?? Guid.NewGuid().ToString(),
+                        CreatedAt = DateTime.Now,
+                        Type = "DOCX"
+                    });
+
+                    await NotificationService.ShowSuccessAsync("Upload Successful", $"{file.Name} has been uploaded and converted successfully.");
+                }
+                else
+                {
+                    uploadStatus[file.Name] = "error";
+                    await NotificationService.ShowErrorAsync("Upload Failed", $"Failed to upload {file.Name}: {result.Error}");
+                }
+
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Upload Error", $"An error occurred during upload: {ex.Message}");
+        }
+        finally
+        {
+            isUploading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void ClearFiles()
+    {
+        selectedFiles.Clear();
+        uploadProgress.Clear();
+        uploadStatus.Clear();
+        StateHasChanged();
+    }
+
+    private void OpenDocument(string documentId)
+    {
+        Navigation.NavigateTo($"/editor/{documentId}");
+    }
+
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        double len = bytes;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+} 

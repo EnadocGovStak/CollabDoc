@@ -1,0 +1,791 @@
+@page "/templates/editor"
+@page "/templates/editor/{id:int?}"
+@using Syncfusion.Blazor.DocumentEditor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Navigations
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data
+@using SyncfusionDocumentConverter.DTOs
+@using Syncfusion.EJ2.DocumentEditor
+@using EJ2WordDocument = Syncfusion.EJ2.DocumentEditor.WordDocument
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using System
+@using System.Linq
+@inject IDocumentRepository DocumentRepository
+@inject IMergeFieldService MergeFieldService
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Template Editor - Collabdoc</PageTitle>
+
+<div class="template-editor-container">
+    <!-- Header Toolbar -->
+    <div class="editor-toolbar bg-light border-bottom p-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <SfButton CssClass="btn btn-outline-secondary" OnClick="GoBack">
+                    <i class="fas fa-arrow-left me-2"></i>Back
+                </SfButton>
+                
+                <div class="vr"></div>
+                
+                <div style="min-width: 200px;">
+                    <SfTextBox @bind-Value="templateName" Placeholder="Template Name" CssClass="form-control"></SfTextBox>
+                </div>
+                
+                <SfDropDownList TItem="string" TValue="string" @bind-Value="templateCategory" 
+                              DataSource="@categoryOptions" CssClass="form-select" Width="150px">
+                    <DropDownListFieldSettings Value="@nameof(String)" Text="@nameof(String)"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <SfButton CssClass="btn btn-outline-info" OnClick="PreviewTemplate">
+                    <i class="fas fa-eye me-2"></i>Preview
+                </SfButton>
+                <SfButton CssClass="btn btn-success" OnClick="SaveTemplate" IsPrimary="true">
+                    <i class="fas fa-save me-2"></i>Save Template
+                </SfButton>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-0 h-100">
+        <!-- Merge Fields Sidebar -->
+        <div class="col-md-3 bg-light border-end sidebar-panel">
+            <div class="p-3">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-puzzle-piece me-2"></i>Merge Fields
+                </h6>
+                
+                <!-- Merge Field Bundles -->
+                <div class="mb-3">
+                    <label class="form-label small">Field Bundles:</label>
+                    <select class="form-select form-select-sm" @onchange="OnBundleChanged" value="@_selectedBundle">
+                        @if (!availableBundles.Any())
+                        {
+                            <option value="">Loading bundles...</option>
+                        }
+                        else
+                        {
+                            @foreach (var bundle in availableBundles)
+                            {
+                                <option value="@bundle.Id">@bundle.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Available Fields -->
+                <div class="available-fields">
+                    <h6 class="small fw-bold text-muted">Available Fields:</h6>
+                    
+                    <!-- Instructions -->
+                    <div class="help-info p-2 mb-2 bg-light border rounded small">
+                        <i class="fas fa-info-circle text-primary me-1"></i>
+                        <strong>Tip:</strong> Click on any field below to insert it into your document. Fields will appear as <code>«FieldName»</code> in the editor.
+                    </div>
+                    
+                    <div class="field-list">
+                        @if (!availableBundles.Any())
+                        {
+                            <div class="text-center py-3">
+                                <small class="text-muted">Loading available bundles...</small>
+                            </div>
+                        }
+                        else if (currentBundleFields == null || !currentBundleFields.Any())
+                        {
+                            <div class="text-center py-3">
+                                <small class="text-muted">
+                                    @if (string.IsNullOrEmpty(_selectedBundle))
+                                    {
+                                        <span>Select a bundle to view available fields</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Loading fields...</span>
+                                    }
+                                </small>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var field in currentBundleFields)
+                            {
+                                <div class="field-item p-2 mb-2 bg-white border rounded cursor-pointer"
+                                     @onclick="() => InsertMergeField(field)"
+                                     title="Click to insert into document">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-grip-vertical text-muted me-2"></i>
+                                        <div>
+                                            <div class="fw-bold small">@field.DisplayName</div>
+                                            <div class="text-muted x-small">@field.Type</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <!-- Custom Field Creation -->
+                <div class="mt-4">
+                    <h6 class="small fw-bold text-muted">Create Custom Field:</h6>
+                    <div class="mb-2">
+                        <SfTextBox @bind-Value="customFieldName" Placeholder="Field Name" CssClass="form-control form-control-sm"></SfTextBox>
+                    </div>
+                    <div class="mb-2">
+                        <SfDropDownList TItem="string" TValue="string" @bind-Value="customFieldType" 
+                                      DataSource="@fieldTypes" CssClass="form-select form-select-sm">
+                            <DropDownListFieldSettings Value="@nameof(String)" Text="@nameof(String)"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+                    <SfButton CssClass="btn btn-sm btn-outline-primary w-100" OnClick="AddCustomField">
+                        <i class="fas fa-plus me-1"></i>Add Field
+                    </SfButton>
+                </div>
+
+                <!-- Template Fields Used -->
+                @if (templateFields.Any())
+                {
+                    <div class="mt-4">
+                        <h6 class="small fw-bold text-muted">Fields in Template:</h6>
+                        <div class="used-fields">
+                            @foreach (var field in templateFields)
+                            {
+                                <div class="field-tag d-flex align-items-center justify-content-between p-1 mb-1 bg-primary bg-opacity-10 border rounded">
+                                    <span class="small">@field.Name</span>
+                                    <SfButton CssClass="btn-sm btn-outline-danger p-0" 
+                                            OnClick="() => RemoveTemplateField(field.Name)" 
+                                            IconCss="fas fa-times" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Document Editor -->
+        <div class="col-md-9 editor-panel">
+            <div class="editor-container h-100">
+                <SfDocumentEditorContainer @ref="documentEditor" 
+                                         Height="100%" 
+                                         ServiceUrl="@GetServiceUrl()"
+                                         EnableToolbar="true">
+                    <DocumentEditorContainerEvents DocumentChanged="OnDocumentChanged"></DocumentEditorContainerEvents>
+                </SfDocumentEditorContainer>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<SfDialog @bind-Visible="showPreviewModal" Header="Template Preview" Width="80%" Height="80%" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            @if (!string.IsNullOrEmpty(previewContent))
+            {
+                <div class="preview-content p-3">
+                    <h6>Template Content:</h6>
+                    <div class="border p-3 bg-light">
+                        <pre>@previewContent</pre>
+                    </div>
+                    
+                    @if (templateFields.Any())
+                    {
+                        <h6 class="mt-3">Merge Fields:</h6>
+                        <div class="row">
+                            @foreach (var field in templateFields)
+                            {
+                                <div class="col-md-4 mb-2">
+                                    <div class="border p-2 rounded">
+                                        <strong>@field.Name</strong><br>
+                                        <small class="text-muted">@field.Type</small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Close" OnClick="() => showPreviewModal = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    
+    private SfDocumentEditorContainer? documentEditor;
+    private string templateName = "New Template";
+    private string templateCategory = "Custom";
+    private string? _selectedBundle;
+    
+    private bool showPreviewModal = false;
+    private string previewContent = "";
+    
+    // Custom field creation
+    private string customFieldName = "";
+    private string customFieldType = "Text";
+    
+    // Template fields tracking
+    private List<MergeField> templateFields = new();
+    private List<MergeField> currentBundleFields = new();
+    private List<MergeFieldBundle> availableBundles = new();
+    
+    private List<string> categoryOptions = new()
+    {
+        "Business Documents", "Mail Merge", "Reports", "Custom",
+        "HR Documents", "Invoicing", "Maintenance", "Contracts"
+    };
+    
+    private List<string> fieldTypes = new()
+    {
+        "Text", "Number", "Date", "Currency", "Email", "Phone", 
+        "Address", "Select", "Boolean", "Image"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try 
+        {
+            // Load bundles first
+            await LoadBundles();
+            
+            // Set initial bundle if none selected
+            if (availableBundles.Any())
+            {
+                await SelectBundle(availableBundles[0].Id);
+            }
+            
+            if (Id.HasValue)
+            {
+                await LoadExistingTemplate();
+            }
+            else
+            {
+                // For new templates, ensure we have a blank document ready
+                await Task.Delay(500); // Give the editor time to initialize
+                await EnsureDocumentEditorReady();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in initialization: {ex.Message}");
+            await NotificationService.ShowErrorAsync("Error", "Failed to initialize editor");
+        }
+    }
+
+    private async Task OnBundleChanged(Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+        if (e.Value is string newBundle)
+        {
+            await SelectBundle(newBundle);
+        }
+    }
+
+    private async Task SelectBundle(string bundleId)
+    {
+        try
+        {
+            if (_selectedBundle == bundleId) return; // No change needed
+            
+            Console.WriteLine($"Selecting bundle: {bundleId}");
+            _selectedBundle = bundleId;
+            
+            // Clear fields and update UI immediately
+            currentBundleFields.Clear();
+            StateHasChanged();
+            
+            // Load new fields
+            await LoadBundleFields();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error selecting bundle: {ex.Message}");
+            await NotificationService.ShowErrorAsync("Error", "Failed to select bundle");
+        }
+    }
+
+    private async Task LoadBundles()
+    {
+        try
+        {
+            var bundles = await MergeFieldService.GetAvailableBundlesAsync();
+            availableBundles = bundles?.ToList() ?? new();
+            Console.WriteLine($"Loaded {availableBundles.Count} bundles");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading bundles: {ex.Message}");
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load bundles: {ex.Message}");
+            availableBundles.Clear();
+        }
+    }
+
+    private async Task LoadBundleFields()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(_selectedBundle)) return;
+
+            Console.WriteLine($"Loading fields for bundle: {_selectedBundle}");
+            var fields = await MergeFieldService.GetMergeFieldsForBundleAsync(_selectedBundle);
+            
+            if (fields != null)
+            {
+                currentBundleFields = fields.ToList();
+                Console.WriteLine($"Loaded {currentBundleFields.Count} fields");
+            }
+            else
+            {
+                currentBundleFields.Clear();
+                Console.WriteLine("No fields returned from service");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading bundle fields: {ex.Message}");
+            currentBundleFields.Clear();
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load fields: {ex.Message}");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task InsertMergeField(MergeField field)
+    {
+        try
+        {
+            if (documentEditor?.DocumentEditor != null)
+            {
+                // Ensure the document editor is ready
+                await EnsureDocumentEditorReady();
+                
+                // Insert merge field using the correct Syncfusion syntax
+                var fieldCode = $"MERGEFIELD {field.Name} \\* MERGEFORMAT";
+                var fieldResult = $"«{field.Name}»";
+                
+                Console.WriteLine($"Inserting merge field: {field.Name}");
+                await documentEditor.DocumentEditor.Editor.InsertFieldAsync(fieldCode, fieldResult);
+                
+                // Add to template fields if not already present
+                if (!templateFields.Any(f => f.Name == field.Name))
+                {
+                    templateFields.Add(field);
+                    Console.WriteLine($"Added field to template: {field.Name}");
+                    StateHasChanged();
+                }
+                
+                await NotificationService.ShowSuccessAsync("Field Added", $"Merge field '{field.Name}' inserted into template");
+            }
+            else
+            {
+                Console.WriteLine("DocumentEditor not available for field insertion");
+                
+                // Still add to template fields list even if editor insertion fails
+                if (!templateFields.Any(f => f.Name == field.Name))
+                {
+                    templateFields.Add(field);
+                    Console.WriteLine($"Added field to template list (editor not available): {field.Name}");
+                    StateHasChanged();
+                }
+                
+                await NotificationService.ShowInfoAsync("Field Added", $"Merge field '{field.Name}' added to template (will be included when saved)");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error inserting merge field {field.Name}: {ex.Message}");
+            
+            // Still add to template fields list as fallback
+            if (!templateFields.Any(f => f.Name == field.Name))
+            {
+                templateFields.Add(field);
+                StateHasChanged();
+            }
+            
+            await NotificationService.ShowWarningAsync("Field Added", $"Merge field '{field.Name}' added to template list (editor insertion failed but field will be saved)");
+        }
+    }
+
+    private async Task AddCustomField()
+    {
+        if (string.IsNullOrWhiteSpace(customFieldName))
+        {
+            await NotificationService.ShowWarningAsync("Warning", "Please enter a field name");
+            return;
+        }
+
+        var customField = new MergeField
+        {
+            Name = customFieldName.Trim(),
+            Type = MergeFieldType.Text,
+            Description = $"Custom {customFieldType} field",
+            IsRequired = false,
+            DisplayName = customFieldName.Trim()
+        };
+
+        await InsertMergeField(customField);
+        
+        // Reset form
+        customFieldName = "";
+        customFieldType = "Text";
+    }
+
+    private void RemoveTemplateField(string fieldName)
+    {
+        templateFields.RemoveAll(f => f.Name == fieldName);
+        StateHasChanged();
+    }
+
+    private void OnDocumentChanged()
+    {
+        // This event fires when the document content changes
+        // We can use this to track merge fields in the document
+    }
+
+    private async Task PreviewTemplate()
+    {
+        if (documentEditor?.DocumentEditor != null)
+        {
+            try
+            {
+                // For now, use a mock content - in production this would get the actual SFDT from the editor
+                previewContent = GetMockSfdtContent();
+                showPreviewModal = true;
+            }
+            catch (Exception ex)
+            {
+                await NotificationService.ShowErrorAsync("Preview Error", $"Failed to generate preview: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task SaveTemplate()
+    {
+        if (string.IsNullOrWhiteSpace(templateName))
+        {
+            await NotificationService.ShowWarningAsync("Warning", "Please enter a template name");
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine($"=== SAVE TEMPLATE DEBUG START ===");
+            Console.WriteLine($"Template Name: {templateName}");
+            Console.WriteLine($"Fields Count: {templateFields.Count}");
+            
+            string sfdtContent = "";
+            
+            // Get the actual SFDT content from the DocumentEditor with timeout
+            if (documentEditor?.DocumentEditor != null)
+            {
+                Console.WriteLine("Getting SFDT content from DocumentEditor...");
+                
+                try
+                {
+                    // Add a timeout to prevent hanging
+                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                    sfdtContent = await documentEditor.DocumentEditor.SerializeAsync();
+                    
+                    if (string.IsNullOrEmpty(sfdtContent) || sfdtContent == "{}")
+                    {
+                        Console.WriteLine("DocumentEditor returned empty SFDT, using fallback");
+                        sfdtContent = CreateBasicSfdtContent();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"DocumentEditor SFDT content length: {sfdtContent.Length}");
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("SerializeAsync was cancelled, using fallback content");
+                    sfdtContent = CreateBasicSfdtContent();
+                    await NotificationService.ShowWarningAsync("Warning", "Document serialization timed out, using basic content");
+                }
+                catch (Exception serializeEx)
+                {
+                    Console.WriteLine($"SerializeAsync failed: {serializeEx.Message}, using fallback content");
+                    sfdtContent = CreateBasicSfdtContent();
+                    await NotificationService.ShowWarningAsync("Warning", "Could not serialize document content, using basic template");
+                }
+            }
+            else
+            {
+                Console.WriteLine("DocumentEditor not available, using fallback content");
+                sfdtContent = CreateBasicSfdtContent();
+            }
+
+            Console.WriteLine($"Final SFDT content length: {sfdtContent.Length}");
+            Console.WriteLine("Creating template request object...");
+            
+            var request = new CreateTemplateWithMergeFieldsRequest
+            {
+                Name = templateName,
+                Description = $"Template created with visual editor containing {templateFields.Count} merge fields",
+                Category = templateCategory,
+                Content = sfdtContent,
+                MergeFields = templateFields.ToList(),
+                CustomFields = templateFields.ToList(),
+                IncludeRecordManagement = true,
+                RecordRetentionPeriod = "365 days",
+                RecordClassification = "Internal"
+            };
+
+            // Add selected bundle if available
+            if (!string.IsNullOrEmpty(_selectedBundle))
+            {
+                request.SelectedBundles.Add(_selectedBundle);
+            }
+
+            Console.WriteLine("Saving template to database...");
+            
+            if (Id.HasValue)
+            {
+                var updateResult = await MergeFieldService.UpdateTemplateWithMergeFieldsAsync(Id.Value, request);
+                Console.WriteLine($"Template update result - Success: {updateResult.Success}, ID: {updateResult.Data?.TemplateId}");
+                
+                if (updateResult.Success)
+                {
+                    await NotificationService.ShowSuccessAsync("Success", "Template updated successfully!");
+                    Console.WriteLine("=== SAVE TEMPLATE DEBUG END - UPDATE SUCCESS ===");
+                    Navigation.NavigateTo("/templates");
+                }
+                else
+                {
+                    Console.WriteLine($"=== SAVE TEMPLATE DEBUG END - UPDATE FAILED: {updateResult.Error} ===");
+                    await NotificationService.ShowErrorAsync("Error", updateResult.Error ?? "Failed to update template");
+                }
+            }
+            else
+            {
+                var createResult = await MergeFieldService.CreateTemplateWithMergeFieldsAsync(request);
+                Console.WriteLine($"Template create result - Success: {createResult.Success}, ID: {createResult.Data?.Id}");
+                
+                if (createResult.Success)
+                {
+                    await NotificationService.ShowSuccessAsync("Success", "Template created successfully!");
+                    Console.WriteLine("=== SAVE TEMPLATE DEBUG END - CREATE SUCCESS ===");
+                    Navigation.NavigateTo("/templates");
+                }
+                else
+                {
+                    Console.WriteLine($"=== SAVE TEMPLATE DEBUG END - CREATE FAILED: {createResult.Error} ===");
+                    await NotificationService.ShowErrorAsync("Error", createResult.Error ?? "Failed to create template");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"=== SAVE TEMPLATE DEBUG END - EXCEPTION ===");
+            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Stack: {ex.StackTrace}");
+            await NotificationService.ShowErrorAsync("Error", $"Failed to save template: {ex.Message}");
+        }
+    }
+
+    private string CreateBasicSfdtContent()
+    {
+        // Create a basic valid SFDT document structure
+        var basicSfdt = new
+        {
+            sfdt = new
+            {
+                sections = new[]
+                {
+                    new
+                    {
+                        sectionFormat = new
+                        {
+                            pageWidth = 612.0,
+                            pageHeight = 792.0,
+                            leftMargin = 72.0,
+                            rightMargin = 72.0,
+                            topMargin = 72.0,
+                            bottomMargin = 72.0
+                        },
+                        blocks = new[]
+                        {
+                            new
+                            {
+                                paragraphFormat = new
+                                {
+                                    textAlignment = "Left",
+                                    lineSpacing = 1.15,
+                                    lineSpacingType = "Multiple"
+                                },
+                                inlines = new object[]
+                                {
+                                    new
+                                    {
+                                        characterFormat = new { fontSize = 11.0, fontFamily = "Calibri" },
+                                        text = templateName ?? "New Template"
+                                    }
+                                }
+                                .Concat(templateFields.Select(field => (object)new
+                                {
+                                    characterFormat = new { fontSize = 11.0, fontFamily = "Calibri" },
+                                    text = $" «{field.Name}»"
+                                }))
+                                .ToArray()
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        var result = JsonConvert.SerializeObject(basicSfdt);
+        Console.WriteLine($"Created basic SFDT content with {templateFields.Count} fields");
+        return result;
+    }
+
+    private string GetMockSfdtContent()
+    {
+        var mergeFieldsText = string.Join(", ", templateFields.Select(f => f.Name));
+        return $@"{{
+            ""sfdt"": ""Template: {templateName}"",
+            ""version"": ""1.0"",
+            ""content"": ""This is a template with merge fields: {mergeFieldsText}"",
+            ""created"": ""{DateTime.Now:yyyy-MM-dd HH:mm:ss}""
+        }}";
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/templates");
+    }
+
+    private string GetServiceUrl()
+    {
+        // This should point to your Syncfusion Document Editor service
+        return "http://localhost:5002/api/documenteditor";
+    }
+
+    private async Task TestServiceConnection()
+    {
+        try
+        {
+            Console.WriteLine("Testing service connection...");
+            var bundles = await MergeFieldService.GetAvailableBundlesAsync();
+            Console.WriteLine($"Service test successful: Found {bundles.Count()} bundles");
+            foreach (var bundle in bundles)
+            {
+                Console.WriteLine($"Bundle: {bundle.Id} - {bundle.Name}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Service test failed: {ex.Message}");
+        }
+    }
+
+    private async Task LoadExistingTemplate()
+    {
+        if (!Id.HasValue) return;
+        
+        try
+        {
+            var template = await DocumentRepository.GetDocumentByIdAsync(Id.Value);
+            if (template != null)
+            {
+                templateName = template.Name;
+                templateCategory = template.Category ?? "Custom";
+                
+                // Load template content into editor
+                if (!string.IsNullOrEmpty(template.Content))
+                {
+                    await LoadDocumentContent(template.Content);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load template: {ex.Message}");
+        }
+    }
+
+    private async Task EnsureDocumentEditorReady()
+    {
+        if (documentEditor?.DocumentEditor == null)
+        {
+            Console.WriteLine("DocumentEditor is null in EnsureDocumentEditorReady");
+            return;
+        }
+
+        try
+        {
+            Console.WriteLine("Ensuring DocumentEditor is ready...");
+            
+            // Give the editor time to initialize
+            await Task.Delay(500);
+            
+            Console.WriteLine("DocumentEditor should be ready");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in EnsureDocumentEditorReady: {ex.Message}");
+        }
+    }
+
+    private async Task LoadDocumentContent(string sfdtContent)
+    {
+        if (documentEditor?.DocumentEditor != null && !string.IsNullOrEmpty(sfdtContent))
+        {
+            try
+            {
+                Console.WriteLine($"Loading document content, length: {sfdtContent.Length}");
+                Console.WriteLine($"Content preview: {sfdtContent.Substring(0, Math.Min(200, sfdtContent.Length))}...");
+                
+                // First ensure the editor is ready
+                await EnsureDocumentEditorReady();
+                
+                // Use DocumentEditor's built-in OpenAsync method
+                await documentEditor.DocumentEditor.OpenAsync(sfdtContent);
+                Console.WriteLine("Document content loaded successfully using OpenAsync");
+                await NotificationService.ShowSuccessAsync("Template Loaded", "Template content loaded successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading document content: {ex.Message}");
+                
+                // If loading fails, create a blank document as fallback
+                try
+                {
+                    await documentEditor.DocumentEditor.OpenBlankAsync();
+                    Console.WriteLine("Opened blank document as fallback");
+                    await NotificationService.ShowWarningAsync("Template Loaded", 
+                        "Template loaded with blank content. The saved content may be incompatible.");
+                }
+                catch (Exception blankEx)
+                {
+                    Console.WriteLine($"Error creating blank document: {blankEx.Message}");
+                    await NotificationService.ShowErrorAsync("Editor Error", 
+                        "Could not load template content. Please refresh the page and try again.");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("DocumentEditor not available or no content provided");
+            if (documentEditor?.DocumentEditor != null)
+            {
+                await documentEditor.DocumentEditor.OpenBlankAsync();
+            }
+        }
+    }
+}
+

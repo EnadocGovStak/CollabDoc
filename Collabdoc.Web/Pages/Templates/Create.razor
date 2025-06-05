@@ -1,0 +1,418 @@
+@page "/templates/create"
+@using Collabdoc.Web.Services
+@inject IMergeFieldService MergeFieldService
+@inject IDocumentApiService DocumentApi
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+
+<PageTitle>Create Template with Merge Fields - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/templates" class="text-decoration-none">Templates</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Template</li>
+                </ol>
+            </nav>
+            
+            <h1 class="display-5 text-primary">
+                <i class="fas fa-magic me-3"></i>
+                Create Template with Merge Fields
+            </h1>
+            <p class="lead">Build professional templates with pre-defined merge field bundles and record management</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Template Information -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Template Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Template Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" @bind="templateRequest.Name" placeholder="Enter template name">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" @bind="templateRequest.Category">
+                            <option value="">Select category</option>
+                            @foreach (var category in availableCategories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="3" @bind="templateRequest.Description" placeholder="Describe the purpose of this template"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Record Management -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" @bind="templateRequest.IncludeRecordManagement" id="enableRecordManagement">
+                        <label class="form-check-label" for="enableRecordManagement">
+                            <i class="fas fa-folder me-2"></i>Enable Record Management
+                        </label>
+                    </div>
+                </div>
+                @if (templateRequest.IncludeRecordManagement)
+                {
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Record Classification</label>
+                            <select class="form-select" @bind="templateRequest.RecordClassification">
+                                <option value="">Select classification</option>
+                                <option value="Public">Public</option>
+                                <option value="Internal">Internal</option>
+                                <option value="Confidential">Confidential</option>
+                                <option value="Restricted">Restricted</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Retention Period</label>
+                            <select class="form-select" @bind="templateRequest.RecordRetentionPeriod">
+                                <option value="">Select retention period</option>
+                                <option value="1 Year">1 Year</option>
+                                <option value="3 Years">3 Years</option>
+                                <option value="5 Years">5 Years</option>
+                                <option value="7 Years">7 Years</option>
+                                <option value="10 Years">10 Years</option>
+                                <option value="Permanent">Permanent</option>
+                            </select>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Merge Field Bundles -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-puzzle-piece me-2"></i>Merge Field Bundles</h5>
+                    <small class="text-muted">Select pre-built field bundles for your business needs</small>
+                </div>
+                <div class="card-body">
+                    @if (isLoadingBundles)
+                    {
+                        <div class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading bundles...</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            @foreach (var bundle in availableBundles)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border @(templateRequest.SelectedBundles.Contains(bundle.Id) ? "border-primary bg-light" : "")">
+                                        <div class="card-body p-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       @onchange="(e) => ToggleBundle(bundle.Id, (bool)e.Value!)"
+                                                       checked="@templateRequest.SelectedBundles.Contains(bundle.Id)"
+                                                       id="bundle-@bundle.Id">
+                                                <label class="form-check-label w-100" for="bundle-@bundle.Id">
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="@bundle.Icon fa-lg text-primary me-3 mt-1"></i>
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">@bundle.Name</h6>
+                                                            <p class="text-muted small mb-1">@bundle.Description</p>
+                                                            <span class="badge bg-secondary">@bundle.Fields.Count fields</span>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Selected Fields Preview -->
+            @if (selectedFields.Any())
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Selected Merge Fields (@selectedFields.Count)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var field in selectedFields.Take(20)) // Limit display to first 20
+                            {
+                                <div class="col-md-6 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-@(GetFieldTypeBadgeColor(field.Type)) me-2">@field.Type</span>
+                                        <span class="fw-bold">{{@field.Name}}</span>
+                                        @if (field.IsRequired)
+                                        {
+                                            <span class="text-danger ms-1">*</span>
+                                        }
+                                    </div>
+                                    <small class="text-muted">@field.DisplayName</small>
+                                </div>
+                            }
+                        </div>
+                        @if (selectedFields.Count > 20)
+                        {
+                            <div class="mt-2">
+                                <small class="text-muted">... and @(selectedFields.Count - 20) more fields</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Custom Fields -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Custom Fields</h5>
+                    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddCustomField">
+                        <i class="fas fa-plus me-1"></i>Add Field
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (templateRequest.CustomFields.Any())
+                    {
+                        @foreach (var field in templateRequest.CustomFields)
+                        {
+                            <div class="row mb-3 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label">Field Name</label>
+                                    <input type="text" class="form-control" @bind="field.Name" placeholder="FieldName">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Display Name</label>
+                                    <input type="text" class="form-control" @bind="field.DisplayName" placeholder="Display Name">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" @bind="field.Type">
+                                        @foreach (var type in Enum.GetValues<MergeFieldType>())
+                                        {
+                                            <option value="@type">@type</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" @bind="field.IsRequired">
+                                        <label class="form-check-label">Required</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-outline-danger" @onclick="() => RemoveCustomField(field)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center py-3">No custom fields added. Click "Add Field" to create custom merge fields.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Create Button -->
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary btn-lg" @onclick="CreateTemplate" disabled="@isCreating">
+                    @if (isCreating)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        <span>Creating Template...</span>
+                    }
+                    else
+                    {
+                        <i class="fas fa-magic me-2"></i>
+                        <span>Create & Open in Editor</span>
+                    }
+                </button>
+                
+                <button type="button" class="btn btn-secondary btn-lg" @onclick="GoBack">
+                    <i class="fas fa-arrow-left me-2"></i>Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateTemplateWithMergeFieldsRequest templateRequest = new();
+    private List<MergeFieldBundle> availableBundles = new();
+    private List<string> availableCategories = new();
+    private List<MergeField> selectedFields = new();
+    private bool isLoadingBundles = true;
+    private bool isCreating = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBundles();
+        await LoadCategories();
+    }
+
+    private async Task LoadBundles()
+    {
+        isLoadingBundles = true;
+        StateHasChanged();
+
+        try
+        {
+            availableBundles = (await MergeFieldService.GetAvailableBundlesAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load merge field bundles: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingBundles = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        try
+        {
+            availableCategories = (await MergeFieldService.GetAvailableCategoriesAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load categories: {ex.Message}");
+        }
+    }
+
+    private async Task ToggleBundle(string bundleId, bool isSelected)
+    {
+        if (isSelected)
+        {
+            templateRequest.SelectedBundles.Add(bundleId);
+        }
+        else
+        {
+            templateRequest.SelectedBundles.Remove(bundleId);
+        }
+
+        await UpdateSelectedFields();
+    }
+
+    private async Task UpdateSelectedFields()
+    {
+        selectedFields.Clear();
+
+        // Add fields from selected bundles
+        foreach (var bundleId in templateRequest.SelectedBundles)
+        {
+            var bundle = await MergeFieldService.GetBundleAsync(bundleId);
+            selectedFields.AddRange(bundle.Fields);
+        }
+
+        // Add custom fields
+        selectedFields.AddRange(templateRequest.CustomFields);
+
+        // Remove duplicates
+        selectedFields = selectedFields.DistinctBy(f => f.Name).ToList();
+
+        StateHasChanged();
+    }
+
+    private void AddCustomField()
+    {
+        templateRequest.CustomFields.Add(new MergeField
+        {
+            Name = "",
+            DisplayName = "",
+            Type = MergeFieldType.Text,
+            Category = "Custom"
+        });
+        StateHasChanged();
+    }
+
+    private async Task RemoveCustomField(MergeField field)
+    {
+        templateRequest.CustomFields.Remove(field);
+        await UpdateSelectedFields();
+    }
+
+    private async Task CreateTemplate()
+    {
+        if (string.IsNullOrWhiteSpace(templateRequest.Name))
+        {
+            await NotificationService.ShowWarningAsync("Validation Error", "Template name is required.");
+            return;
+        }
+
+        isCreating = true;
+        StateHasChanged();
+
+        try
+        {
+            var result = await MergeFieldService.CreateTemplateWithMergeFieldsAsync(templateRequest);
+            
+            if (result.Success)
+            {
+                await NotificationService.ShowSuccessAsync("Success", 
+                    $"Template '{templateRequest.Name}' created successfully with {result.Data?.MergeFields.Count ?? 0} merge fields!");
+                
+                // Navigate to the visual editor to build the template content
+                Navigation.NavigateTo($"/templates/editor/{result.Data?.Id}");
+            }
+            else
+            {
+                await NotificationService.ShowErrorAsync("Error", $"Failed to create template: {result.Error}");
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"An error occurred while creating the template: {ex.Message}");
+        }
+        finally
+        {
+            isCreating = false;
+            StateHasChanged();
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/templates");
+    }
+
+    private string GetFieldTypeBadgeColor(MergeFieldType type)
+    {
+        return type switch
+        {
+            MergeFieldType.Text => "primary",
+            MergeFieldType.Number => "success",
+            MergeFieldType.Date => "info",
+            MergeFieldType.Currency => "warning",
+            MergeFieldType.Boolean => "secondary",
+            MergeFieldType.Email => "primary",
+            MergeFieldType.Phone => "primary",
+            MergeFieldType.Address => "dark",
+            MergeFieldType.Select => "purple",
+            MergeFieldType.Image => "danger",
+            _ => "light"
+        };
+    }
+} 

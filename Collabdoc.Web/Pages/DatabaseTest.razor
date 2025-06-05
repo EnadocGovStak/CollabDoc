@@ -1,0 +1,172 @@
+@page "/database-test"
+@using Collabdoc.Web.Services
+@inject IDocumentRepository DocumentRepository
+@inject ILogger<DatabaseTest> Logger
+
+<PageTitle>Database Test - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Entity Framework Database Test</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Database Connection Test</h5>
+                            <button class="btn btn-primary" @onclick="TestConnection" disabled="@isLoading">
+                                @if (isLoading)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                }
+                                Test Connection
+                            </button>
+                            
+                            @if (!string.IsNullOrEmpty(connectionResult))
+                            {
+                                <div class="alert @(connectionSuccess ? "alert-success" : "alert-danger") mt-3">
+                                    @connectionResult
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5>Document Statistics</h5>
+                            @if (documentStats != null)
+                            {
+                                <ul class="list-group">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Total Documents
+                                        <span class="badge bg-primary rounded-pill">@documentStats.TotalDocuments</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Recent Documents
+                                        <span class="badge bg-secondary rounded-pill">@documentStats.RecentDocuments</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Templates
+                                        <span class="badge bg-info rounded-pill">@documentStats.Templates</span>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                    
+                    @if (recentDocuments != null && recentDocuments.Any())
+                    {
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Recent Documents from Database</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Document ID</th>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Status</th>
+                                                <th>Created</th>
+                                                <th>Last Modified</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var doc in recentDocuments)
+                                            {
+                                                <tr>
+                                                    <td>@doc.DocumentId</td>
+                                                    <td>@doc.Name</td>
+                                                    <td>@doc.Category</td>
+                                                    <td>
+                                                        <span class="badge bg-@(doc.Status == "Active" ? "success" : "secondary")">
+                                                            @doc.Status
+                                                        </span>
+                                                    </td>
+                                                    <td>@doc.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                                    <td>@doc.LastModified.ToString("yyyy-MM-dd HH:mm")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isLoading = false;
+    private string connectionResult = "";
+    private bool connectionSuccess = false;
+    private DocumentStats? documentStats;
+    private IEnumerable<Collabdoc.Web.Data.Entities.Document>? recentDocuments;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDocumentStats();
+    }
+
+    private async Task TestConnection()
+    {
+        isLoading = true;
+        connectionResult = "";
+        
+        try
+        {
+            connectionSuccess = await DocumentRepository.TestDatabaseConnectionAsync();
+            connectionResult = connectionSuccess 
+                ? "✅ Database connection successful! Entity Framework is working properly."
+                : "❌ Database connection failed.";
+                
+            if (connectionSuccess)
+            {
+                await LoadDocumentStats();
+            }
+        }
+        catch (Exception ex)
+        {
+            connectionSuccess = false;
+            connectionResult = $"❌ Error testing connection: {ex.Message}";
+            Logger.LogError(ex, "Error testing database connection");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task LoadDocumentStats()
+    {
+        try
+        {
+            var totalCount = await DocumentRepository.GetTotalDocumentCountAsync();
+            var recentDocs = await DocumentRepository.GetRecentDocumentsAsync(5);
+            var templates = await DocumentRepository.GetTemplatesAsync();
+            
+            documentStats = new DocumentStats
+            {
+                TotalDocuments = totalCount,
+                RecentDocuments = recentDocs.Count(),
+                Templates = templates.Count()
+            };
+            
+            recentDocuments = recentDocs;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading document statistics");
+        }
+    }
+
+    private class DocumentStats
+    {
+        public int TotalDocuments { get; set; }
+        public int RecentDocuments { get; set; }
+        public int Templates { get; set; }
+    }
+} 

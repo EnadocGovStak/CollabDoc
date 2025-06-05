@@ -1,0 +1,505 @@
+@page "/templates/edit/{id:int}"
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Cards
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Popups
+@using Collabdoc.Web.Services
+@using Collabdoc.Web.Data
+@inject IDocumentRepository DocumentRepository
+@inject IMergeFieldService MergeFieldService
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+
+<PageTitle>Edit Template - Collabdoc</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 text-primary">
+                        <i class="fas fa-edit me-3"></i>
+                        Edit Template
+                    </h1>
+                    <p class="lead">Modify template properties and merge fields</p>
+                </div>
+                <div>
+                    <SfButton CssClass="btn btn-outline-secondary me-2" OnClick="GoBack">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Templates
+                    </SfButton>
+                    <SfButton CssClass="btn btn-primary" OnClick="SaveTemplate" IsPrimary="true">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </SfButton>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading template...</p>
+            </div>
+        </div>
+    }
+    else if (template == null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <h4>Template Not Found</h4>
+                    <p>The requested template could not be found. It may have been deleted or you may not have permission to access it.</p>
+                    <SfButton CssClass="btn btn-primary" OnClick="GoBack">
+                        <i class="fas fa-arrow-left me-2"></i>Return to Templates
+                    </SfButton>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="@template" OnValidSubmit="SaveTemplate">
+            <DataAnnotationsValidator />
+            
+            <!-- Basic Information -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <SfCard>
+                        <CardHeader Title="Basic Information" />
+                        <CardContent>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Template Name *</label>
+                                    <SfTextBox @bind-Value="template.Name" Placeholder="Enter template name" CssClass="form-control"></SfTextBox>
+                                    <ValidationMessage For="() => template.Name" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Category</label>
+                                    <SfDropDownList TItem="string" TValue="string" @bind-Value="template.Category" 
+                                                  DataSource="@categoryOptions" CssClass="form-control">
+                                        <DropDownListFieldSettings Value="@nameof(String)" Text="@nameof(String)"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label">Description</label>
+                                    <SfTextBox @bind-Value="template.Description" Multiline="true" 
+                                             Placeholder="Enter template description" CssClass="form-control"></SfTextBox>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </SfCard>
+                </div>
+            </div>
+
+            <!-- Merge Fields -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <SfCard>
+                        <CardHeader Title="Merge Fields" />
+                        <CardContent>
+                            @if (template.MergeFields?.Any() == true)
+                            {
+                                <div class="row">
+                                    @foreach (var field in template.MergeFields)
+                                    {
+                                        <div class="col-md-6 col-lg-4 mb-3">
+                                            <div class="border rounded p-3 bg-light">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1">@field.Name</h6>
+                                                        <small class="text-muted">@field.Type</small>
+                                                        @if (!string.IsNullOrEmpty(field.Description))
+                                                        {
+                                                            <p class="small mb-0 mt-1">@field.Description</p>
+                                                        }
+                                                    </div>
+                                                    <SfButton CssClass="btn-sm btn-outline-danger" OnClick="() => RemoveMergeField(field.Name)">
+                                                        <i class="fas fa-times"></i>
+                                                    </SfButton>
+                                                </div>
+                                                @if (field.IsRequired)
+                                                {
+                                                    <span class="badge bg-warning text-dark mt-2">Required</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <SfButton CssClass="btn btn-outline-primary" OnClick="() => showAddFieldDialog = true">
+                                        <i class="fas fa-plus me-2"></i>Add New Field
+                                    </SfButton>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                    <h5>No Merge Fields</h5>
+                                    <p class="text-muted">This template doesn't have any merge fields yet.</p>
+                                    <SfButton CssClass="btn btn-primary" OnClick="() => showAddFieldDialog = true">
+                                        <i class="fas fa-plus me-2"></i>Add First Field
+                                    </SfButton>
+                                </div>
+                            }
+                        </CardContent>
+                    </SfCard>
+                </div>
+            </div>
+
+            <!-- Record Management -->
+            @if (template.RecordSettings != null)
+            {
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <SfCard>
+                            <CardHeader Title="Record Management" />
+                            <CardContent>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Retention Period</label>
+                                        <SfTextBox @bind-Value="template.RecordSettings.RetentionPeriod" 
+                                                 Placeholder="e.g., 365 days" CssClass="form-control"></SfTextBox>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Classification</label>
+                                        <SfDropDownList TItem="string" TValue="string" @bind-Value="template.RecordSettings.Classification" 
+                                                      DataSource="@classificationOptions" CssClass="form-control">
+                                            <DropDownListFieldSettings Value="@nameof(String)" Text="@nameof(String)"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="col-md-4 mb-3 d-flex align-items-end">
+                                        <div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" @bind="template.RecordSettings.RequireApproval" id="requireApproval">
+                                                <label class="form-check-label" for="requireApproval">Require Approval</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" @bind="template.RecordSettings.TrackVersions" id="trackVersions">
+                                                <label class="form-check-label" for="trackVersions">Track Versions</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" @bind="template.RecordSettings.ArchiveOnExpiry" id="archiveOnExpiry">
+                                                <label class="form-check-label" for="archiveOnExpiry">Archive on Expiry</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </SfCard>
+                    </div>
+                </div>
+            }
+
+            <!-- Template Stats -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <SfCard>
+                        <CardHeader Title="Template Information" />
+                        <CardContent>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <strong>Created:</strong><br>
+                                    <small class="text-muted">@template.CreatedAt.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Last Modified:</strong><br>
+                                    <small class="text-muted">@template.ModifiedAt?.ToString("MMM dd, yyyy") ?? "Never"</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>File Size:</strong><br>
+                                    <small class="text-muted">@FormatFileSize(template.Size)</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <strong>Template ID:</strong><br>
+                                    <small class="text-muted">@template.DocumentId</small>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </SfCard>
+                </div>
+            </div>
+        </EditForm>
+    }
+</div>
+
+<!-- Add Field Dialog -->
+<SfDialog @bind-Visible="showAddFieldDialog" Header="Add Merge Field" Width="500px" IsModal="true">
+    <DialogTemplates>
+        <Content>
+            <div class="mb-3">
+                <label class="form-label">Field Name *</label>
+                <SfTextBox @bind-Value="newFieldName" Placeholder="Enter field name" CssClass="form-control"></SfTextBox>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Field Type</label>
+                <SfDropDownList TItem="string" TValue="string" @bind-Value="newFieldType" 
+                              DataSource="@fieldTypes" CssClass="form-control">
+                    <DropDownListFieldSettings Value="@nameof(String)" Text="@nameof(String)"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <SfTextBox @bind-Value="newFieldDescription" Multiline="true" 
+                         Placeholder="Enter field description" CssClass="form-control"></SfTextBox>
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" @bind="newFieldRequired" id="newFieldRequired">
+                    <label class="form-check-label" for="newFieldRequired">Required Field</label>
+                </div>
+            </div>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Add Field" IsPrimary="true" OnClick="AddMergeField"></DialogButton>
+        <DialogButton Content="Cancel" OnClick="() => showAddFieldDialog = false"></DialogButton>
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    
+    private TemplateInfo? template;
+    private bool isLoading = true;
+    private bool showAddFieldDialog = false;
+    
+    // New field dialog
+    private string newFieldName = string.Empty;
+    private string newFieldType = "Text";
+    private string newFieldDescription = string.Empty;
+    private bool newFieldRequired = false;
+    
+    private List<string> categoryOptions = new()
+    {
+        "Business Documents", "Mail Merge", "Reports", "Custom",
+        "HR Documents", "Invoicing", "Maintenance", "Contracts"
+    };
+    
+    private List<string> classificationOptions = new()
+    {
+        "Public", "Internal", "Confidential", "Restricted"
+    };
+    
+    private List<string> fieldTypes = new()
+    {
+        "Text", "Number", "Date", "Currency", "Email", "Phone", 
+        "Address", "Select", "Boolean", "Image"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTemplate();
+    }
+
+    private async Task LoadTemplate()
+    {
+        isLoading = true;
+        try
+        {
+            var dbTemplate = await DocumentRepository.GetDocumentByIdAsync(Id);
+            if (dbTemplate != null && dbTemplate.IsTemplate)
+            {
+                template = new TemplateInfo
+                {
+                    Id = Id,
+                    Name = dbTemplate.Name,
+                    Description = dbTemplate.Description ?? "",
+                    Category = dbTemplate.Category ?? "Custom",
+                    CreatedAt = dbTemplate.CreatedAt,
+                    ModifiedAt = dbTemplate.LastModified,
+                    Size = (int)dbTemplate.Size,
+                    DocumentId = dbTemplate.DocumentId,
+                    MergeFields = new List<MergeField>(),
+                    RecordSettings = new RecordManagementSettings
+                    {
+                        IsEnabled = true,
+                        RetentionPeriod = "365 days",
+                        Classification = "Internal",
+                        RequireApproval = false,
+                        TrackVersions = true,
+                        ArchiveOnExpiry = true
+                    }
+                };
+
+                // For now, we'll skip metadata parsing since Document entity doesn't have Metadata property
+                // TODO: Add metadata support to Document entity or use a different approach
+                /*
+                // Parse metadata to get merge fields if they exist
+                if (!string.IsNullOrEmpty(dbTemplate.Metadata))
+                {
+                    try
+                    {
+                        var metadata = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(dbTemplate.Metadata);
+                        if (metadata?.ContainsKey("MergeFields") == true)
+                        {
+                            var fieldsJson = metadata["MergeFields"].ToString();
+                            if (!string.IsNullOrEmpty(fieldsJson))
+                            {
+                                template.MergeFields = System.Text.Json.JsonSerializer.Deserialize<List<MergeField>>(fieldsJson) ?? new List<MergeField>();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ignore parsing errors
+                    }
+                }
+                */
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to load template: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task SaveTemplate()
+    {
+        if (template == null) return;
+
+        try
+        {
+            // Update template in database
+            var dbTemplate = await DocumentRepository.GetDocumentByIdAsync(Id);
+            if (dbTemplate != null)
+            {
+                dbTemplate.Name = template.Name;
+                dbTemplate.Description = template.Description;
+                dbTemplate.Category = template.Category;
+                dbTemplate.LastModified = DateTime.UtcNow;
+                
+                // TODO: Add metadata support to Document entity for merge fields
+                // For now, we can only update basic template properties
+                /*
+                // Update metadata with merge fields
+                var metadata = new Dictionary<string, object>();
+                if (template.MergeFields?.Any() == true)
+                {
+                    metadata["MergeFields"] = template.MergeFields;
+                }
+                if (template.RecordSettings != null)
+                {
+                    metadata["RecordManagement"] = template.RecordSettings;
+                }
+                
+                dbTemplate.Metadata = System.Text.Json.JsonSerializer.Serialize(metadata);
+                */
+                
+                await DocumentRepository.UpdateDocumentAsync(dbTemplate);
+                
+                await NotificationService.ShowSuccessAsync("Success", "Template updated successfully!");
+                
+                // Optionally navigate back
+                // Navigation.NavigateTo("/templates");
+            }
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.ShowErrorAsync("Error", $"Failed to save template: {ex.Message}");
+        }
+    }
+
+    private async Task AddMergeField()
+    {
+        if (string.IsNullOrWhiteSpace(newFieldName))
+        {
+            await NotificationService.ShowWarningAsync("Warning", "Please enter a field name.");
+            return;
+        }
+
+        if (template?.MergeFields?.Any(f => f.Name.Equals(newFieldName, StringComparison.OrdinalIgnoreCase)) == true)
+        {
+            await NotificationService.ShowWarningAsync("Warning", "A field with this name already exists.");
+            return;
+        }
+
+        template ??= new TemplateInfo { MergeFields = new List<MergeField>() };
+        template.MergeFields ??= new List<MergeField>();
+
+        template.MergeFields.Add(new MergeField
+        {
+            Name = newFieldName,
+            Type = newFieldType,
+            Description = newFieldDescription,
+            IsRequired = newFieldRequired
+        });
+
+        // Reset form
+        newFieldName = string.Empty;
+        newFieldType = "Text";
+        newFieldDescription = string.Empty;
+        newFieldRequired = false;
+        showAddFieldDialog = false;
+
+        await NotificationService.ShowSuccessAsync("Success", "Merge field added successfully!");
+        StateHasChanged();
+    }
+
+    private async Task RemoveMergeField(string fieldName)
+    {
+        if (template?.MergeFields != null)
+        {
+            var removed = template.MergeFields.RemoveAll(f => f.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+            if (removed > 0)
+            {
+                await NotificationService.ShowSuccessAsync("Success", "Merge field removed successfully!");
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/templates");
+    }
+
+    private string FormatFileSize(int bytes)
+    {
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+
+    public class TemplateInfo
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
+        public int Size { get; set; }
+        public string DocumentId { get; set; } = string.Empty;
+        public List<MergeField>? MergeFields { get; set; }
+        public RecordManagementSettings? RecordSettings { get; set; }
+    }
+
+    public class MergeField
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsRequired { get; set; }
+    }
+
+    public class RecordManagementSettings
+    {
+        public bool IsEnabled { get; set; }
+        public string RetentionPeriod { get; set; } = string.Empty;
+        public string Classification { get; set; } = string.Empty;
+        public bool RequireApproval { get; set; }
+        public bool TrackVersions { get; set; }
+        public bool ArchiveOnExpiry { get; set; }
+    }
+} 
