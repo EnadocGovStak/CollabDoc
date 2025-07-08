@@ -28,8 +28,10 @@ import {
 import { registerLicense } from '@syncfusion/ej2-base';
 import './DocumentEditor.css';
 
+import config from '../config';
+
 // Register Syncfusion license
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
+registerLicense(config.syncfusion.licenseKey);
 
 // Inject necessary modules for Document Editor features
 DocumentEditorContainerComponent.Inject(

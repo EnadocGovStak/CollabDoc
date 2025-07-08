@@ -7,7 +7,7 @@
 const config = {
   syncfusion: {
     // Using provided Syncfusion license key
-    licenseKey: process.env.REACT_APP_SYNCFUSION_LICENSE_KEY || 'Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=',
+    licenseKey: process.env.REACT_APP_SYNCFUSION_LICENSE_KEY || '',
   },
   azureAd: {
     clientId: process.env.REACT_APP_AZURE_AD_CLIENT_ID || '',

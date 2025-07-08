@@ -7,7 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import config from '../config';
 
 // Register Syncfusion license
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
+registerLicense(config.syncfusion.licenseKey);
 
 interface DocumentEditorProps {
   documentId?: string;
