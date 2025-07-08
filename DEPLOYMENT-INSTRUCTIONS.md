@@ -3,9 +3,12 @@
 ## ✅ Pre-Deployment Security Check Complete
 
 All hardcoded secrets have been removed from your codebase:
-- ✅ Syncfusion license keys now use environment variables
+- ✅ Syncfusion license keys now use environment variables with production fallback
 - ✅ Azure AD client IDs use environment variables
+- ✅ API URLs updated to use production backend URL as fallback
 - ✅ No hardcoded secrets found in source code
+
+**Note**: Fallback values are set for production deployment but will be overridden by GitHub Secrets during build.
 
 ## 📋 Step-by-Step Deployment Instructions
 
