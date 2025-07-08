@@ -1,0 +1,519 @@
+{
+  "categories": {
+    "Document": {
+      "description": "Basic document metadata fields for document information and properties",
+      "fields": [
+        {
+          "name": "document_title",
+          "description": "The title of the document"
+        },
+        {
+          "name": "document_id",
+          "description": "Unique identifier for the document"
+        },
+        {
+          "name": "document_date",
+          "description": "The date the document was created or effective date"
+        },
+        {
+          "name": "date",
+          "description": "Current date, typically used for the document date"
+        },
+        {
+          "name": "signature_field",
+          "description": "Location for signature"
+        },
+        {
+          "name": "reference_number",
+          "description": "Reference or tracking number for the document"
+        }
+      ]
+    },
+    "Customer": {
+      "description": "Fields for customer or client information",
+      "fields": [
+        {
+          "name": "customer_name",
+          "description": "Full name of the customer"
+        },
+        {
+          "name": "customer_email",
+          "description": "Email address of the customer"
+        },
+        {
+          "name": "customer_phone",
+          "description": "Phone number of the customer"
+        },
+        {
+          "name": "customer_address",
+          "description": "Street address of the customer"
+        },
+        {
+          "name": "customer_city",
+          "description": "City of the customer's address"
+        },
+        {
+          "name": "customer_state",
+          "description": "State/province of the customer's address"
+        },
+        {
+          "name": "customer_zip",
+          "description": "ZIP/postal code of the customer's address"
+        },
+        {
+          "name": "customer_id",
+          "description": "Unique identifier for the customer"
+        },
+        {
+          "name": "customer_since",
+          "description": "Date the customer relationship began"
+        }
+      ]
+    },
+    "Company": {
+      "description": "Fields for company and business information",
+      "fields": [
+        {
+          "name": "company_name",
+          "description": "Name of the company"
+        },
+        {
+          "name": "company_address",
+          "description": "Street address of the company"
+        },
+        {
+          "name": "company_phone",
+          "description": "Phone number of the company"
+        },
+        {
+          "name": "company_email",
+          "description": "Email address of the company"
+        },
+        {
+          "name": "company_website",
+          "description": "Website URL of the company"
+        },
+        {
+          "name": "company_logo",
+          "description": "Logo of the company (path or placeholder)"
+        },
+        {
+          "name": "company_registration",
+          "description": "Business registration number"
+        },
+        {
+          "name": "tax_id",
+          "description": "Tax identification number"
+        },
+        {
+          "name": "legal_representative",
+          "description": "Name of legal representative or authorized signatory"
+        }
+      ]
+    },
+    "Invoice": {
+      "description": "Fields for invoice and billing information",
+      "fields": [
+        {
+          "name": "invoice_number",
+          "description": "Unique invoice identifier"
+        },
+        {
+          "name": "invoice_date",
+          "description": "Date the invoice was issued"
+        },
+        {
+          "name": "due_date",
+          "description": "Date payment is due"
+        },
+        {
+          "name": "payment_terms",
+          "description": "Terms of payment (e.g., Net 30)"
+        },
+        {
+          "name": "total_amount",
+          "description": "Total amount due including tax"
+        },
+        {
+          "name": "subtotal",
+          "description": "Subtotal amount before tax"
+        },
+        {
+          "name": "tax",
+          "description": "Tax amount"
+        },
+        {
+          "name": "discount",
+          "description": "Discount amount or percentage"
+        },
+        {
+          "name": "balance_due",
+          "description": "Remaining balance due"
+        },
+        {
+          "name": "billing_address",
+          "description": "Address where invoice is sent"
+        },
+        {
+          "name": "shipping_address",
+          "description": "Address where items are shipped"
+        },
+        {
+          "name": "payment_method",
+          "description": "Method of payment"
+        }
+      ]
+    },
+    "Contract": {
+      "description": "Fields for contract and agreement information",
+      "fields": [
+        {
+          "name": "contract_number",
+          "description": "Unique contract identifier"
+        },
+        {
+          "name": "contract_date",
+          "description": "Date the contract was created"
+        },
+        {
+          "name": "effective_date",
+          "description": "Date the contract becomes effective"
+        },
+        {
+          "name": "expiration_date",
+          "description": "Date the contract expires"
+        },
+        {
+          "name": "contract_term",
+          "description": "Duration of the contract"
+        },
+        {
+          "name": "contract_value",
+          "description": "Monetary value of the contract"
+        },
+        {
+          "name": "party_one",
+          "description": "First party to the contract"
+        },
+        {
+          "name": "party_two",
+          "description": "Second party to the contract"
+        },
+        {
+          "name": "termination_clause",
+          "description": "Terms for terminating the contract"
+        },
+        {
+          "name": "renewal_terms",
+          "description": "Terms for renewing the contract"
+        },
+        {
+          "name": "governing_law",
+          "description": "Law that governs the contract"
+        }
+      ]
+    },
+    "Lease/Rental": {
+      "description": "Fields for property lease and rental agreements",
+      "fields": [
+        {
+          "name": "property_address",
+          "description": "Address of the leased/rented property"
+        },
+        {
+          "name": "lease_start_date",
+          "description": "Start date of the lease"
+        },
+        {
+          "name": "lease_end_date",
+          "description": "End date of the lease"
+        },
+        {
+          "name": "monthly_rent",
+          "description": "Monthly rent amount"
+        },
+        {
+          "name": "security_deposit",
+          "description": "Security deposit amount"
+        },
+        {
+          "name": "tenant_name",
+          "description": "Name of the tenant"
+        },
+        {
+          "name": "landlord_name",
+          "description": "Name of the landlord"
+        },
+        {
+          "name": "payment_due_date",
+          "description": "Date rent is due each month"
+        },
+        {
+          "name": "late_fee",
+          "description": "Fee for late payments"
+        },
+        {
+          "name": "occupancy_limit",
+          "description": "Maximum number of occupants"
+        },
+        {
+          "name": "pet_policy",
+          "description": "Policy regarding pets"
+        },
+        {
+          "name": "maintenance_terms",
+          "description": "Terms for property maintenance"
+        }
+      ]
+    },
+    "Employment": {
+      "description": "Fields for employment and HR documents",
+      "fields": [
+        {
+          "name": "employee_name",
+          "description": "Full name of the employee"
+        },
+        {
+          "name": "employee_id",
+          "description": "Unique identifier for the employee"
+        },
+        {
+          "name": "position_title",
+          "description": "Job title or position"
+        },
+        {
+          "name": "department",
+          "description": "Department or division"
+        },
+        {
+          "name": "start_date",
+          "description": "Employment start date"
+        },
+        {
+          "name": "salary",
+          "description": "Salary amount"
+        },
+        {
+          "name": "pay_frequency",
+          "description": "Frequency of pay (e.g., bi-weekly)"
+        },
+        {
+          "name": "manager",
+          "description": "Name of the employee's manager"
+        },
+        {
+          "name": "work_location",
+          "description": "Location of work"
+        },
+        {
+          "name": "work_hours",
+          "description": "Regular work hours"
+        },
+        {
+          "name": "probation_period",
+          "description": "Length of probation period"
+        },
+        {
+          "name": "benefits",
+          "description": "Summary of employee benefits"
+        },
+        {
+          "name": "vacation_days",
+          "description": "Number of vacation days"
+        },
+        {
+          "name": "notice_period",
+          "description": "Notice period for termination"
+        }
+      ]
+    },
+    "Job_Offer": {
+      "description": "Fields for job offer letters and recruitment",
+      "fields": [
+        {
+          "name": "candidate_name",
+          "description": "Name of the job candidate"
+        },
+        {
+          "name": "position_offered",
+          "description": "Job position being offered"
+        },
+        {
+          "name": "salary_offered",
+          "description": "Salary offered for the position"
+        },
+        {
+          "name": "start_date",
+          "description": "Proposed start date"
+        },
+        {
+          "name": "reporting_to",
+          "description": "Manager or supervisor name"
+        },
+        {
+          "name": "offer_expiry",
+          "description": "Date the offer expires"
+        },
+        {
+          "name": "benefits_summary",
+          "description": "Summary of benefits offered"
+        },
+        {
+          "name": "signing_bonus",
+          "description": "Signing bonus amount, if any"
+        },
+        {
+          "name": "equity_offer",
+          "description": "Equity or stock options offered"
+        }
+      ]
+    },
+    "HR_Action": {
+      "description": "Fields for HR actions like promotions, warnings, etc.",
+      "fields": [
+        {
+          "name": "employee_name",
+          "description": "Name of the employee"
+        },
+        {
+          "name": "employee_id",
+          "description": "Employee ID number"
+        },
+        {
+          "name": "action_type",
+          "description": "Type of HR action (promotion, warning, etc.)"
+        },
+        {
+          "name": "action_date",
+          "description": "Date the action is documented"
+        },
+        {
+          "name": "effective_date",
+          "description": "Date the action takes effect"
+        },
+        {
+          "name": "current_position",
+          "description": "Current position before the action"
+        },
+        {
+          "name": "new_position",
+          "description": "New position after the action"
+        },
+        {
+          "name": "current_salary",
+          "description": "Current salary before the action"
+        },
+        {
+          "name": "new_salary",
+          "description": "New salary after the action"
+        },
+        {
+          "name": "reason",
+          "description": "Reason for the HR action"
+        },
+        {
+          "name": "performance_summary",
+          "description": "Summary of performance evaluation"
+        },
+        {
+          "name": "improvement_plan",
+          "description": "Plan for improvement, if applicable"
+        },
+        {
+          "name": "review_date",
+          "description": "Date for next review"
+        }
+      ]
+    },
+    "Legal": {
+      "description": "Fields for legal documents and agreements",
+      "fields": [
+        {
+          "name": "party_name",
+          "description": "Name of the party to the agreement"
+        },
+        {
+          "name": "legal_entity_type",
+          "description": "Type of legal entity (LLC, Corp, etc.)"
+        },
+        {
+          "name": "jurisdiction",
+          "description": "Legal jurisdiction"
+        },
+        {
+          "name": "governing_law",
+          "description": "Law governing the agreement"
+        },
+        {
+          "name": "arbitration_clause",
+          "description": "Arbitration terms"
+        },
+        {
+          "name": "confidentiality_terms",
+          "description": "Terms of confidentiality"
+        },
+        {
+          "name": "liability_clause",
+          "description": "Liability limitations"
+        },
+        {
+          "name": "indemnification_clause",
+          "description": "Indemnification terms"
+        },
+        {
+          "name": "force_majeure",
+          "description": "Force majeure clause"
+        }
+      ]
+    },
+    "Financial": {
+      "description": "Fields for financial documents and transactions",
+      "fields": [
+        {
+          "name": "account_number",
+          "description": "Account number"
+        },
+        {
+          "name": "account_name",
+          "description": "Name on the account"
+        },
+        {
+          "name": "transaction_date",
+          "description": "Date of the transaction"
+        },
+        {
+          "name": "transaction_amount",
+          "description": "Amount of the transaction"
+        },
+        {
+          "name": "balance",
+          "description": "Current balance"
+        },
+        {
+          "name": "payment_method",
+          "description": "Method of payment"
+        },
+        {
+          "name": "currency",
+          "description": "Currency used"
+        },
+        {
+          "name": "exchange_rate",
+          "description": "Exchange rate, if applicable"
+        },
+        {
+          "name": "interest_rate",
+          "description": "Interest rate, if applicable"
+        },
+        {
+          "name": "loan_term",
+          "description": "Term of the loan"
+        },
+        {
+          "name": "maturity_date",
+          "description": "Date when the loan or investment matures"
+        }
+      ]
+    }
+  }
+} 

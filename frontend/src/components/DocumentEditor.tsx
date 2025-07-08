@@ -1,20 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { 
-  DocumentEditorComponent, 
-  DocumentEditorContainerComponent, 
-  Toolbar, 
-  Print,
-  SfdtExport,
-  WordExport,
-  Editor,
-  Selection,
-  EditorHistory
+  DocumentEditorContainerComponent
 } from '@syncfusion/ej2-react-documenteditor';
+import { registerLicense } from '@syncfusion/ej2-base';
 import { useAuth } from '../contexts/AuthContext';
 import config from '../config';
 
-// Register Syncfusion document editor modules
-DocumentEditorContainerComponent.Inject(Toolbar, Print, SfdtExport, WordExport, Editor, Selection, EditorHistory);
+// Register Syncfusion license
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
 
 interface DocumentEditorProps {
   documentId?: string;
@@ -29,7 +22,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
   readOnly = false,
   onSave
 }) => {
-  const editorRef = useRef<DocumentEditorContainerComponent | null>(null);
+  const editorRef = useRef<any>(null);
   const { getAccessToken } = useAuth();
 
   // Set Syncfusion license key
@@ -57,7 +50,9 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
           
           if (response.ok) {
             const data = await response.json();
-            editorRef.current.documentEditor.open(data.content);
+            if (editorRef.current?.documentEditor) {
+              editorRef.current.documentEditor.open(data.content);
+            }
           } else {
             console.error('Failed to load document');
           }
@@ -87,7 +82,9 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
           
           if (response.ok) {
             const data = await response.json();
-            editorRef.current.documentEditor.open(data.content);
+            if (editorRef.current?.documentEditor) {
+              editorRef.current.documentEditor.open(data.content);
+            }
           } else {
             console.error('Failed to load template');
           }
@@ -102,7 +99,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   // Handle document save
   const handleSave = async () => {
-    if (editorRef.current) {
+    if (editorRef.current?.documentEditor) {
       // Get document content in SFDT format
       const documentContent = editorRef.current.documentEditor.serialize();
       
@@ -138,7 +135,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
 
   // Handle document export
   const handleExport = async () => {
-    if (editorRef.current) {
+    if (editorRef.current?.documentEditor) {
       editorRef.current.documentEditor.saveAsBlob('Docx').then(async (blob: Blob) => {
         try {
           const token = await getAccessToken();
@@ -185,13 +182,7 @@ const DocumentEditor: React.FC<DocumentEditorProps> = ({
         ref={editorRef}
         height="700px"
         enableToolbar={!readOnly}
-        isReadOnly={readOnly}
-        enableEditor={!readOnly}
-        enableSelection={true}
-        enableEditorHistory={!readOnly}
-        enableSfdtExport={true}
-        enableWordExport={true}
-        enablePrint={true}
+        readOnly={readOnly}
       />
     </div>
   );

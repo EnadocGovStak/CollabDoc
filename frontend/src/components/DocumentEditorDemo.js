@@ -1,274 +1,229 @@
 import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
-import { DocumentEditorContainerComponent, Toolbar } from '@syncfusion/ej2-react-documenteditor';
+import {
+  DocumentEditorContainerComponent,
+  Toolbar,
+  SfdtExport,
+  WordExport,
+  TextExport,
+  Selection,
+  Search,
+  ImageResizer,
+  Editor,
+  EditorHistory,
+  ContextMenu,
+  OptionsPane,
+  Print,
+  HyperlinkDialog,
+  TableDialog,
+  BookmarkDialog,
+  TableOfContentsDialog,
+  PageSetupDialog,
+  StyleDialog,
+  ListDialog,
+  ParagraphDialog,
+  FontDialog,
+  TablePropertiesDialog,
+  StylesDialog
+} from '@syncfusion/ej2-react-documenteditor';
 import { registerLicense } from '@syncfusion/ej2-base';
 import './DocumentEditor.css';
 
 // Register Syncfusion license
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
 
-// Inject required modules
-DocumentEditorContainerComponent.Inject(Toolbar);
+// Inject necessary modules for Document Editor features
+DocumentEditorContainerComponent.Inject(
+  Toolbar, SfdtExport, WordExport, TextExport, Selection, Search, ImageResizer,
+  Editor, EditorHistory, ContextMenu, OptionsPane, Print, HyperlinkDialog, TableDialog,
+  BookmarkDialog, TableOfContentsDialog, PageSetupDialog, StyleDialog, ListDialog,
+  ParagraphDialog, FontDialog, TablePropertiesDialog, StylesDialog
+);
 
-const DocumentEditorDemo = forwardRef(({ document, onContentChange, readOnly = false }, ref) => {
-    const editorRef = useRef(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [editorInitialized, setEditorInitialized] = useState(false);
-    const initialLoadCompleted = useRef(false);
-    const contentChangeTimeout = useRef(null);
-    const isContentChangeInProgress = useRef(false);
-    const lastLoadedContent = useRef(null);
-    const [editorKey, setEditorKey] = useState(1); // Add key to force re-render when needed
-
-    // Expose methods via ref
-    useImperativeHandle(ref, () => ({
-        getContent: async () => {
-            if (!editorRef.current?.documentEditor) return null;
-            
-            try {
-                setIsLoading(true);
-                // Prevent content change handler from firing during save
-                isContentChangeInProgress.current = true;
-                const content = await editorRef.current.documentEditor.serialize();
-                return content;
-            } catch (error) {
-                console.error('Error serializing document:', error);
-                return null;
-            } finally {
-                setIsLoading(false);
-                // Re-enable content change handler
-                setTimeout(() => {
-                    isContentChangeInProgress.current = false;
-                }, 100);
-            }
-        },
-        loadContent: async (content) => {
-            if (!editorRef.current || !editorRef.current.documentEditor) {
-                console.warn('Editor reference not available for loading content');
-                return false;
-            }
-
-            try {
-                console.log('Loading content into editor');
-                setIsLoading(true);
-                isContentChangeInProgress.current = true;
-
-                // Ensure content is parsed as object if it's a string
-                let contentObj = content;
-                if (typeof content === 'string') {
-                    try {
-                        contentObj = JSON.parse(content);
-                    } catch (e) {
-                        console.error('Error parsing content:', e);
-                        return false;
-                    }
-                }
-                
-                // Save a reference to this content
-                lastLoadedContent.current = contentObj;
-                
-                // Load the content into the editor
-                editorRef.current.documentEditor.open(JSON.stringify(contentObj));
-                initialLoadCompleted.current = true;
-                
-                // Force refresh if we have issues with content not showing
-                setTimeout(() => {
-                    if (editorRef.current?.documentEditor) {
-                        try {
-                            // Trigger a slight refresh of the editor
-                            editorRef.current.documentEditor.selection.selectAll();
-                            editorRef.current.documentEditor.selection.clearFormatting();
-                        } catch (err) {
-                            console.warn('Minor refresh error:', err);
-                        }
-                    }
-                }, 300);
-                
-                return true;
-            } catch (error) {
-                console.error('Error loading content into editor:', error);
-                // If loading fails, try to force a complete re-render of the editor
-                setEditorKey(prevKey => prevKey + 1);
-                return false;
-            } finally {
-                setIsLoading(false);
-                // Re-enable content change handler after a delay
-                setTimeout(() => {
-                    isContentChangeInProgress.current = false;
-                }, 500);
-            }
-        },
-        reload: () => {
-            if (lastLoadedContent.current && editorRef.current?.documentEditor) {
-                try {
-                    console.log('Reloading editor content from last saved content');
-                    editorRef.current.documentEditor.open(JSON.stringify(lastLoadedContent.current));
-                    return true;
-                } catch (error) {
-                    console.error('Error reloading document:', error);
-                    // If reload fails, force complete re-render
-                    setEditorKey(prevKey => prevKey + 1);
-                    return false;
-                }
-            }
-            return false;
-        },
-        forceRefresh: () => {
-            // Force a complete re-render of the editor component
-            setEditorKey(prevKey => prevKey + 1);
+const DocumentEditorDemo = forwardRef(({ initialContent, onContentChange, documentSettings, onDocumentLoaded, isReadOnly, serviceUrl }, ref) => {
+  const editorInstance = useRef(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  
+  // Effect for cleanup
+  useEffect(() => {
+    return () => {
+      const editor = editorInstance.current?.documentEditor;
+      if (editor && !editor.isDestroyed) {
+        try {
+          if (editor.selection) editor.selection.destroy();
+          if (editor.editor) editor.editor.destroy();
+          if (editor.viewer) editor.viewer.destroy();
+          editor.destroy();
+        } catch (error) {
+          console.warn('Error during editor cleanup:', error);
         }
-    }));
+      }
+    };
+  }, []);
 
-    // Handle the editor creation
-    const created = () => {
-        if (!editorRef.current?.documentEditor) {
-            console.warn('Editor reference not available on creation');
-            return;
+  // Expose editor methods via ref
+  useImperativeHandle(ref, () => ({
+    editor: editorInstance.current?.documentEditor,
+    getContent: async () => {
+      if (editorInstance.current?.documentEditor) {
+        try {
+          return editorInstance.current.documentEditor.serializeContent();
+        } catch (error) {
+          console.error("Error getting content:", error);
+          return null;
+        }
+      }
+      return null;
+    },
+    loadContent: (contentToLoad) => {
+      if (editorInstance.current?.documentEditor && isEditorReady) {
+        try {
+          const editor = editorInstance.current.documentEditor;
+          if (typeof contentToLoad === 'string') {
+            editor.open(contentToLoad === '' ? JSON.stringify({ "sfdt": "" }) : contentToLoad);
+          } else if (typeof contentToLoad === 'object' && contentToLoad !== null) {
+            const contentStr = JSON.stringify(contentToLoad);
+            editor.open(!contentStr.includes('"sfdt"') ? 
+              JSON.stringify({ "sfdt": contentStr }) : contentStr);
+          } else {
+            editor.open(JSON.stringify({ "sfdt": "" }));
+          }
+        } catch (error) {
+          console.error("Error loading content:", error);
+          editorInstance.current.documentEditor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      }
+    },
+    setReadOnly: (readOnlyStatus) => {
+      if (editorInstance.current?.documentEditor) {
+        editorInstance.current.documentEditor.isReadOnly = readOnlyStatus;
+      }
+    }
+  }));
+
+  // Effect for editor initialization and content loading
+  useEffect(() => {
+    const initializeEditor = async () => {
+      if (!editorInstance.current?.documentEditor || !isEditorReady) return;
+      
+      try {
+        const editor = editorInstance.current.documentEditor;
+        
+        // Skip if editor is not ready
+        if (editor.isDestroyed || !editor.editor) {
+          console.warn('Editor not ready for initialization');
+          return;
         }
         
-        try {
-            // Always start with a blank document first
-            editorRef.current.documentEditor.openBlank();
-            
-            // Set up custom handlers
-            const container = editorRef.current;
-            
-            // Handle document changes with debouncing
-            container.documentEditor.contentChange = () => {
-                // Don't update during save or initial load
-                if (isContentChangeInProgress.current || !initialLoadCompleted.current) {
-                    return;
-                }
-                
-                // Clear any existing timeout to debounce rapid changes
-                if (contentChangeTimeout.current) {
-                    clearTimeout(contentChangeTimeout.current);
-                }
-                
-                // Debounce content changes to prevent interrupting typing
-                contentChangeTimeout.current = setTimeout(() => {
-                    if (onContentChange && container.documentEditor) {
-                        try {
-                            const content = container.documentEditor.serialize();
-                            onContentChange(content);
-                        } catch (error) {
-                            console.error('Error handling content change:', error);
-                        }
-                    }
-                }, 1000); // Only update after 1 second of no typing
-            };
-            
-            // Disable default save dialog
-            container.documentEditor.saveAsEvent = () => {
-                return false;
-            };
-
-            // Disable default open dialog
-            container.documentEditor.beforeFileOpen = () => {
-                return false;
-            };
-
-            // Mark the editor as initialized
-            setEditorInitialized(true);
-            console.log('Document editor initialized successfully');
-        } catch (error) {
-            console.error('Error creating document editor:', error);
+        // Set read-only state
+        editor.isReadOnly = !!isReadOnly;
+        
+        // Initialize modules
+        if (editor.selection && !editor.selection.isInitialized) {
+          editor.selection.initSelectionModule();
         }
+        
+        if (editor.viewer?.scroller && !editor.viewer.scroller.initialized) {
+          editor.viewer.initViewerScroller();
+        }
+        
+        // Load content with a small delay to ensure initialization is complete
+        await new Promise(resolve => setTimeout(resolve, 0));
+        
+        if (typeof initialContent === 'object' && initialContent !== null) {
+          const contentStr = JSON.stringify(initialContent);
+          editor.open(!contentStr.includes('"sfdt"') ? 
+            JSON.stringify({ "sfdt": contentStr }) : contentStr);
+        } else if (typeof initialContent === 'string' && initialContent) {
+          editor.open(!initialContent.includes('"sfdt"') ? 
+            JSON.stringify({ "sfdt": initialContent }) : initialContent);
+        } else {
+          editor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      } catch (error) {
+        console.error("Error during editor initialization:", error);
+        const editor = editorInstance.current?.documentEditor;
+        if (editor && !editor.isDestroyed) {
+          editor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      }
     };
+    
+    initializeEditor();
+  }, [initialContent, isEditorReady, isReadOnly]);
 
-    // Apply read-only mode when it changes
-    useEffect(() => {
-        if (editorRef.current?.documentEditor) {
-            editorRef.current.documentEditor.isReadOnly = readOnly;
-        }
-    }, [readOnly]);
-
-    // When editor is initialized and we have document content, try to load it
-    useEffect(() => {
-        const loadContent = async () => {
-            // Skip if not initialized or no document
-            if (!editorInitialized || !editorRef.current?.documentEditor || !document) {
-                return;
-            }
-
-            // Prevent content change callbacks during loading
-            isContentChangeInProgress.current = true;
-
+  return (
+    <div className="document-editor-container" style={{ height: '100%', width: '100%' }}>
+      <DocumentEditorContainerComponent
+        id="doc_editor_container"
+        ref={editorInstance}
+        style={{ display: 'block', height: '100%' }}
+        enableToolbar={true}
+        showPropertiesPane={true}
+        serviceUrl={serviceUrl || 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/'}
+        created={() => {
+          console.log("DocumentEditorComponent created");
+          setIsEditorReady(true);
+          if (onDocumentLoaded) {
+            onDocumentLoaded();
+          }
+        }}
+        contentChange={() => {
+          if (onContentChange && editorInstance.current?.documentEditor) {
             try {
-                console.log('Attempting to load document content on initialization');
-                
-                // If we received actual content, try to open it
-                if (document.content && typeof document.content === 'object') {
-                    console.log('Loading content from document object');
-                    lastLoadedContent.current = document.content;
-                    editorRef.current.documentEditor.open(JSON.stringify(document.content));
-                    initialLoadCompleted.current = true;
-                }
-                else if (document.content && typeof document.content === 'string' && document.content.length > 10) {
-                    console.log('Loading content from document string');
-                    try {
-                        const contentObj = JSON.parse(document.content);
-                        lastLoadedContent.current = contentObj;
-                        editorRef.current.documentEditor.open(JSON.stringify(contentObj));
-                    } catch (error) {
-                        // If not valid JSON, try using directly
-                        editorRef.current.documentEditor.open(document.content);
-                        lastLoadedContent.current = document.content;
-                    }
-                    initialLoadCompleted.current = true;
-                }
-                else {
-                    console.log('No valid content found, opening blank document');
-                    editorRef.current.documentEditor.openBlank();
-                    initialLoadCompleted.current = true;
-                }
+              const content = editorInstance.current.documentEditor.serializeContent();
+              onContentChange(content);
             } catch (error) {
-                console.error('Error loading document content:', error);
-                // If there's an error, ensure we have a blank document
-                try {
-                    editorRef.current.documentEditor.openBlank();
-                    initialLoadCompleted.current = true; 
-                } catch (innerError) {
-                    console.error('Error opening blank document:', innerError);
-                }
-            } finally {
-                // Re-enable content change callbacks
-                setTimeout(() => {
-                    isContentChangeInProgress.current = false;
-                }, 500);
+              console.error('Error serializing content:', error);
             }
-        };
-
-        loadContent();
-    }, [editorInitialized, document?.id, document?.version]); // Add document.version to dependencies
-
-    return (
-        <div className="document-editor-container">
-            {/* Loading Indicator */}
-            {isLoading && (
-                <div className="loading-overlay">
-                    <span>Loading...</span>
-                </div>
-            )}
-
-            {/* Document Editor */}
-            <DocumentEditorContainerComponent 
-                key={editorKey} // Add key for forcing re-renders
-                ref={editorRef}
-                enableToolbar={true}
-                height="100%"
-                created={created}
-                enableEditor={true}
-                enableSelection={true}
-                enableSfdtExport={true}
-                enableWordExport={true}
-                showPropertiesPane={false}
-                enableContextMenu={true}
-                isReadOnly={readOnly}
-            />
-        </div>
-    );
+          }
+        }}
+        documentChange={() => {
+          const editor = editorInstance.current?.documentEditor;
+          if (editor && !editor.isDestroyed) {
+            if (editor.selection && !editor.selection.isInitialized) {
+              editor.selection.initSelectionModule();
+            }
+            if (editor.viewer?.scroller && !editor.viewer.scroller.initialized) {
+              editor.viewer.initViewerScroller();
+            }
+          }
+        }}
+        height="100%"
+        width="100%"
+        documentEditorSettings={{
+          enableImageResizer: true,
+          enableSelection: true,
+          enableContextMenu: true,
+          enableSearch: true,
+          enableOptionsPane: false,
+          enableEditorHistory: true,
+          enableTableDialog: true,
+          enableHyperlinkDialog: true,
+          enableFontDialog: true,
+          enableTableOfContentsDialog: true,
+          enableListDialog: true,
+          enableParagraphDialog: true,
+          enableStyleDialog: true,
+          enableRtl: false,
+          enableTrackChanges: true,
+          enableComment: true,
+          zOrderPosition: 'Behind',
+          fontFamilies: ['Arial', 'Times New Roman', 'Courier New', 'Calibri'],
+          ...documentSettings
+        }}
+        toolbarItems={[
+          'New', 'Open', 'Separator',
+          'Undo', 'Redo', 'Separator',
+          'Image', 'Table', 'Hyperlink', 'Bookmark', 'TableOfContents', 'Separator',
+          'Header', 'Footer', 'PageSetup', 'PageNumber', 'Break', 'Separator',
+          'Find', 'Separator', 'Comments', 'TrackChanges', 'Separator',
+          'LocalClipboard', 'RestrictEditing', 'Separator', 'FormFields', 'UpdateFields'
+        ]}
+      />
+    </div>
+  );
 });
 
 DocumentEditorDemo.displayName = 'DocumentEditorDemo';
 
-export default DocumentEditorDemo; 
+export default DocumentEditorDemo;

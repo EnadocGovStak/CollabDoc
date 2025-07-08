@@ -620,4 +620,4 @@ router.post('/create-from-template', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

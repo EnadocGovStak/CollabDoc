@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, startTransition } from 'react';
 import { documentService } from '../services/DocumentService';
 import './VersionHistory.css';
 
@@ -43,27 +43,31 @@ const VersionHistory = ({ documentId, onVersionSelect, onVersionRestore, current
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
-
   const handleVersionClick = (version) => {
-    // Toggle the expanded state
-    setExpandedVersion(expandedVersion === version ? null : version);
-    
-    // Call the parent handler if provided
-    if (onVersionSelect) {
-      onVersionSelect(version);
-    }
+    // Use React 18's startTransition for state updates
+    React.startTransition(() => {
+      // Toggle the expanded state
+      setExpandedVersion(expandedVersion === version ? null : version);
+      
+      // Call the parent handler if provided
+      if (onVersionSelect) {
+        onVersionSelect(version);
+      }
+    });
   };
-
   const handleViewVersion = async (versionNumber) => {
     try {
-      // Instead of trying to open the raw content, just select this version
-      // which will load it in the editor
-      if (onVersionSelect) {
-        onVersionSelect(versionNumber);
-      }
-      
-      // Collapse the expanded version after selecting
-      setExpandedVersion(null);
+      // Use startTransition for both state updates
+      startTransition(() => {
+        // Instead of trying to open the raw content, just select this version
+        // which will load it in the editor
+        if (onVersionSelect) {
+          onVersionSelect(versionNumber);
+        }
+        
+        // Collapse the expanded version after selecting
+        setExpandedVersion(null);
+      });
     } catch (error) {
       console.error('Error viewing version:', error);
       alert('Failed to view this version. Please try again.');

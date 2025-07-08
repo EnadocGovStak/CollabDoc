@@ -25,7 +25,7 @@ const DocumentEditorPage = () => {
   const [retentionPeriods, setRetentionPeriods] = useState([]);
   const [recordsExpanded, setRecordsExpanded] = useState(true);
   const [versionHistoryExpanded, setVersionHistoryExpanded] = useState(false);
-  const [contentLoaded, setContentLoaded] = useState(false); // Track if content has been loaded
+  const [contentLoaded, setContentLoaded] = useState(false);
   const [templateExpanded, setTemplateExpanded] = useState(false);
   const [mergeCompleted, setMergeCompleted] = useState(false);
 
@@ -51,15 +51,20 @@ const DocumentEditorPage = () => {
   }, []);
 
   // Separate function to update editor content that doesn't depend on document state
+  // This is now primarily for explicit calls if needed, e.g., previewing a version,
+  // as main document loads are handled via initialContent prop.
   const updateEditorContent = useCallback((content) => {
     if (editorRef.current && content) {
-      console.log('Updating editor with content');
+      console.log('Explicitly updating editor with content via updateEditorContent');
       try {
+        // DocumentEditorDemo's loadContent handles stringification and readiness.
         editorRef.current.loadContent(content);
-        setContentLoaded(true);
       } catch (err) {
-        console.error('Error loading content into editor:', err);
+        console.error('Error loading content into editor via updateEditorContent:', err);
+        // Optionally, set an error state or provide user feedback
       }
+    } else {
+      console.warn('updateEditorContent called but editorRef.current is null or no content provided.');
     }
   }, []);
 
@@ -68,115 +73,55 @@ const DocumentEditorPage = () => {
     try {
       setLoading(true);
       setError(null);
-      setSelectedVersion(null); // Reset any selected version when loading
-      setContentLoaded(false); // Reset content loaded flag
-      
+      setSelectedVersion(null);
+      setContentLoaded(false); // Unmount DocumentEditorDemo, editorRef will become null temporarily
+
+      let newDocumentData;
+
       if (id) {
-        try {
-          console.log(`Loading document: ${id}`);
-          
-          // First, get the document versions to determine the latest version
-          const versionsResponse = await documentService.getDocumentVersions(id);
-          const currentVersion = versionsResponse.currentVersion || 1;
-          
-          console.log(`Current version is ${currentVersion}, fetching document data`);
-          
-          // Get the document metadata and potentially content
-          const response = await documentService.getDocument(id);
-          console.log('Document loaded with full response:', response);
-          
-          // Use the title from the response or extract one from the filename
-          const title = response?.title || 'Untitled';
-          
-          // Check for records management data
-          if (response.recordsManagement) {
-            console.log('Records management data found:', response.recordsManagement);
-          } else {
-            console.warn('No records management data in document response');
-          }
-          
-          // Compare versions - if the response version doesn't match current version
-          // or if content is missing, explicitly load the latest version
-          let content = response?.content || '';
-          
-          if (!content || response.version !== currentVersion) {
-            console.log(`Need to load explicit version ${currentVersion}`);
-            try {
-              const latestVersionData = await documentService.getDocumentVersion(id, currentVersion);
-              if (latestVersionData && latestVersionData.content) {
-                content = latestVersionData.content;
-                console.log(`Successfully loaded content for version ${currentVersion}`);
-              } else {
-                console.warn(`Version ${currentVersion} content is empty or invalid`);
-              }
-            } catch (versionError) {
-              console.error('Error loading latest version:', versionError);
-            }
-          }
-          
-          if (!content) {
-            console.error('Failed to load document content');
-            throw new Error('Document content could not be loaded');
-          }
-          
-          console.log("Document state after loading:", {
-            id,
-            title,
-            contentLoaded: !!content,
-            contentSize: content ? JSON.stringify(content).length : 0,
-            version: currentVersion,
-            recordsManagement: response?.recordsManagement
-          });
-          
-          // Set document state first
-          setDocument({
-            id: id,
-            title: title,
-            content: content,
-            createdAt: response?.createdAt || new Date().toISOString(),
-            lastModified: response?.modifiedAt || new Date().toISOString(),
-            createdBy: response?.createdBy || 'Anonymous',
-            recordsManagement: response?.recordsManagement || {
-              classification: '',
-              documentType: '',
-              retentionPeriod: '',
-              recordNumber: '',
-              notes: ''
-            },
-            version: currentVersion
-          });
-          
-          // Use a small delay to ensure the editor component is ready before loading content
-          setTimeout(() => {
-            updateEditorContent(content);
-          }, 100);
-        } catch (fetchError) {
-          console.error('Error fetching document:', fetchError);
-          // If there's an error loading, create a new document with this ID
-          setDocument({
-            id: id,  // Use exactly the ID from the URL
-            title: 'Untitled',
-            content: '',
-            createdAt: new Date().toISOString(),
-            lastModified: new Date().toISOString(),
-            createdBy: 'Anonymous',
-            recordsManagement: {
-              classification: '',
-              documentType: '',
-              retentionPeriod: '',
-              recordNumber: '',
-              notes: ''
-            },
-            version: 1
-          });
-          setContentLoaded(true);
+        console.log(`Loading document: ${id}`);
+        // Determine the current/target version to load
+        const versionsResponse = await documentService.getDocumentVersions(id);
+        // Ensure versionsResponse and versionsResponse.versions are checked before accessing currentVersion
+        const currentVersion = versionsResponse?.versions?.length > 0 ? versionsResponse.currentVersion : 1;
+        console.log(`Target version is ${currentVersion}`);
+
+        // Fetch the specific version content
+        const versionData = await documentService.getDocumentVersion(id, currentVersion);
+        if (!versionData || versionData.content === undefined) {
+          console.error(`Failed to load content for version ${currentVersion} of document ${id}`);
+          throw new Error(`Document content for version ${currentVersion} could not be loaded.`);
         }
+
+        // Fetch document metadata (like title, recordsManagement, etc.)
+        // This might come from a general getDocument endpoint or be part of versionData
+        const docMetadata = await documentService.getDocument(id);
+
+        newDocumentData = {
+          id: id,
+          title: docMetadata?.title || versionData?.title || 'Untitled',
+          content: versionData.content, // This is the critical content from the specific version
+          createdAt: docMetadata?.createdAt || new Date().toISOString(),
+          lastModified: versionData?.timestamp || docMetadata?.modifiedAt || new Date().toISOString(),
+          createdBy: docMetadata?.createdBy || 'Anonymous',
+          recordsManagement: docMetadata?.recordsManagement || {
+            classification: '',
+            documentType: '',
+            retentionPeriod: '',
+            recordNumber: '',
+            notes: ''
+          },
+          version: versionData.version || currentVersion
+        };
+        console.log("Document state to be set after loading:", newDocumentData);
+
       } else {
         // New document
-        setDocument({
+        console.log("Setting up a new document.");
+        newDocumentData = {
           id: null,
           title: 'Untitled',
-          content: '',
+          content: '', // Empty content for new document
           createdAt: new Date().toISOString(),
           lastModified: new Date().toISOString(),
           createdBy: 'Anonymous',
@@ -188,20 +133,37 @@ const DocumentEditorPage = () => {
             notes: ''
           },
           version: 1
-        });
-        setContentLoaded(true);
+        };
       }
+
+      setDocument(newDocumentData); // Update the document state
+      setContentLoaded(true);       // NOW set contentLoaded to true.
+                                    // This will render DocumentEditorDemo,
+                                    // which will use newDocumentData.content as its initialContent prop.
+
     } catch (err) {
-      console.error('Error loading document:', err);
-      setError('Failed to load document');
+      console.error('Error in loadDocument:', err);
+      setError(`Failed to load document: ${err.message}`);
+      // Fallback: set a minimal document and allow editor to render to show error or be usable
+      setDocument({
+        id: id || null,
+        title: 'Error Loading Document',
+        content: '', // Empty content on error
+        version: 0,
+        recordsManagement: {},
+        createdAt: new Date().toISOString(),
+        lastModified: new Date().toISOString(),
+        createdBy: 'System'
+      });
+      setContentLoaded(true); // Still allow editor UI to render
     } finally {
       setLoading(false);
     }
-  }, [id, updateEditorContent]);
+  }, [id]); // 'id' is the primary dependency.
 
   useEffect(() => {
     loadDocument();
-  }, [loadDocument]);
+  }, [loadDocument]); // React to changes in loadDocument (which means changes in 'id')
 
   // Check if document is final
   const isDocumentFinal = useCallback(() => {
@@ -355,148 +317,125 @@ const DocumentEditorPage = () => {
     }));
   };
 
-  const handleVersionSelect = async (versionNumber) => {
-    try {
-      if (!document.id) return;
-      
-      console.log(`Version ${versionNumber} selected (current is ${document.version})`);
-      
-      if (versionNumber === document.version) {
-        // Selected current version, just reset
-        setSelectedVersion(null);
-        return;
-      }
-      
-      // Load the specific version
-      const versionData = await documentService.getDocumentVersion(document.id, versionNumber);
-      
-      // Update editor with version content, but don't update document state fully
-      // This avoids changing metadata but shows different content
-      if (versionData && versionData.content) {
-        console.log(`Loading content for version ${versionNumber}`);
-        
-        // Set loading state while switching versions
-        setLoading(true);
-        
-        if (editorRef.current) {
-          // First try standard load
-          const loaded = await editorRef.current.loadContent(versionData.content);
-          
-          // If loading failed, try to force a refresh
-          if (!loaded && editorRef.current.forceRefresh) {
-            editorRef.current.forceRefresh();
-            // Wait a moment for the refresh to complete, then try loading again
-            setTimeout(async () => {
-              await editorRef.current.loadContent(versionData.content);
-            }, 200);
-          }
-        }
-        
-        setSelectedVersion(versionNumber);
-        setSaveStatus(`Viewing version ${versionNumber} (read-only)`);
-        setLoading(false);
-      } else {
-        console.error(`Version ${versionNumber} returned empty content`);
-        setSaveStatus(`Error: Version ${versionNumber} content not found`);
-      }
-    } catch (error) {
-      console.error(`Error loading version ${versionNumber}:`, error);
-      setSaveStatus(`Error loading version ${versionNumber}`);
-      setLoading(false);
-    }
-  };
-
-  // Function to return to the current document version
-  const returnToCurrent = () => {
-    // Only proceed if we have a different version selected
-    if (!selectedVersion || selectedVersion === document.version) {
-      setSelectedVersion(null);
+  // Handle version selection and preview
+  const handleVersionSelect = useCallback(async (versionNumber) => {
+    if (!document || !document.id) {
+      console.warn('Cannot select version, document or document.id is missing.');
       return;
     }
-    
-    console.log('Returning to current version:', document.version);
-    
-    // Set loading state
-    setLoading(true);
-    
-    // Clear selected version state
-    setSelectedVersion(null);
-    
-    setTimeout(async () => {
-      try {
-        // Reload the current document content
-        if (editorRef.current && document.content) {
-          const success = await editorRef.current.loadContent(document.content);
-          
-          // If direct loading failed, try force refreshing the editor
-          if (!success && editorRef.current.forceRefresh) {
-            editorRef.current.forceRefresh();
-            
-            // Wait a moment and try again
-            setTimeout(async () => {
-              await editorRef.current.loadContent(document.content);
-            }, 200);
-          }
-        }
-      } catch (error) {
-        console.error('Error returning to current version:', error);
-        setSaveStatus('Error returning to current version');
-      } finally {
-        setLoading(false);
-      }
-    }, 100);
-  };
 
-  const handleRestoreVersion = async () => {
-    if (!selectedVersion || !document.id) return;
-    
     try {
-      setSaveStatus('Restoring version...');
-      
-      // Get the version content
+      setLoading(true);
+      const versionData = await documentService.getDocumentVersion(document.id, versionNumber);
+      if (versionData && versionData.content !== undefined) {
+        setSelectedVersion(versionNumber);
+
+        // Directly update the editor with the selected version's content using the imperative method.
+        // DocumentEditorDemo's loadContent handles stringification and editor readiness.
+        if (editorRef.current) {
+          updateEditorContent(versionData.content);
+        } else {
+          console.warn('editorRef.current is null during handleVersionSelect. Editor might not be rendered.');
+        }
+        setSaveStatus(`Previewing version ${versionNumber}`);
+      } else {
+        setError('Failed to load version content for preview.');
+        setSaveStatus('');
+      }
+    } catch (err) {
+      console.error('Error selecting version for preview:', err);
+      setError('Error loading version preview.');
+      setSaveStatus('');
+    } finally {
+      setLoading(false);
+      if (saveStatus.startsWith('Previewing')) {
+        setTimeout(() => setSaveStatus(''), 3000);
+      }
+    }
+  }, [document, updateEditorContent, saveStatus]);
+
+  // Handle returning to current version
+  const returnToCurrent = useCallback(async () => {
+    try {
+      setLoading(true);
+      // Load the current version using the main loadDocument function
+      await loadDocument();
+      // Clear selected version
+      setSelectedVersion(null);
+      setSaveStatus('Returned to current version');
+      setTimeout(() => setSaveStatus(''), 3000);
+    } catch (error) {
+      console.error('Error returning to current version:', error);
+      setError('Failed to return to current version');
+      setSaveStatus('Error returning to current version');
+      setTimeout(() => setSaveStatus(''), 3000);
+    } finally {
+      setLoading(false);
+    }
+  }, [loadDocument]);
+
+  // Handle version restoration
+  const handleRestoreVersion = useCallback(async () => {
+    if (!document?.id || !selectedVersion) {
+      console.warn('Cannot restore version: no document ID or selected version');
+      return;
+    }
+
+    try {
+      setLoading(true);
       const versionData = await documentService.getDocumentVersion(document.id, selectedVersion);
       
-      if (versionData && versionData.content) {
-        console.log('Restoring version with content:', versionData.content);
-        
-        // Create a document data object for saving
-        const documentData = {
-          content: versionData.content,
-          title: document.title,
-          recordsManagement: document.recordsManagement // Preserve records management metadata
-        };
-        
-        // Save as new version
-        const result = await documentService.saveDocument(documentData, document.id);
-        
-        // Update document state with new version
-        setDocument(prev => ({
-          ...prev,
-          version: result.version,
-          content: versionData.content,
-          lastModified: new Date().toISOString()
-        }));
-        
-        // If we have an editor reference, update its content too
-        if (editorRef.current) {
-          editorRef.current.loadContent(versionData.content);
-        }
-        
-        // Reset selected version
-        setSelectedVersion(null);
-        
-        setSaveStatus(`Restored version ${selectedVersion} as new version ${result.version}`);
-        
-        // Reload the document to ensure everything is in sync
-        await loadDocument();
-      } else {
-        setSaveStatus('Error: Could not restore version - no content found');
+      if (!versionData || !versionData.content) {
+        throw new Error('Failed to get version content for restore');
       }
+
+      // Save the version content as a new version
+      const result = await documentService.saveDocument({
+        content: versionData.content,
+        title: document.title, // Maintain current title
+        recordsManagement: document.recordsManagement // Maintain current records management data
+      }, document.id);
+
+      if (!result) {
+        throw new Error('Failed to save restored version');
+      }
+
+      // Clear selected version and reload the document to show the new version
+      setSelectedVersion(null);
+      await loadDocument();
+
+      setSaveStatus(`Successfully restored as version ${result.version}`);
+      setTimeout(() => setSaveStatus(''), 3000);
     } catch (error) {
-      console.error(`Error restoring version ${selectedVersion}:`, error);
-      setSaveStatus(`Error restoring version ${selectedVersion}`);
+      console.error('Error restoring version:', error);
+      setError('Failed to restore version. Please try again.');
+      setSaveStatus('Error restoring version');
+      setTimeout(() => setSaveStatus(''), 3000);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [document, selectedVersion, loadDocument]);
+
+  // Handle version restoration completed (callback for VersionHistory component)
+  const handleVersionRestored = useCallback(async (restoredDocumentInfo) => {
+    if (!restoredDocumentInfo || !restoredDocumentInfo.id || restoredDocumentInfo.version === undefined) {
+      console.error('Invalid restored document info:', restoredDocumentInfo);
+      setError('Failed to process restored version.');
+      return;
+    }
+
+    console.log('Version restored, new document info:', restoredDocumentInfo);
+    setSaveStatus(`Restored as version ${restoredDocumentInfo.version}`);
+
+    if (id !== restoredDocumentInfo.id) {
+      navigate(`/editor/${restoredDocumentInfo.id}`, { replace: true });
+    } else {
+      await loadDocument();
+    }
+
+    setSelectedVersion(null);
+    setTimeout(() => setSaveStatus(''), 3000);
+  }, [id, navigate, loadDocument]);
 
   // Toggle template merge section
   const toggleTemplateSection = () => {
@@ -812,4 +751,4 @@ const DocumentEditorPage = () => {
   );
 };
 
-export default DocumentEditorPage; 
+export default DocumentEditorPage;
