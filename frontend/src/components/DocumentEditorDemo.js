@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
 import {
   DocumentEditorContainerComponent,
   Toolbar,
@@ -77,6 +77,9 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
     enableToolbar = true,
     isPreview = false
   } = props;
+
+  // Add state for better user feedback
+  const [mergeStatus, setMergeStatus] = useState('');
 
   // Expose methods via ref
   useImperativeHandle(ref, () => ({
@@ -558,6 +561,7 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
       }
       
       console.log('Creating non-destructive preview with merge data:', fieldsData);
+      setMergeStatus('Preparing preview...');
       
       // First, load the original template
       editor.open(contentToUse);
@@ -572,6 +576,7 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
           
           if (tempMergedSfdt && tempMergedSfdt !== contentToUse) {
             console.log('Loading temp merged SFDT for preview');
+            setMergeStatus('Applying merge fields...');
             editor.open(tempMergedSfdt);
           } else {
             console.log('No merge changes made in preview');
@@ -582,10 +587,15 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
             editor.isReadOnly = true;
           }
           
+          setMergeStatus('Preview ready');
+          
           // Signal that preview is ready
           if (onContentChange) {
             setTimeout(onContentChange, 100);
           }
+          
+          // Clear status after a moment
+          setTimeout(() => setMergeStatus(''), 2000);
           
         } catch (mergeError) {
           console.error('Error during preview merge execution:', mergeError);

@@ -42,7 +42,7 @@
 
 .content-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr; /* Give more space to document preview */
   gap: 30px;
   min-height: 600px;
 }
