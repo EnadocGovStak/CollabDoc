@@ -48,9 +48,20 @@ A modern, full-stack document creation and collaboration platform built with Rea
 - **📄 Template System**: Create and manage document templates with merge fields
 - **🔄 Version Control**: Automatic document versioning with complete history tracking
 - **👥 Collaboration**: Multi-user document editing capabilities
-- **📁 Records Management**: Document classification and retention policies
-- **☁️ Cloud Integration**: OneDrive integration for document storage
-- **🔐 Secure Authentication**: Azure AD integration with role-based access
+
+## 📚 Documentation
+
+### Essential Reading
+- **[React Best Practices](./docs/REACT_BEST_PRACTICES.md)** - Critical guidelines for avoiding cursor reset and performance issues
+- **[Cursor Reset Troubleshooting](./docs/CURSOR_RESET_FIX.md)** - Specific fix documentation for cursor position issues
+- **[Development Plan Gap Analysis](./docs/DEVELOPMENT_PLAN_GAP_ANALYSIS.md)** - Comprehensive review of missing features and implementation priorities
+- **[API Specification](./docs/api-spec.md)** - Complete API endpoint documentation
+- **[Testing Guide](./docs/testing.md)** - Testing procedures and best practices
+
+### Quick Reference
+- **Cursor Reset Issue**: If users can't type without cursor jumping, see [CURSOR_RESET_FIX.md](./docs/CURSOR_RESET_FIX.md)
+- **Performance Issues**: Check [REACT_BEST_PRACTICES.md](./docs/REACT_BEST_PRACTICES.md) for optimization guidelines
+- **Backend API**: Reference [api-spec.md](./docs/api-spec.md) for endpoint usage
 
 ## 🏗️ Project Structure
 ```
@@ -360,3 +371,37 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 4. **Found a bug?** [Open an issue](../../issues/new) with details
 
 **Happy coding!** 🎉
+
+## ⚠️ Important Note About Running the Application
+
+To ensure the Collaborative Document Platform functions correctly:
+
+1. **Both servers must be running simultaneously**:
+   - The backend provides API services, document storage, and collaboration features
+   - The frontend provides the user interface and document editor components
+
+2. **Start the servers from their respective directories**:
+   ```bash
+   # Terminal 1: Start backend server
+   cd c:\Users\User\collabdoc\backend
+   npm start
+   
+   # Terminal 2: Start frontend server
+   cd c:\Users\User\collabdoc\frontend
+   npm start
+   ```
+
+3. **Start order matters**:
+   - Always start the backend server first and let it initialize completely
+   - Then start the frontend server in a separate terminal
+   - Access the application at http://localhost:3000
+
+4. **Common issues and solutions**:
+   - Port conflicts: Kill any processes using port 3000 or 5000 before starting
+   - Connection errors: Ensure backend is running before accessing document features
+   - Editor errors: Check browser console for any initialization issues
+
+5. **Verifying everything is working**:
+   - Backend console should show "Server running on port 5000"
+   - Frontend console should show "Compiled successfully"
+   - Document editor should load without errors in the browser
