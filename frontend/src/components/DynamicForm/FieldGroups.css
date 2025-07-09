@@ -1,0 +1,245 @@
+.field-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.field-group:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.field-group.expanded {
+  border-color: #1976d2;
+}
+
+.field-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.field-group-header:hover {
+  background: #e9ecef;
+}
+
+.field-group-header.has-required {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+}
+
+.field-group-header.has-errors {
+  background: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
+
+.group-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.group-icon {
+  font-size: 20px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.group-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.required-indicator {
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: 4px;
+}
+
+.group-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.group-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 12px;
+  color: #666;
+  min-width: 120px;
+}
+
+.fields-filled {
+  font-weight: 600;
+  color: #333;
+}
+
+.required-filled {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.required-filled.complete {
+  color: #28a745;
+}
+
+.required-filled.incomplete {
+  color: #dc3545;
+}
+
+.error-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.expand-icon {
+  font-size: 14px;
+  color: #666;
+  min-width: 16px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.field-group.expanded .expand-icon {
+  transform: rotate(0deg);
+}
+
+.field-group.collapsed .expand-icon {
+  transform: rotate(-90deg);
+}
+
+.field-group-content {
+  padding: 20px;
+  background: #ffffff;
+  border-top: 1px solid #e9ecef;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .field-group-header {
+    padding: 12px;
+  }
+  
+  .group-header-right {
+    gap: 8px;
+  }
+  
+  .group-stats {
+    min-width: 80px;
+    font-size: 11px;
+  }
+  
+  .fields-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .field-group-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .group-header-left {
+    gap: 8px;
+  }
+  
+  .group-title {
+    font-size: 14px;
+  }
+  
+  .group-icon {
+    font-size: 16px;
+  }
+  
+  .group-stats {
+    display: none;
+  }
+}
+
+/* Animation for content expansion */
+.field-group-content {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress indicator for category completion */
+.field-group-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #28a745;
+  transition: width 0.3s ease;
+}
+
+.field-group {
+  position: relative;
+}
+
+/* Custom styling for different category types */
+.field-group[data-category="Personal"] .group-header-left {
+  color: #6f42c1;
+}
+
+.field-group[data-category="Company"] .group-header-left {
+  color: #0d6efd;
+}
+
+.field-group[data-category="Employment"] .group-header-left {
+  color: #198754;
+}
+
+.field-group[data-category="Legal"] .group-header-left {
+  color: #dc3545;
+}
+
+.field-group[data-category="Finance"] .group-header-left {
+  color: #fd7e14;
+}
+
+.field-group[data-category="Project"] .group-header-left {
+  color: #20c997;
+}

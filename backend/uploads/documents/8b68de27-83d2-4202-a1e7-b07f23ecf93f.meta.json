@@ -2,13 +2,18 @@
   "id": "8b68de27-83d2-4202-a1e7-b07f23ecf93f",
   "title": "From Blank",
   "createdAt": "2025-05-11T08:07:43.833Z",
-  "modifiedAt": "2025-05-11T08:07:43.833Z",
-  "currentVersion": 1,
+  "modifiedAt": "2025-07-09T04:31:16.251Z",
+  "currentVersion": 2,
   "versions": [
     {
       "version": 1,
       "timestamp": "2025-05-11T08:07:43.833Z",
       "comment": "Initial version"
+    },
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T04:31:16.251Z",
+      "comment": "Version 2"
     }
   ],
   "recordsManagement": {

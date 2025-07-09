@@ -1,0 +1,89 @@
+.form-validation {
+  margin-bottom: 24px;
+}
+
+.validation-summary {
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.validation-summary.has-errors {
+  background-color: #fff8f8;
+  border: 1px solid #ffcdd2;
+}
+
+.validation-icon {
+  font-size: 1.5rem;
+  margin-right: 16px;
+  line-height: 1;
+}
+
+.validation-message {
+  flex: 1;
+}
+
+.validation-message h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #d32f2f;
+  font-size: 1rem;
+}
+
+.validation-error-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.validation-error-item {
+  margin-bottom: 4px;
+}
+
+.validation-error-item a {
+  color: #d32f2f;
+  text-decoration: none;
+}
+
+.validation-error-item a:hover {
+  text-decoration: underline;
+}
+
+.validation-pending {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Field-level validation styling */
+.field-container.has-error .field-input {
+  border-color: #d32f2f;
+  background-color: #fff8f8;
+}
+
+.field-error-message {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.field-error-message::before {
+  content: "⚠️";
+  font-size: 0.85rem;
+  margin-right: 6px;
+}
+
+/* Success indicator for valid fields */
+.field-container.is-valid .field-input {
+  border-color: #4caf50;
+}
+
+.field-success-icon {
+  color: #4caf50;
+  font-size: 0.85rem;
+  margin-left: 8px;
+}

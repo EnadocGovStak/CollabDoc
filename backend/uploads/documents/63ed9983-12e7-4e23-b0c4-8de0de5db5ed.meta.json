@@ -1,0 +1,43 @@
+{
+  "id": "63ed9983-12e7-4e23-b0c4-8de0de5db5ed",
+  "name": "Business Letter - Generated for John Smith",
+  "templateId": "business-letter-template",
+  "templateName": "Business Letter Template",
+  "category": "Business",
+  "documentType": "Letter",
+  "mergeData": {
+    "CompanyEmail": "contact@example.com",
+    "SenderTitle": "Business Development Manager",
+    "CompanyPhone": "(555) 123-4567",
+    "ServiceType": "Web Development",
+    "Timeline": "3 months",
+    "CompanyName": "Acme Corporation",
+    "Budget": "50000",
+    "SenderName": "Mike Johnson",
+    "CompanyAddress": "123 Tech Street, Silicon Valley, CA",
+    "CustomerName": "John Smith",
+    "ContactPerson": "Jane Doe",
+    "ResponseTime": "2 business days",
+    "ProjectName": "Corporate Website Redesign"
+  },
+  "createdAt": "2025-07-09T05:59:00.479Z",
+  "updatedAt": "2025-07-09T05:59:00.479Z",
+  "currentVersion": 2,
+  "status": "draft",
+  "versions": [
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T08:21:50.626Z",
+      "comment": "Version 2"
+    }
+  ],
+  "title": "Untitled",
+  "modifiedAt": "2025-07-09T08:21:50.626Z",
+  "recordsManagement": {
+    "classification": "",
+    "documentType": "",
+    "retentionPeriod": "",
+    "recordNumber": "",
+    "notes": ""
+  }
+}

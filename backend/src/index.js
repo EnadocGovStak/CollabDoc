@@ -9,10 +9,11 @@ const morgan = require('morgan');
 const documentsRouter = require('./routes/documents');
 const recordsRouter = require('./routes/records');
 const templatesRouter = require('./routes/templates');
+const fieldsRouter = require('./routes/fields');
 
-// Create Express app
+// Create Express app  
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
@@ -27,6 +28,7 @@ app.use(morgan('dev'));
 app.use('/api/documents', documentsRouter);
 app.use('/api/records', recordsRouter);
 app.use('/api/templates', templatesRouter);
+app.use('/api/fields', fieldsRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

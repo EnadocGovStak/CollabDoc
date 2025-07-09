@@ -39,7 +39,17 @@ async function getDocumentMetadata(documentId) {
     try {
         const metadataPath = path.join(DOCUMENTS_DIR, `${documentId}.meta.json`);
         const data = await fs.readFile(metadataPath, 'utf8');
-        return JSON.parse(data);
+        const metadata = JSON.parse(data);
+        
+        // Ensure backward compatibility - add missing fields if they don't exist
+        if (!metadata.versions || !Array.isArray(metadata.versions)) {
+            metadata.versions = [];
+        }
+        if (!metadata.currentVersion) {
+            metadata.currentVersion = 1;
+        }
+        
+        return metadata;
     } catch (error) {
         // If metadata doesn't exist, return default metadata
         return {
@@ -107,7 +117,12 @@ router.get('/list', async (req, res) => {
 // Save document
 router.post('/save', upload.single('document'), async (req, res) => {
     try {
+        console.log('=== SAVE REQUEST START ===');
+        console.log('req.file:', req.file);
+        console.log('req.body:', req.body);
+        
         if (!req.file) {
+            console.log('No file provided in request');
             return res.status(400).json({ error: 'No document provided' });
         }
 
@@ -205,7 +220,12 @@ router.post('/save', upload.single('document'), async (req, res) => {
             }];
         } else {
             // Increment version
-            metadata.currentVersion += 1;
+            metadata.currentVersion = (metadata.currentVersion || 1) + 1;
+            
+            // Ensure versions array exists
+            if (!metadata.versions || !Array.isArray(metadata.versions)) {
+                metadata.versions = [];
+            }
             
             // Add version to history
             metadata.versions.push({
@@ -242,6 +262,7 @@ router.post('/save', upload.single('document'), async (req, res) => {
         await fs.unlink(tempFilePath);
         
         console.log(`Successfully saved document: ${documentId}, version: ${metadata.currentVersion}`);
+        console.log('=== SAVE REQUEST END ===');
         
         // Send success response
         res.json({
@@ -253,7 +274,10 @@ router.post('/save', upload.single('document'), async (req, res) => {
             recordsManagement: metadata.recordsManagement
         });
     } catch (error) {
+        console.error('=== SAVE ERROR ===');
         console.error('Error saving document:', error);
+        console.error('Stack trace:', error.stack);
+        console.error('=== SAVE ERROR END ===');
         res.status(500).json({ error: 'Failed to save document' });
     }
 });
@@ -312,41 +336,59 @@ router.get('/:id/versions/:version', async (req, res) => {
         // Get metadata
         const metadata = await getDocumentMetadata(documentId);
         
-        if (version === metadata.currentVersion) {
+        // Handle legacy metadata format - use 'version' field or default to 1
+        const currentVersion = metadata.currentVersion || metadata.version || 1;
+        const versions = metadata.versions || [];
+        
+        if (version === currentVersion) {
             // Request for current version - redirect to the main endpoint
             return res.redirect(`/api/documents/${documentId}`);
         }
         
-        if (version < 1 || version > metadata.currentVersion) {
+        if (version < 1 || version > currentVersion) {
             return res.status(404).json({ error: 'Version not found' });
         }
         
         // Path to the version file
         const versionPath = path.join(VERSIONS_DIR, `${documentId}.v${version}.sfdt`);
         
-        // Read version content
-        const content = await fs.readFile(versionPath, 'utf8');
-        
-        // Find version metadata
-        const versionMeta = metadata.versions.find(v => v.version === version);
-        
-        // Send response
-        res.json({
-            id: documentId,
-            title: metadata.title,
-            content: JSON.parse(content),
-            createdAt: metadata.createdAt,
-            timestamp: versionMeta?.timestamp || '',
-            version: version,
-            current: false,
-            recordsManagement: metadata.recordsManagement || {
-                classification: '',
-                documentType: '',
-                retentionPeriod: '',
-                recordNumber: '',
-                notes: ''
+        try {
+            // Read version content
+            const content = await fs.readFile(versionPath, 'utf8');
+            
+            // Find version metadata
+            const versionMeta = versions.find(v => v.version === version);
+            
+            // Parse content safely
+            let parsedContent;
+            try {
+                parsedContent = JSON.parse(content);
+            } catch (parseError) {
+                console.error(`Error parsing version content for ${documentId}:`, parseError);
+                parsedContent = content; // Return as string if JSON parsing fails
             }
-        });
+            
+            // Send response
+            res.json({
+                id: documentId,
+                title: metadata.title,
+                content: parsedContent,
+                createdAt: metadata.createdAt,
+                timestamp: versionMeta?.timestamp || metadata.modifiedAt || '',
+                version: version,
+                current: false,
+                recordsManagement: metadata.recordsManagement || {
+                    classification: '',
+                    documentType: '',
+                    retentionPeriod: '',
+                    recordNumber: '',
+                    notes: ''
+                }
+            });
+        } catch (fileError) {
+            console.error(`Version file not found for ${documentId} v${version}:`, fileError);
+            return res.status(404).json({ error: 'Version file not found' });
+        }
     } catch (error) {
         console.error(`Error reading document version ${req.params.id}/${req.params.version}:`, error);
         res.status(500).json({ error: 'Failed to read document version' });
@@ -361,12 +403,16 @@ router.get('/:id/versions', async (req, res) => {
         // Get metadata
         const metadata = await getDocumentMetadata(documentId);
         
+        // Handle legacy metadata format
+        const currentVersion = metadata.currentVersion || metadata.version || 1;
+        const versions = metadata.versions || [];
+        
         // Send response with versions
         res.json({
             id: documentId,
             title: metadata.title,
-            currentVersion: metadata.currentVersion,
-            versions: metadata.versions
+            currentVersion: currentVersion,
+            versions: versions
         });
     } catch (error) {
         console.error(`Error listing versions for document ${req.params.id}:`, error);

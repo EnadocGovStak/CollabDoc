@@ -5,11 +5,15 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: visible; /* Allow context menus to overflow */
+    transform: none; /* Remove any transforms that could affect positioning */
 }
 
-/* Ensure the editor takes full height */
+/* Ensure the editor takes full height and doesn't clip context menus */
 .e-documenteditorcontainer {
     height: 100% !important;
+    overflow: visible !important; /* Allow context menus to overflow */
+    transform: none !important; /* Remove any transforms */
 }
 
 /* Fix text color issues */
@@ -37,118 +41,134 @@
     background: #f8f9fa;
 }
 
-/* Add Syncfusion icons font */
+/* Add Syncfusion icons font - Updated path to use CDN with latest version */
 @font-face {
     font-family: 'e-icons';
-    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
+    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff2') format('woff2'),
+         url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff') format('woff'),
+         url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+    font-display: fallback;
 }
 
-/* Style the content area */
-.e-documenteditor {
-  flex: 1 !important;
-  height: auto !important;
-  background-color: #fff !important;
+/* Fix toolbar icon positioning */
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-btn {
+    display: inline-flex !important;
+    align-items: center !important;
 }
 
-/* Ensure the editor container fills available space */
-.document-editor-wrapper {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  overflow: hidden;
-  position: relative;
+/* Fix icon display in toolbar */
+.e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn .e-icons {
+    font-size: 16px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+    font-style: normal !important;
+    font-weight: normal !important;
 }
 
-/* Make sure editor fills the container */
-.e-documenteditor-containerouterwrap {
-  flex: 1;
-  min-height: 0;
-  display: flex !important;
-  flex-direction: column !important;
-  position: relative;
+/* Context Menu Specific Fixes - Critical */
+/* These rules ensure context menu appears at mouse cursor position */
+.e-contextmenu-wrapper, 
+.e-contextmenu-container,
+.e-contextmenu,
+.e-menu-parent,
+.e-documenteditor-contextmenu {
+    position: fixed !important; /* Fixed positioning to escape container constraints */
+    z-index: 100000 !important;
+    visibility: visible !important;
+    display: block !important;
+    background-color: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    max-width: 200px !important;
+    min-width: 120px !important;
+    transform: none !important; /* Remove any transforms that could affect positioning */
+    -webkit-transform: none !important;
 }
 
-/* Fix the toolbar */
-.e-toolbar {
-  flex-shrink: 0;
-  min-height: 40px !important;
-  height: auto !important;
-  background-color: #f8f9fa !important;
-  border-bottom: 1px solid #e0e0e0 !important;
-  z-index: 1000;
+.e-contextmenu-wrapper ul.e-contextmenu,
+.e-documenteditor-contextmenu ul.e-contextmenu {
+    visibility: visible !important;
+    display: block !important;
+    background-color: white !important;
+    position: static !important; /* Use static so it doesn't create new positioning context */
+    margin: 0 !important;
+    padding: 4px 0 !important;
+    list-style: none !important;
 }
 
-/* Fix the content container */
-#container_editor_viewerContainer {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  background: white !important;
-  display: flex;
-  flex-direction: column;
+.e-contextmenu .e-menu-item,
+.e-contextmenu-wrapper .e-menu-item,
+.e-documenteditor-contextmenu .e-menu-item {
+    height: 36px !important;
+    line-height: 36px !important;
+    color: #333 !important;
 }
 
-/* Ensure proper sizing of the editor body */
-#documenteditor_container_body {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  display: flex !important;
-  flex-direction: column !important;
+.e-contextmenu .e-menu-item.e-focused,
+.e-contextmenu .e-menu-item:hover,
+.e-contextmenu-wrapper .e-menu-item:hover,
+.e-documenteditor-contextmenu .e-menu-item:hover {
+    background-color: #e6f2ff !important;
+    color: #0078d7 !important;
 }
 
-/* Properties pane sizing */
-.e-de-prop-pane {
-  width: 300px !important;
-  border-left: 1px solid #e0e0e0;
-  flex-shrink: 0;
-  position: relative;
-  height: 100% !important;
-  overflow: auto;
+/* Menu styling fixes */
+.e-menu-wrapper {
+    height: auto !important;
+    max-height: 50px !important;
+    z-index: 1000 !important;
 }
 
-/* Customize toolbar appearance */
-.e-toolbar {
-  background-color: #f8f9fa !important;
-  border-bottom: 1px solid #e0e0e0 !important;
+.e-menu {
+    height: auto !important;
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #e0e0e0 !important;
 }
 
-/* Add custom styles for better integration with our app */
-.e-control {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+.e-menu-wrapper .e-menu {
+    overflow: visible !important;
 }
 
-/* Hide license validation message */
-.e-de-ctn-info {
-  display: none !important;
+.e-menu-wrapper .e-menu .e-menu-item {
+    height: 36px !important;
+    line-height: 36px !important;
 }
 
-/* Hide any warning/license banners */
-.e-de-ctn-warning,
-.e-de-ctn-info {
-  display: none !important;
+.e-menu-wrapper ul .e-menu-item {
+    padding: 0 10px !important;
 }
 
-/* Ensure content area is white */
-.e-de-content,
-.e-de-content-wrapper {
-  background-color: white !important;
-  background-image: none !important;
+/* Fix for separators */
+.e-contextmenu .e-separator,
+.e-contextmenu-wrapper .e-separator,
+.e-documenteditor-contextmenu .e-separator {
+    height: 1px !important;
+    background-color: #e0e0e0 !important;
+    margin: 4px 0 !important;
 }
 
-/* Ensure proper z-index stacking */
-.e-documenteditor-container {
-  z-index: 1;
+/* Additional context menu positioning fixes */
+.e-contextmenu-wrapper {
+    overflow: visible !important;
+    transform: none !important; /* Prevent CSS transforms from affecting positioning */
 }
 
-.e-toolbar {
-  z-index: 2;
+/* Ensure context menu doesn't get clipped by container overflow */
+.document-editor-wrapper .e-contextmenu-wrapper,
+.document-editor-content .e-contextmenu-wrapper {
+    overflow: visible !important;
+    clip: none !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
 }
 
-.e-de-prop-pane {
-  z-index: 3;
+/* Style for document editor menu */
+.e-documenteditor-menu {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #e0e0e0 !important;
 }
 
 /* Document list styling */
@@ -280,4 +300,112 @@
 
 .e-documenteditor-container::-webkit-scrollbar-thumb:hover {
     background: #555;
-} 
+}
+
+/* Preview mode specific styles */
+.preview-mode .e-de-content,
+.preview-mode .e-de-content * {
+  cursor: default !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  pointer-events: none !important;
+}
+
+/* Hide context menu in preview mode */
+.preview-mode + .e-contextmenu-wrapper,
+.preview-mode + .e-menu-container,
+.preview-mode .e-contextmenu-container {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hide the formatting toolbar in preview mode */
+.preview-mode .e-de-format-toolbar {
+  display: none !important;
+}
+
+/* Hide any contextual options in preview mode */
+.preview-mode .e-de-contextual-menu,
+.preview-mode .e-de-contextual-tooltip,
+.preview-mode .e-de-contextual-container {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide the properties pane/formatting sidebar completely */
+.e-de-prop-pane,
+.e-documenteditor-container .e-de-prop-pane,
+.e-documenteditorcontainer .e-de-prop-pane {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide any formatting panels */
+.e-de-ctnr-pane-padding,
+.e-de-prop-separator-line,
+.e-de-ctnr-segment,
+.e-de-panel-left-width,
+.e-de-panel-right-width,
+.e-de-ctnr-group-btn,
+.e-de-char-fmt-btn-left,
+.e-de-char-fmt-btn-right,
+.e-de-font-clr-picker,
+.e-de-ctnr-prop-label {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Hide the entire properties container */
+.e-documenteditorcontainer .e-de-container-right,
+.e-documenteditor-container .e-de-container-right {
+    display: none !important;
+    width: 0 !important;
+}
+
+/* Ensure document viewer takes full width when properties pane is hidden */
+.e-documenteditorcontainer .e-de-container-left,
+.e-documenteditor-container .e-de-container-left {
+    width: 100% !important;
+    flex: 1 !important;
+}
+
+/* Layout adjustments for document editor container */
+.document-editor-demo-container {
+    flex: 1.5 !important; /* Give more space to document editor */
+    min-width: 60% !important;
+    max-width: 70% !important;
+}
+
+/* If the parent uses grid layout */
+.document-editor-grid-container {
+    grid-template-columns: 2fr 1fr !important; /* Document editor gets 2/3, field list gets 1/3 */
+}
+
+/* If the parent uses flexbox layout */
+.document-editor-flex-container {
+    display: flex !important;
+}
+
+.document-editor-flex-container > *:first-child {
+    flex: 2 !important; /* Document editor section */
+    min-width: 60% !important;
+}
+
+.document-editor-flex-container > *:last-child {
+    flex: 1 !important; /* Field list section */
+    max-width: 40% !important;
+}
+
+/* Ensure the document editor itself takes full width of its container */
+.e-documenteditorcontainer,
+.document-editor-container {
+    width: 100% !important;
+    height: 100% !important;
+}

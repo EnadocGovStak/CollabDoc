@@ -1,0 +1,110 @@
+{
+  "id": "nda-template",
+  "name": "Non-Disclosure Agreement (NDA)",
+  "description": "Standard mutual non-disclosure agreement template for protecting confidential information",
+  "category": "Legal",
+  "documentType": "Contract",
+  "content": "{\"sfdt\":\"NON-DISCLOSURE AGREEMENT\\n\\nThis Non-Disclosure Agreement (\\\"Agreement\\\") is entered into on {{ContractDate}} by and between:\\n\\nDisclosing Party: {{DisclosingPartyName}}\\nAddress: {{DisclosingPartyAddress}}\\n\\nReceiving Party: {{ReceivingPartyName}}\\nAddress: {{ReceivingPartyAddress}}\\n\\nPURPOSE:\\nThe parties wish to explore a business relationship regarding: {{BusinessPurpose}}\\n\\nCONFIDENTIAL INFORMATION:\\nFor purposes of this Agreement, \\\"Confidential Information\\\" includes all information disclosed by either party, whether written, oral, or visual, including but not limited to:\\n- Technical data, know-how, research, product plans\\n- Business information, customer lists, financial information\\n- Any other information marked or identified as confidential\\n\\nOBLIGATIONS:\\n1. The Receiving Party agrees to hold all Confidential Information in strict confidence\\n2. Not to disclose Confidential Information to any third party without prior written consent\\n3. To use Confidential Information solely for the purpose of {{BusinessPurpose}}\\n4. To protect Confidential Information with the same degree of care used for own confidential information\\n\\nTERM:\\nThis Agreement shall remain in effect for {{ContractTerm}} from the date of execution.\\n\\nGOVERNING LAW:\\nThis Agreement shall be governed by the laws of {{GoverningLaw}}.\\n\\nSIGNATURES:\\n\\nDisclosing Party: _____________________ Date: {{SignatureDate}}\\n{{DisclosingPartyName}}\\n{{DisclosingPartyTitle}}\\n\\nReceiving Party: _____________________ Date: {{SignatureDate}}\\n{{ReceivingPartyName}}\\n{{ReceivingPartyTitle}}\\n\\nWitness: _____________________ Date: {{SignatureDate}}\\n{{WitnessName}}\"}",
+  "mergeFields": [
+    {
+      "name": "ContractDate",
+      "type": "date",
+      "required": true,
+      "category": "Legal",
+      "description": "Date of the agreement"
+    },
+    {
+      "name": "DisclosingPartyName",
+      "type": "text",
+      "required": true,
+      "category": "Legal",
+      "description": "Name of the disclosing party"
+    },
+    {
+      "name": "DisclosingPartyAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Legal",
+      "description": "Address of the disclosing party"
+    },
+    {
+      "name": "DisclosingPartyTitle",
+      "type": "text",
+      "required": false,
+      "category": "Legal",
+      "description": "Title of disclosing party representative"
+    },
+    {
+      "name": "ReceivingPartyName",
+      "type": "text",
+      "required": true,
+      "category": "Legal",
+      "description": "Name of the receiving party"
+    },
+    {
+      "name": "ReceivingPartyAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Legal",
+      "description": "Address of the receiving party"
+    },
+    {
+      "name": "ReceivingPartyTitle",
+      "type": "text",
+      "required": false,
+      "category": "Legal",
+      "description": "Title of receiving party representative"
+    },
+    {
+      "name": "BusinessPurpose",
+      "type": "textarea",
+      "required": true,
+      "category": "Project",
+      "description": "Purpose of the business relationship and information sharing"
+    },
+    {
+      "name": "ContractTerm",
+      "type": "dropdown",
+      "required": true,
+      "category": "Legal",
+      "description": "Duration of the agreement",
+      "options": ["1 year", "2 years", "3 years", "5 years", "Indefinite"],
+      "defaultValue": "2 years"
+    },
+    {
+      "name": "GoverningLaw",
+      "type": "dropdown",
+      "required": true,
+      "category": "Legal",
+      "description": "Governing law jurisdiction",
+      "options": ["Delaware", "New York", "California", "Texas", "Illinois"],
+      "defaultValue": "Delaware"
+    },
+    {
+      "name": "SignatureDate",
+      "type": "date",
+      "required": true,
+      "category": "Legal",
+      "description": "Date of signature"
+    },
+    {
+      "name": "WitnessName",
+      "type": "text",
+      "required": false,
+      "category": "Legal",
+      "description": "Name of the witness (if required)"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T12:00:00.000Z",
+  "updatedAt": "2025-01-09T12:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Confidential",
+    "retentionPeriod": "7 years",
+    "accessControl": "Restricted",
+    "documentType": "Contract",
+    "department": "Legal",
+    "reviewCycle": "Annual"
+  }
+}

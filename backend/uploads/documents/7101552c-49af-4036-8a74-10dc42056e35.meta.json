@@ -1,0 +1,20 @@
+{
+  "id": "7101552c-49af-4036-8a74-10dc42056e35",
+  "name": "Business Letter Template - Generated",
+  "templateId": "business-letter-template",
+  "templateName": "Business Letter Template",
+  "category": "Business",
+  "documentType": "Letter",
+  "mergeData": {
+    "CompanyName": "Acme Corp",
+    "ServiceType": "Consulting",
+    "SenderName": "Bob Johnson",
+    "ContactPerson": "Jane Smith",
+    "CustomerName": "John Doe",
+    "SenderTitle": "Sales Manager"
+  },
+  "createdAt": "2025-07-09T06:19:42.563Z",
+  "updatedAt": "2025-07-09T06:19:42.563Z",
+  "currentVersion": 1,
+  "status": "draft"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "1df7eb59-b566-4487-87ea-a35156e40f4b",
+  "title": "Test Document",
+  "createdAt": "2025-07-09T07:59:18.434Z",
+  "modifiedAt": "2025-07-09T08:16:04.795Z",
+  "currentVersion": 2,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2025-07-09T07:59:18.434Z",
+      "comment": "Initial version"
+    },
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T08:16:04.795Z",
+      "comment": "Version 2"
+    }
+  ],
+  "recordsManagement": {
+    "classification": "",
+    "documentType": "",
+    "retentionPeriod": "",
+    "recordNumber": "",
+    "notes": ""
+  }
+}

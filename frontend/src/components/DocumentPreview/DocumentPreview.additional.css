@@ -1,0 +1,10 @@
+/* Hide toolbar in document editor */
+.document-preview .rendered-view .e-de-ctn .e-toolbar-container,
+.document-preview .rendered-view .e-de-ctn .e-de-toolbar {
+  display: none !important;
+}
+
+/* Add padding to make up for missing toolbar */
+.document-preview .rendered-view .e-de-ctn .e-content-container {
+  padding-top: 10px;
+}

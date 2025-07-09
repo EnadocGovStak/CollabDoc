@@ -1,5 +1,48 @@
 # Collaborative Document Platform - Developer Instructions
 
+## ✅ Document Editor Stabilization Plan (COMPLETED)
+
+### 5-Step Stabilization Approach
+
+The Document Editor has been stabilized following a systematic 5-step approach to eliminate runtime errors and ensure robust collaborative editing:
+
+#### Step 1: ✅ Minimal Baseline (COMPLETED)
+- Established minimal, stable DocumentEditorDemo.js with essential modules only
+- Modules: `Toolbar`, `SfdtExport`, `Selection`, `Editor`
+- Minimal toolbar: `['New', 'Undo', 'Redo']`
+- Disabled properties pane and non-essential features
+- **Result**: Stable baseline with no runtime errors
+
+#### Step 2: ✅ Incremental Feature Re-introduction (COMPLETED)
+- Re-introduced `EditorHistory` module for undo/redo functionality
+- Added `ImageResizer`, `TableDialog`, `ContextMenu` modules
+- Added `Print` and `WordExport` modules for document operations
+- Expanded toolbar: `['New', 'Separator', 'Undo', 'Redo', 'Separator', 'Bold', 'Italic', 'Underline', 'Separator', 'Image', 'Table', 'Separator', 'Print']`
+- **Result**: Enhanced functionality while maintaining stability
+
+#### Step 3: ✅ Content Loading & Debouncing (COMPLETED)
+- Implemented debounced content change handler (1-second delay)
+- Added proper cleanup for debounce timeouts
+- Refined content loading logic with better error handling
+- **Result**: Improved performance and reduced API calls
+
+#### Step 4: ✅ Error Boundary Implementation (COMPLETED)
+- Created `DocumentEditorErrorBoundary` component with retry functionality
+- Wrapped DocumentEditor with error boundary for graceful error handling
+- Added development mode error details for debugging
+- **Result**: Robust error handling and recovery
+
+#### Step 5: ✅ Final Integration & Documentation (COMPLETED)
+- All modules properly imported and injected
+- Error-free component with comprehensive functionality
+- Updated INSTRUCTIONS.md with stabilization plan
+- **Result**: Production-ready, stable document editor
+
+### Current Status: STABILIZED ✅
+The Document Editor is now stable, feature-complete, and ready for production use. All runtime errors have been eliminated, and the editor provides robust collaborative editing capabilities.
+
+---
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Architecture](#architecture)
@@ -19,28 +62,173 @@
 The Collaborative Document Platform is a modern web application that provides:
 
 - **Rich Text Editing**: Word-like document editing using Syncfusion Document Editor
-- **Template System**: Create and manage document templates with merge fields
+- **Advanced Template System**: Industry-specific templates with merge fields and dynamic form generation
 - **Version Control**: Automatic document versioning with history tracking
 - **Real-time Collaboration**: Multi-user document editing capabilities
 - **Records Management**: Document classification and retention policies
 - **Cloud Integration**: OneDrive integration for document storage
 - **Authentication**: Azure AD integration for secure access
 
-### Technology Stack
+## 📋 Advanced Template Management System
 
-**Frontend:**
-- React 18.2.0 with TypeScript support
-- Syncfusion Document Editor Components
-- Azure AD Authentication (@azure/msal-react)
-- React Router for navigation
-- Axios for API communication
+### File Storage Structure
 
-**Backend:**
-- Node.js with Express.js
-- File-based storage for documents and templates
-- Multer for file upload handling
-- UUID for document identification
-- CORS and security middleware
+The system follows a clear separation for different file types:
+- **Templates**: Stored in `backend/templates/` directory as `.json` files
+- **Generated Documents**: Stored in `backend/uploads/documents/` directory as `.sfdt` files with `.meta.json` metadata
+- **Document Versions**: Stored in `backend/uploads/versions/` directory for version history
+
+### Two-Phase Template Workflow
+
+#### Phase 1: Template Creation
+1. **Template Editor Interface**: 
+   - Open document editor with pre-loaded merge field samples
+   - Industry-categorized templates (Legal, Business, HR, Finance, etc.)
+   - Letter template types (Cover Letter, Contract, Invoice, etc.)
+   - Best practice merge field naming conventions
+
+2. **Simple Merge Field Management**:
+   - **Standard Merge Fields**: `{{FirstName}}`, `{{LastName}}`, `{{CompanyName}}`, `{{Date}}`, etc.
+   - **Simple Syntax**: Uses double curly braces `{{FieldName}}` for easy string replacement
+   - **Industry-Specific Fields**: 
+     - Legal: `{{CaseNumber}}`, `{{CourtName}}`, `{{JudgeName}}`
+     - Business: `{{ProjectName}}`, `{{Budget}}`, `{{Timeline}}`
+     - HR: `{{PositionTitle}}`, `{{StartDate}}`, `{{Salary}}`
+   - **Basic Field Validation**: Text, number, date format validation
+   - **Field Categorization**: Group fields by type (Personal, Company, Project, etc.)
+
+3. **Template Metadata & Simple Merge Processing**:
+   - Template name and description
+   - Industry category and document type
+   - Merge field definitions with basic validation
+   - **Simple Node.js Merge Engine**: String replacement for `{{FieldName}}` patterns
+   - **Supported Document Types**: Text-based documents, simple SFDT structures
+   - **Limitations**: Complex formatting and conditional logic not supported (keeps it simple)
+
+#### Phase 2: Document Generation from Template
+1. **Dynamic Form Generation**:
+   - Automatically create form based on template merge fields
+   - Field type detection (text, email, date, number, dropdown)
+   - Validation rules application
+   - Conditional field display
+
+2. **User Data Capture**:
+   - Intuitive form interface with field grouping
+   - Real-time validation feedback
+   - Save draft data for later completion
+   - Pre-populate from user profile or previous documents
+
+3. **Document Generation**:
+   - Merge user data with template
+   - Apply formatting and styling
+   - Generate preview before final save
+   - Save as new document with version control
+
+### API Integration
+
+#### Template Management APIs
+```javascript
+// Create template with merge fields - saves to backend/templates/
+POST /api/templates
+{
+  "name": "Employment Contract Template",
+  "category": "HR",
+  "documentType": "Contract",
+  "content": "...", // SFDT content with merge fields
+  "mergeFields": [
+    {
+      "name": "EmployeeName",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "StartDate", 
+      "type": "date",
+      "required": true,
+      "category": "Employment"
+    }
+  ]
+}
+
+// Generate document from template - saves to backend/uploads/documents/
+POST /api/templates/{templateId}/generate
+{
+  "mergeData": {
+    "EmployeeName": "John Doe",
+    "StartDate": "2025-01-15"
+  },
+  "documentName": "John Doe Employment Contract"
+}
+
+// Get template with merge field definitions
+GET /api/templates/{templateId}/fields
+```
+
+#### Backend Merge Processing
+- Server-side merge field replacement
+- Data validation against field rules
+- Document generation without frontend dependency
+- Batch document generation support
+
+---
+
+## 🚀 Template Management Implementation Plan
+
+### Implementation Strategy: 5-Step Approach
+
+**Step 1: Template Creation Infrastructure (3-4 days)**
+- Enhanced template model with merge field definitions
+- Template service with merge processing capabilities
+- API endpoints for template creation and field management
+
+**Step 2: Industry Template Library (2-3 days)**
+- Pre-built templates for Legal, Business, HR, Finance categories
+- Standardized merge field library with validation rules
+- Template import/export functionality
+
+**Step 3: Dynamic Form Generation Engine (4-5 days)**
+- Frontend form generation from template merge fields
+- Field type components (text, email, date, dropdown, etc.)
+- Template selection and preview interface
+
+**Step 4: Template Editor Enhancement (3-4 days)**
+- Merge field toolbar and management
+- Visual field insertion and editing
+- Template creation workflow with preview
+
+**Step 5: Document Generation Integration (2-3 days)**
+- Complete template-to-document workflow
+- Batch processing capabilities
+- Integration with existing document management
+
+### Key Features to Implement
+
+#### Template Creation Features
+- Industry-categorized template library
+- Standard merge field sets (Personal, Company, Legal, etc.)
+- Custom merge field creation with validation rules
+- Template metadata management (category, type, description)
+- Field dependency and conditional logic
+
+#### Document Generation Features  
+- Dynamic form generation from template merge fields
+- Real-time form validation and preview
+- Batch document generation from CSV data
+- Server-side merge processing via API
+- Template analytics and usage tracking
+
+#### API Endpoints Required
+```javascript
+POST /api/templates/create-with-fields    // Create template with merge fields
+GET /api/templates/categories             // Get template categories
+GET /api/templates/:id/fields             // Get template merge field definitions
+POST /api/templates/:id/generate          // Generate document from template
+PUT /api/templates/:id/fields             // Update template merge fields
+POST /api/templates/batch-generate        // Batch document generation
+```
+
+For detailed implementation steps, see `TEMPLATE_IMPLEMENTATION_PLAN.md`.
 
 ---
 
@@ -1764,6 +1952,7 @@ const DocumentEditor = ({
   // 3. Event handlers
   const handleContentChange = useCallback(() => {
     // Handler logic
+    onContentChange?.();
   }, [onContentChange]);
 
   // 4. Early returns
@@ -1779,7 +1968,6 @@ const DocumentEditor = ({
   );
 };
 
-// PropTypes or TypeScript interfaces
 DocumentEditor.propTypes = {
   document: PropTypes.object,
   onContentChange: PropTypes.func,

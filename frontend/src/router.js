@@ -2,8 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import DocumentListPage from './pages/DocumentListPage';
 import DocumentEditorPage from './pages/DocumentEditorPage';
+import DocumentTestPage from './pages/DocumentTestPage';
 import TemplatesListPage from './pages/TemplatesListPage';
 import TemplateEditorPage from './pages/TemplateEditorPage';
+import DocumentFromTemplatePage from './pages/DocumentFromTemplatePage';
+import EditorTest from './EditorTest';
 
 const router = createBrowserRouter([
     {
@@ -38,6 +41,18 @@ const router = createBrowserRouter([
                 path: '/templates/:id',
                 element: <TemplateEditorPage />,
             },
+            {
+                path: '/templates/:templateId/generate',
+                element: <DocumentFromTemplatePage />,
+            },
+            {
+                path: '/editor-test',
+                element: <EditorTest />,
+            },
+            {
+                path: '/document-test',
+                element: <DocumentTestPage />,
+            },
         ],
     },
 ], {
@@ -47,4 +62,4 @@ const router = createBrowserRouter([
     }
 });
 
-export default router; 
+export default router;

@@ -1,0 +1,238 @@
+{
+  "id": "offer-letter-template",
+  "name": "Job Offer Letter",
+  "description": "Professional job offer letter template for HR departments",
+  "category": "HR",
+  "documentType": "Letter",
+  "content": "{\"sfdt\":\"{{CompanyName}}\\n{{CompanyAddress}}\\n{{CompanyPhone}} | {{CompanyEmail}}\\n\\n{{Date}}\\n\\n{{CandidateName}}\\n{{CandidateAddress}}\\n\\nDear {{CandidateName}},\\n\\nWe are pleased to offer you the position of {{PositionTitle}} at {{CompanyName}}. We believe that your skills and experience will be a valuable addition to our team.\\n\\nPOSITION DETAILS:\\n• Position: {{PositionTitle}}\\n• Department: {{Department}}\\n• Reports to: {{ReportingManager}}\\n• Start Date: {{StartDate}}\\n• Work Location: {{WorkLocation}}\\n• Work Schedule: {{WorkSchedule}}\\n\\nCOMPENSATION & BENEFITS:\\n• Annual Salary: ${{Salary}}\\n• Pay Frequency: {{PayFrequency}}\\n• Benefits Package: {{BenefitsPackage}}\\n• Vacation Days: {{VacationDays}} days per year\\n• Health Insurance: {{HealthInsurance}}\\n• Retirement Plan: {{RetirementPlan}}\\n\\nTERMS OF EMPLOYMENT:\\n• Employment Type: {{EmploymentType}}\\n• Probationary Period: {{ProbationaryPeriod}}\\n• Notice Period: {{NoticePeriod}}\\n\\nThis offer is contingent upon:\\n{{ContingencyConditions}}\\n\\nPlease confirm your acceptance of this offer by signing and returning this letter by {{ResponseDeadline}}. If you have any questions, please don't hesitate to contact me at {{HRContactEmail}} or {{HRContactPhone}}.\\n\\nWe look forward to welcoming you to the {{CompanyName}} team!\\n\\nSincerely,\\n\\n{{HRRepresentativeName}}\\n{{HRRepresentativeTitle}}\\n{{CompanyName}}\\n\\n---\\n\\nACCEPTANCE:\\nI, {{CandidateName}}, accept the terms and conditions of this offer.\\n\\nSignature: _________________________ Date: _____________\\n\\nPrint Name: {{CandidateName}}\"}",
+  "mergeFields": [
+    {
+      "name": "CompanyName",
+      "type": "text",
+      "required": true,
+      "category": "Company",
+      "description": "Company name"
+    },
+    {
+      "name": "CompanyAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Company",
+      "description": "Company address"
+    },
+    {
+      "name": "CompanyPhone",
+      "type": "text",
+      "required": false,
+      "category": "Company",
+      "description": "Company phone number"
+    },
+    {
+      "name": "CompanyEmail",
+      "type": "email",
+      "required": false,
+      "category": "Company",
+      "description": "Company email"
+    },
+    {
+      "name": "Date",
+      "type": "date",
+      "required": true,
+      "category": "General",
+      "description": "Letter date"
+    },
+    {
+      "name": "CandidateName",
+      "type": "text",
+      "required": true,
+      "category": "Personal",
+      "description": "Candidate's full name"
+    },
+    {
+      "name": "CandidateAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Personal",
+      "description": "Candidate's address"
+    },
+    {
+      "name": "PositionTitle",
+      "type": "text",
+      "required": true,
+      "category": "Employment",
+      "description": "Job title being offered"
+    },
+    {
+      "name": "Department",
+      "type": "text",
+      "required": true,
+      "category": "Employment",
+      "description": "Department or division"
+    },
+    {
+      "name": "ReportingManager",
+      "type": "text",
+      "required": true,
+      "category": "Employment",
+      "description": "Direct supervisor name"
+    },
+    {
+      "name": "StartDate",
+      "type": "date",
+      "required": true,
+      "category": "Employment",
+      "description": "Proposed start date"
+    },
+    {
+      "name": "WorkLocation",
+      "type": "text",
+      "required": true,
+      "category": "Employment",
+      "description": "Work location (office, remote, hybrid)"
+    },
+    {
+      "name": "WorkSchedule",
+      "type": "text",
+      "required": false,
+      "category": "Employment",
+      "description": "Work schedule details",
+      "defaultValue": "Monday - Friday, 9:00 AM - 5:00 PM"
+    },
+    {
+      "name": "Salary",
+      "type": "number",
+      "required": true,
+      "category": "Employment",
+      "description": "Annual salary amount",
+      "validation": {
+        "min": 0
+      }
+    },
+    {
+      "name": "PayFrequency",
+      "type": "dropdown",
+      "required": true,
+      "category": "Employment",
+      "description": "Pay frequency",
+      "options": ["Weekly", "Bi-weekly", "Monthly"],
+      "defaultValue": "Bi-weekly"
+    },
+    {
+      "name": "BenefitsPackage",
+      "type": "textarea",
+      "required": false,
+      "category": "Employment",
+      "description": "Description of benefits package"
+    },
+    {
+      "name": "VacationDays",
+      "type": "number",
+      "required": false,
+      "category": "Employment",
+      "description": "Annual vacation days",
+      "defaultValue": 15,
+      "validation": {
+        "min": 0,
+        "max": 50
+      }
+    },
+    {
+      "name": "HealthInsurance",
+      "type": "text",
+      "required": false,
+      "category": "Employment",
+      "description": "Health insurance details",
+      "defaultValue": "Company-sponsored health insurance available"
+    },
+    {
+      "name": "RetirementPlan",
+      "type": "text",
+      "required": false,
+      "category": "Employment",
+      "description": "Retirement plan details",
+      "defaultValue": "401(k) with company matching"
+    },
+    {
+      "name": "EmploymentType",
+      "type": "dropdown",
+      "required": true,
+      "category": "Employment",
+      "description": "Type of employment",
+      "options": ["Full-time", "Part-time", "Contract", "Temporary"],
+      "defaultValue": "Full-time"
+    },
+    {
+      "name": "ProbationaryPeriod",
+      "type": "dropdown",
+      "required": false,
+      "category": "Employment",
+      "description": "Probationary period",
+      "options": ["None", "30 days", "60 days", "90 days", "6 months"],
+      "defaultValue": "90 days"
+    },
+    {
+      "name": "NoticePeriod",
+      "type": "dropdown",
+      "required": false,
+      "category": "Employment",
+      "description": "Required notice period",
+      "options": ["1 week", "2 weeks", "1 month"],
+      "defaultValue": "2 weeks"
+    },
+    {
+      "name": "ContingencyConditions",
+      "type": "textarea",
+      "required": false,
+      "category": "Employment",
+      "description": "Conditions the offer is contingent upon",
+      "defaultValue": "• Successful completion of background check\\n• Verification of employment eligibility\\n• Reference checks"
+    },
+    {
+      "name": "ResponseDeadline",
+      "type": "date",
+      "required": true,
+      "category": "Employment",
+      "description": "Deadline for candidate response"
+    },
+    {
+      "name": "HRContactEmail",
+      "type": "email",
+      "required": true,
+      "category": "Company",
+      "description": "HR contact email"
+    },
+    {
+      "name": "HRContactPhone",
+      "type": "text",
+      "required": false,
+      "category": "Company",
+      "description": "HR contact phone"
+    },
+    {
+      "name": "HRRepresentativeName",
+      "type": "text",
+      "required": true,
+      "category": "Company",
+      "description": "Name of HR representative"
+    },
+    {
+      "name": "HRRepresentativeTitle",
+      "type": "text",
+      "required": true,
+      "category": "Company",
+      "description": "Title of HR representative"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T12:00:00.000Z",
+  "updatedAt": "2025-01-09T12:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Internal",
+    "retentionPeriod": "7 years",
+    "accessControl": "HR Only",
+    "documentType": "Offer Letter",
+    "department": "HR",
+    "reviewCycle": "1 year"
+  }
+}

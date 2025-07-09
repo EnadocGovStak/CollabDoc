@@ -4,11 +4,10 @@ import DocumentEditorDemo from '../components/DocumentEditorDemo';
 import '@syncfusion/ej2-react-documenteditor/styles/material.css';
 import '@syncfusion/ej2-react-buttons/styles/material.css';
 import '@syncfusion/ej2-react-popups/styles/material.css';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { documentService } from '../services/DocumentService';
 import './DocumentEditorPage.css';
 import VersionHistory from '../components/VersionHistory';
-import TemplateManager from '../components/TemplateManager';
+
 
 const DocumentEditorPage = () => {
   const { id } = useParams();
@@ -18,7 +17,6 @@ const DocumentEditorPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
-  const lastContentUpdate = useRef(Date.now());
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [classifications, setClassifications] = useState([]);
@@ -26,8 +24,6 @@ const DocumentEditorPage = () => {
   const [recordsExpanded, setRecordsExpanded] = useState(true);
   const [versionHistoryExpanded, setVersionHistoryExpanded] = useState(false);
   const [contentLoaded, setContentLoaded] = useState(false);
-  const [templateExpanded, setTemplateExpanded] = useState(false);
-  const [mergeCompleted, setMergeCompleted] = useState(false);
 
   // Load reference data
   useEffect(() => {
@@ -57,8 +53,8 @@ const DocumentEditorPage = () => {
     if (editorRef.current && content) {
       console.log('Explicitly updating editor with content via updateEditorContent');
       try {
-        // DocumentEditorDemo's loadContent handles stringification and readiness.
-        editorRef.current.loadContent(content);
+        // DocumentEditorDemo's setContent handles stringification and readiness.
+        editorRef.current.setContent(content);
       } catch (err) {
         console.error('Error loading content into editor via updateEditorContent:', err);
         // Optionally, set an error state or provide user feedback
@@ -170,28 +166,24 @@ const DocumentEditorPage = () => {
     return document?.recordsManagement?.isFinal === true;
   }, [document]);
 
-  // Updated content change handler to check for final status
+  // Stable content change handler that doesn't recreate on every render
   const handleContentChange = useCallback((content) => {
-    // Don't update if document is final
-    if (isDocumentFinal()) {
-      return;
-    }
-    
-    // Throttle content updates to avoid interfering with typing
-    const now = Date.now();
-    if (now - lastContentUpdate.current > 2000) { // Only update every 2 seconds at most
-      lastContentUpdate.current = now;
-      
-      if (content && document) {
-        // Update document without triggering editor refresh
-        setDocument(prev => ({
+    if (content) {
+      // Update document without triggering editor refresh
+      setDocument(prev => {
+        // Don't update if document is final
+        if (prev?.recordsManagement?.isFinal === true) {
+          return prev;
+        }
+        
+        return {
           ...prev,
           content,
           lastModified: new Date().toISOString()
-        }));
-      }
+        };
+      });
     }
-  }, [document, isDocumentFinal]);
+  }, []); // No dependencies to prevent callback recreation
 
   // Handle save with check for finalization
   const handleSave = useCallback(async () => {
@@ -299,6 +291,10 @@ const DocumentEditorPage = () => {
   }, [handleSave]);
 
   const handleTitleChange = (e) => {
+    console.log('Title change attempt:', e.target.value);
+    console.log('Current selectedVersion:', selectedVersion);
+    console.log('Is document final:', isDocumentFinal());
+    console.log('Document:', document);
     setDocument(prev => ({
       ...prev,
       title: e.target.value
@@ -307,6 +303,9 @@ const DocumentEditorPage = () => {
 
   const handleRecordsChange = (e) => {
     const { name, value } = e.target;
+    console.log('Records change attempt:', name, value);
+    console.log('Current selectedVersion:', selectedVersion);
+    console.log('Is document final:', isDocumentFinal());
     
     setDocument(prev => ({
       ...prev,
@@ -331,7 +330,7 @@ const DocumentEditorPage = () => {
         setSelectedVersion(versionNumber);
 
         // Directly update the editor with the selected version's content using the imperative method.
-        // DocumentEditorDemo's loadContent handles stringification and editor readiness.
+        // DocumentEditorDemo's setContent handles stringification and editor readiness.
         if (editorRef.current) {
           updateEditorContent(versionData.content);
         } else {
@@ -416,61 +415,6 @@ const DocumentEditorPage = () => {
     }
   }, [document, selectedVersion, loadDocument]);
 
-  // Handle version restoration completed (callback for VersionHistory component)
-  const handleVersionRestored = useCallback(async (restoredDocumentInfo) => {
-    if (!restoredDocumentInfo || !restoredDocumentInfo.id || restoredDocumentInfo.version === undefined) {
-      console.error('Invalid restored document info:', restoredDocumentInfo);
-      setError('Failed to process restored version.');
-      return;
-    }
-
-    console.log('Version restored, new document info:', restoredDocumentInfo);
-    setSaveStatus(`Restored as version ${restoredDocumentInfo.version}`);
-
-    if (id !== restoredDocumentInfo.id) {
-      navigate(`/editor/${restoredDocumentInfo.id}`, { replace: true });
-    } else {
-      await loadDocument();
-    }
-
-    setSelectedVersion(null);
-    setTimeout(() => setSaveStatus(''), 3000);
-  }, [id, navigate, loadDocument]);
-
-  // Toggle template merge section
-  const toggleTemplateSection = () => {
-    setTemplateExpanded(!templateExpanded);
-  };
-  
-  // Handle template merge completion
-  const handleMergeComplete = (result) => {
-    if (result.success) {
-      setMergeCompleted(true);
-      setSaveStatus('Document merged and sent for signing');
-      
-      // Update document to reflect final status
-      if (document) {
-        setDocument(prev => ({
-          ...prev,
-          recordsManagement: {
-            ...prev.recordsManagement,
-            isFinal: true
-          }
-        }));
-      }
-      
-      // Show success message for 3 seconds
-      setTimeout(() => {
-        setSaveStatus('');
-      }, 3000);
-    } else {
-      setSaveStatus('Error: ' + (result.message || 'Failed to merge document'));
-      setTimeout(() => {
-        setSaveStatus('');
-      }, 3000);
-    }
-  };
-
   if (loading) {
     return (
       <div className="document-editor-page loading">
@@ -536,7 +480,8 @@ const DocumentEditorPage = () => {
                   type="text" 
                   value={document.title}
                   onChange={handleTitleChange}
-                  disabled={!!selectedVersion || isDocumentFinal()}
+                  // temporarily disabled: disabled={!!selectedVersion || isDocumentFinal()}
+                  title={`Debug: selectedVersion=${!!selectedVersion}, isFinal=${isDocumentFinal()}`}
                 />
               </div>
               
@@ -611,7 +556,7 @@ const DocumentEditorPage = () => {
                         name="classification"
                         value={document.recordsManagement?.classification || ''}
                         onChange={handleRecordsChange}
-                        disabled={!!selectedVersion || isDocumentFinal()}
+                        // temporarily disabled: disabled={!!selectedVersion || isDocumentFinal()}
                       >
                         <option value="">Select Classification</option>
                         {classifications.map(classification => (
@@ -701,23 +646,6 @@ const DocumentEditorPage = () => {
                 )}
               </div>
 
-              <div className="sidebar-section">
-                <button 
-                  className="sidebar-section-header"
-                  onClick={toggleTemplateSection}
-                >
-                  Template Merge & Finalization {templateExpanded ? '▼' : '►'}
-                </button>
-                
-                {templateExpanded && (
-                  <div className="sidebar-section-content">
-                    <TemplateManager 
-                      document={document}
-                      onMergeComplete={handleMergeComplete}
-                    />
-                  </div>
-                )}
-              </div>
 
               <div className="sidebar-section">
                 <button 
@@ -734,8 +662,8 @@ const DocumentEditorPage = () => {
                 ref={editorRef}
                 document={document}
                 onContentChange={handleContentChange}
-                readOnly={!!selectedVersion || isDocumentFinal()}
-                key={document.id} // Add key to force re-render when document ID changes
+                isReadOnly={!!selectedVersion || isDocumentFinal()}
+                key={document?.id || 'new'} // Add key to force re-render when document ID changes
               />
               {!contentLoaded && (
                 <div className="editor-loading-overlay">

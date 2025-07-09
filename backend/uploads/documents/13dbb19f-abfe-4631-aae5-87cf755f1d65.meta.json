@@ -1,0 +1,27 @@
+{
+  "id": "13dbb19f-abfe-4631-aae5-87cf755f1d65",
+  "name": "Business Letter Template - Generated",
+  "templateId": "business-letter-template",
+  "templateName": "Business Letter Template",
+  "category": "Business",
+  "documentType": "Letter",
+  "mergeData": {
+    "CustomerName": "Wasantha W Weerakoone",
+    "SenderName": "Andrew",
+    "SenderTitle": "MR",
+    "CompanyName": "TechOneGlobal",
+    "ContactPerson": "Wasantha W Weerakoone",
+    "ResponseTime": "10",
+    "CompanyAddress": "200",
+    "CompanyPhone": "0777388230",
+    "CompanyEmail": "wasantha@techoneglobal.com",
+    "ServiceType": "cleaning",
+    "ProjectName": "ABC If",
+    "Budget": "3",
+    "Timeline": "30"
+  },
+  "createdAt": "2025-07-09T09:49:19.955Z",
+  "updatedAt": "2025-07-09T09:49:19.955Z",
+  "currentVersion": 1,
+  "status": "draft"
+}

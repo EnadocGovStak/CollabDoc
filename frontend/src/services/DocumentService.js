@@ -73,6 +73,9 @@ export const documentService = {
       };
     } catch (error) {
       console.error('Error saving document:', error);
+      console.error('Error details:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
       throw error;
     }
   },
@@ -84,23 +87,24 @@ export const documentService = {
   async getDocuments() {
     try {
       const response = await axios.get(`${API_URL}/api/documents/list`);
-      console.log("Raw document response from server:", response.data);
+      // Reduce logging frequency - only log summary
       
       // Normalize documents to ensure consistent structure
       const normalizedDocs = response.data.map(doc => {
-        console.log("Processing document:", doc.title, doc);
+        // Only log for debugging if needed
+        // console.log("Processing document:", doc.title, doc);
         
         // If recordsManagement doesn't exist in the root, check if it's in metadata
         if (!doc.recordsManagement && doc.metadata && doc.metadata.recordsManagement) {
           doc.recordsManagement = doc.metadata.recordsManagement;
-          console.log(`Moved recordsManagement from metadata for ${doc.title}`);
+          // console.log(`Moved recordsManagement from metadata for ${doc.title}`);
         }
         
         // Look for properties in .meta.json files and extract data
         if (doc.metaFile) {
           try {
             // For testing and debugging - attempt to extract data from any available properties
-            console.log(`Detected metaFile for ${doc.title}`, doc.metaFile);
+            // console.log(`Detected metaFile for ${doc.title}`, doc.metaFile);
             
             // See if we can extract classification from metaFile 
             if (doc.metaFile.recordsManagement && doc.metaFile.recordsManagement.classification) {
@@ -108,7 +112,7 @@ export const documentService = {
                 doc.recordsManagement = {};
               }
               doc.recordsManagement.classification = doc.metaFile.recordsManagement.classification;
-              console.log(`Extracted classification from metaFile for ${doc.title}: ${doc.recordsManagement.classification}`);
+              // console.log(`Extracted classification from metaFile for ${doc.title}: ${doc.recordsManagement.classification}`);
             }
           } catch (e) {
             console.error("Error processing metaFile:", e);
@@ -127,16 +131,16 @@ export const documentService = {
           // Assign classifications based on document name patterns
           if (title.includes('policy') || title.includes('manual')) {
             doc.recordsManagement.classification = 'Internal';
-            console.log(`Assigned Internal classification to ${doc.title} based on name pattern`);
+            // console.log(`Assigned Internal classification to ${doc.title} based on name pattern`);
           } else if (title.includes('fee') || title.includes('feee')) {
             doc.recordsManagement.classification = 'Confidential';
-            console.log(`Assigned Confidential classification to ${doc.title} based on name pattern`);
+            // console.log(`Assigned Confidential classification to ${doc.title} based on name pattern`);
           } else if (title.includes('pass') || title.includes('gate')) {
             doc.recordsManagement.classification = 'Restricted';
-            console.log(`Assigned Restricted classification to ${doc.title} based on name pattern`);
+            // console.log(`Assigned Restricted classification to ${doc.title} based on name pattern`);
           } else {
             doc.recordsManagement.classification = 'Public';
-            console.log(`Assigned Public classification to ${doc.title} as default`);
+            // console.log(`Assigned Public classification to ${doc.title} as default`);
           }
         }
         
@@ -172,12 +176,6 @@ export const documentService = {
               doc.recordsManagement.retentionPeriod = '1 Year';
           }
           console.log(`Assigned retention period for ${doc.title}: ${doc.recordsManagement.retentionPeriod}`);
-        }
-        
-        // Manually set operation manual as final
-        if (doc.title === 'Operation Manual') {
-          doc.recordsManagement.isFinal = true;
-          console.log(`Marked Operation Manual as final`);
         }
         
         return doc;

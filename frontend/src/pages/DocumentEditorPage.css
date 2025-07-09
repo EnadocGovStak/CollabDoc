@@ -118,9 +118,98 @@
   flex-direction: column;
   position: relative;
   height: 100%;
+  width: 100%;
+  min-width: 0; /* Allow flex child to shrink */
   overflow: hidden;
   background-color: #fff;
   border-left: 1px solid #e0e0e0;
+}
+
+/* Ensure the Syncfusion DocumentEditor takes full space */
+.document-editor-wrapper .e-documenteditor-container {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.document-editor-wrapper .e-documenteditor {
+  flex: 1 !important;
+  height: auto !important;
+  width: 100% !important;
+}
+
+/* Fix toolbar and content area sizing */
+.document-editor-wrapper .e-toolbar {
+  flex-shrink: 0 !important;
+}
+
+.document-editor-wrapper .e-de-content {
+  flex: 1 !important;
+  height: auto !important;
+  overflow: auto !important;
+}
+
+/* Force document editor to use full width and height */
+.document-editor-wrapper .e-de-content,
+.document-editor-wrapper .e-de-document,
+.document-editor-wrapper .e-de-page-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+}
+
+/* Remove any centering or max-width constraints on the document content */
+.document-editor-wrapper .e-de-page,
+.document-editor-wrapper .e-de-page-container .e-de-page {
+  margin: 0 auto 20px auto !important;
+  max-width: none !important;
+  width: calc(100% - 40px) !important;
+  min-width: 600px !important;
+}
+
+/* Ensure toolbar spans full width */
+.document-editor-wrapper .e-toolbar-items {
+  width: 100% !important;
+}
+
+/* Fix any scrolling issues */
+.document-editor-wrapper .e-de-content {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+/* Override Syncfusion's default page centering and width constraints */
+.document-editor-wrapper .e-de-page-container {
+  text-align: left !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+/* Remove any fixed width or centering from the document pages */
+.document-editor-wrapper .e-de-page {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  position: relative !important;
+}
+
+/* Ensure the editor content takes full width */
+.document-editor-wrapper .e-de-editor {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Fix for the document editor container to take full available space */
+.document-editor-page {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.document-editor-page .document-editor-content {
+  width: 100% !important;
+  max-width: none !important;
 }
 
 /* Loading and Error States */
@@ -485,4 +574,123 @@
 
 .checkbox-label input {
   margin-right: 8px;
-} 
+}
+
+/* Context Menu Positioning Fixes for DocumentEditorPage */
+/* These rules ensure the context menu appears at the mouse cursor position */
+
+/* Fix for all Syncfusion context menu classes - ensure they use fixed positioning */
+.e-contextmenu-wrapper,
+.e-contextmenu-container,
+.e-contextmenu,
+.e-menu-wrapper,
+.e-documenteditor-contextmenu,
+.e-de-contextmenu {
+  position: fixed !important;
+  z-index: 10000 !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+  max-width: calc(100vw - 20px) !important;
+  max-height: calc(100vh - 20px) !important;
+}
+
+/* Prevent context menus from going off-screen */
+.e-contextmenu-container {
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+}
+
+/* Ensure the document editor container doesn't interfere with positioning */
+.document-editor-page .e-documenteditor-container,
+.document-editor-page .e-documenteditor {
+  position: static !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+/* Fix overflow for content containers - allow context menus but hide main content overflow */
+.document-editor-page .document-editor-content {
+  overflow: hidden !important;
+}
+
+.document-editor-page .document-editor-wrapper {
+  overflow: hidden !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+.document-editor-page .e-documenteditor-container {
+  overflow: visible !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+/* Additional fix for any Syncfusion popup/overlay elements */
+.e-popup,
+.e-popup-container,
+.e-dlg-container,
+.e-tooltip {
+  position: fixed !important;
+  z-index: 10000 !important;
+  max-width: calc(100vw - 20px) !important;
+  max-height: calc(100vh - 20px) !important;
+}
+
+/* Responsive layout fixes */
+@media (max-width: 768px) {
+  .document-sidebar {
+    width: 200px;
+  }
+  
+  .document-editor-wrapper .e-de-page {
+    min-width: 400px !important;
+    width: calc(100% - 20px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .document-sidebar {
+    width: 180px;
+  }
+  
+  .document-editor-wrapper .e-de-page {
+    min-width: 300px !important;
+    width: calc(100% - 10px) !important;
+  }
+}
+
+/* Force full viewport usage */
+html, body {
+  width: 100% !important;
+  max-width: none !important;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Fix Syncfusion font loading issues */
+@font-face {
+  font-family: 'e-icons';
+  src: url('data:application/x-font-ttf;charset=utf-8;base64,') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback fonts for Syncfusion components */
+.e-de-content,
+.e-documenteditor,
+.e-toolbar,
+.e-menu {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+}
+
+/* Suppress font loading errors by providing fallbacks */
+.e-icons:before {
+  font-family: 'e-icons', 'Font Awesome 5 Free', 'Material Icons', sans-serif !important;
+}

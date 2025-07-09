@@ -1,0 +1,30 @@
+{
+  "id": "2c6ccde6-f9e5-4c5d-a5e7-a5267c689a6c",
+  "title": "Invoice Template - 7/9/2025",
+  "createdAt": "2025-07-09T06:42:33.647Z",
+  "modifiedAt": "2025-07-09T08:21:28.038Z",
+  "recordsManagement": {
+    "classification": "Internal",
+    "documentType": "Invoice Template",
+    "retentionPeriod": "3 Years",
+    "notes": "Created from template: Invoice Template"
+  },
+  "currentVersion": 3,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2025-07-09T06:42:33.647Z",
+      "comment": "Initial version"
+    },
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T08:15:42.689Z",
+      "comment": "Version 2"
+    },
+    {
+      "version": 3,
+      "timestamp": "2025-07-09T08:21:28.038Z",
+      "comment": "Version 3"
+    }
+  ]
+}

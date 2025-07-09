@@ -2,8 +2,8 @@
   "id": "15c7e199-5aee-48b6-bbdd-8b8703483c21",
   "title": "Leave Policy",
   "createdAt": "2025-05-10T15:40:47.707Z",
-  "modifiedAt": "2025-05-10T16:04:50.945Z",
-  "currentVersion": 6,
+  "modifiedAt": "2025-07-09T08:21:40.989Z",
+  "currentVersion": 7,
   "versions": [
     {
       "version": 1,
@@ -34,6 +34,11 @@
       "version": 6,
       "timestamp": "2025-05-10T16:04:50.945Z",
       "comment": "Version 6"
+    },
+    {
+      "version": 7,
+      "timestamp": "2025-07-09T08:21:40.989Z",
+      "comment": "Version 7"
     }
   ],
   "recordsManagement": {

@@ -28,7 +28,7 @@ const config: Config = {
     redirectUri: `${window.location.origin}/`,
   },
   api: {
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001',
+    baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000',
   },
 };
 

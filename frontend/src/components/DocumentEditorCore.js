@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
-import { DocumentEditorContainerComponent, Toolbar } from '@syncfusion/ej2-react-documenteditor';
+import { DocumentEditorContainerComponent } from '@syncfusion/ej2-react-documenteditor';
 import { registerLicense } from '@syncfusion/ej2-base';
 import './DocumentEditor.css';
 import "../../node_modules/@syncfusion/ej2-react-documenteditor/styles/material.css";
@@ -12,8 +12,7 @@ try {
   console.warn('Error registering Syncfusion license:', error);
 }
 
-// Inject required modules
-DocumentEditorContainerComponent.Inject(Toolbar);
+// Note: Modules are now injected globally in utils/syncfusionModules.js
 
 const DocumentEditorCore = forwardRef(({ document, onContentChange, readOnly = false, showMergeFields = false, serverApiUrl = '/api/document-editor' }, ref) => {
   const editorRef = useRef(null);

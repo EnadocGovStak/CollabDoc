@@ -1,0 +1,51 @@
+{
+  "id": "4c8c7883-cb6b-4a41-a73e-14493be10b53",
+  "name": "Employment Contract Template - Generated",
+  "templateId": "employment-contract-template",
+  "templateName": "Employment Contract Template",
+  "category": "HR",
+  "documentType": "Contract",
+  "mergeData": {
+    "CompanyName": "sadsd",
+    "HRRepresentative": "sadsad",
+    "HRTitle": "sadsa",
+    "TermsAndConditions": "sadsads",
+    "EmployeeName": "wasantha",
+    "SignatureDate": "2025-07-09",
+    "PositionTitle": "sadsa",
+    "Department": "sadsad",
+    "StartDate": "2025-07-24",
+    "EmployeeID": "23232",
+    "WorkLocation": "sadsad",
+    "ReportingManager": "asd",
+    "WeeklyHours": "2",
+    "Salary": "232132",
+    "PayFrequency": "mo",
+    "BenefitsPackage": "112"
+  },
+  "createdAt": "2025-07-09T06:54:19.126Z",
+  "updatedAt": "2025-07-09T06:54:19.126Z",
+  "currentVersion": 3,
+  "status": "draft",
+  "versions": [
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T08:20:24.784Z",
+      "comment": "Version 2"
+    },
+    {
+      "version": 3,
+      "timestamp": "2025-07-09T08:21:32.910Z",
+      "comment": "Version 3"
+    }
+  ],
+  "title": "Debug Test Fixed",
+  "modifiedAt": "2025-07-09T08:21:32.910Z",
+  "recordsManagement": {
+    "classification": "",
+    "documentType": "",
+    "retentionPeriod": "",
+    "recordNumber": "",
+    "notes": ""
+  }
+}

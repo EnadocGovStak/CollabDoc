@@ -1,0 +1,27 @@
+{
+  "id": "d47b8df2-49d0-47df-a7a6-137d077c4385",
+  "name": "Mobile App Development - Alice Johnson",
+  "templateId": "business-letter-template",
+  "templateName": "Business Letter Template",
+  "category": "Business",
+  "documentType": "Letter",
+  "mergeData": {
+    "CompanyEmail": "projects@techcorp.com",
+    "SenderTitle": "Project Manager",
+    "CompanyPhone": "(555) 987-6543",
+    "ServiceType": "Mobile App Development",
+    "Timeline": "4 months",
+    "CompanyName": "TechCorp Solutions",
+    "Budget": "75000",
+    "SenderName": "Sarah Wilson",
+    "CompanyAddress": "456 Innovation Drive, Tech City, CA",
+    "CustomerName": "Alice Johnson",
+    "ContactPerson": "Bob Smith",
+    "ResponseTime": "1 business day",
+    "ProjectName": "Employee Portal App"
+  },
+  "createdAt": "2025-07-09T06:08:22.827Z",
+  "updatedAt": "2025-07-09T06:08:22.827Z",
+  "currentVersion": 1,
+  "status": "draft"
+}

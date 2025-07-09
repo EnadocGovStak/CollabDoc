@@ -1,0 +1,20 @@
+{
+  "sfdt": "<p>Test document content</p>",
+  "sections": [
+    {
+      "sectionFormat": {},
+      "blocks": [
+        {
+          "paragraphFormat": {},
+          "characterFormat": {},
+          "inlines": [
+            {
+              "characterFormat": {},
+              "text": "Test document content"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

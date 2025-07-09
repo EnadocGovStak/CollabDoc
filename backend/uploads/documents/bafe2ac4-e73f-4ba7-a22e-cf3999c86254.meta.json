@@ -1,0 +1,37 @@
+{
+  "id": "bafe2ac4-e73f-4ba7-a22e-cf3999c86254",
+  "name": "Invoice - ABC Manufacturing Q1 2025",
+  "templateId": "a2e8ed36-0112-4d3c-b698-131b76d49c91",
+  "templateName": "Invoice Template",
+  "category": "General",
+  "documentType": "Document",
+  "mergeData": {
+    "CompanyName": "TechCorp Solutions",
+    "ClientName": "ABC Manufacturing",
+    "InvoiceDate": "2025-01-15",
+    "ServiceDescription": "Web Development Services - Q1 2025",
+    "Amount": "15000",
+    "InvoiceNumber": "INV-2025-001",
+    "DueDate": "2025-02-15"
+  },
+  "createdAt": "2025-07-09T05:59:52.328Z",
+  "updatedAt": "2025-07-09T05:59:52.329Z",
+  "currentVersion": 2,
+  "status": "draft",
+  "versions": [
+    {
+      "version": 2,
+      "timestamp": "2025-07-09T08:21:17.702Z",
+      "comment": "Version 2"
+    }
+  ],
+  "title": "Untitled",
+  "modifiedAt": "2025-07-09T08:21:17.702Z",
+  "recordsManagement": {
+    "classification": "",
+    "documentType": "",
+    "retentionPeriod": "",
+    "recordNumber": "",
+    "notes": ""
+  }
+}

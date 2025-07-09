@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DocumentEditorDemo from '../components/DocumentEditorDemo';
-import { documentService } from '../services/DocumentService';
+import TemplateService from '../services/TemplateService';
+import TemplatePreviewModal from '../components/TemplateSelector/TemplatePreviewModal';
 import './TemplateEditorPage.css';
 
 const TemplateEditorPage = () => {
@@ -13,6 +14,7 @@ const TemplateEditorPage = () => {
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState('');
   const [contentLoaded, setContentLoaded] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   
   // Load template or create new one
   const loadTemplate = useCallback(async () => {
@@ -24,7 +26,7 @@ const TemplateEditorPage = () => {
       if (id) {
         // Load existing template
         try {
-          const response = await documentService.getTemplate(id);
+          const response = await TemplateService.getTemplateContent(id);
           
           setTemplate({
             id: id,
@@ -37,7 +39,7 @@ const TemplateEditorPage = () => {
           
           setTimeout(() => {
             if (editorRef.current && response.content) {
-              editorRef.current.loadContent(response.content);
+              editorRef.current.setContent(response.content);
             }
             setContentLoaded(true);
           }, 100);
@@ -113,7 +115,7 @@ const TemplateEditorPage = () => {
       console.log(`Saving template with ${existingId ? 'existing ID: ' + existingId : 'as new template'}`);
       
       // Save the template
-      const result = await documentService.saveTemplate(templateData, existingId);
+      const result = await TemplateService.saveTemplate(templateData, existingId);
       
       // Update template in state with the returned data
       setTemplate(prev => ({
@@ -168,6 +170,14 @@ const TemplateEditorPage = () => {
     }));
   };
 
+  const handlePreview = () => {
+    setPreviewModalOpen(true);
+  };
+
+  const handleClosePreview = () => {
+    setPreviewModalOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="template-editor-page loading">
@@ -201,6 +211,12 @@ const TemplateEditorPage = () => {
         </div>
         <div className="template-editor-actions">
           {saveStatus && <span className="save-status">{saveStatus}</span>}
+          <button 
+            onClick={handlePreview}
+            className="preview-button"
+          >
+            Preview
+          </button>
           <button 
             onClick={handleSave}
             className="save-button"
@@ -271,6 +287,12 @@ const TemplateEditorPage = () => {
                 >
                   Save Template (Ctrl+S)
                 </button>
+                <button 
+                  onClick={handlePreview} 
+                  className="sidebar-button preview-button"
+                >
+                  Preview Template
+                </button>
               </div>
             </div>
             <div className="template-editor-wrapper">
@@ -290,8 +312,15 @@ const TemplateEditorPage = () => {
           </>
         )}
       </div>
+      
+      {/* Template Preview Modal */}
+      <TemplatePreviewModal
+        isOpen={previewModalOpen}
+        template={template}
+        onClose={handleClosePreview}
+      />
     </div>
   );
 };
 
-export default TemplateEditorPage; 
+export default TemplateEditorPage;

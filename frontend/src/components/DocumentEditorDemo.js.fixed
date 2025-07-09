@@ -1,0 +1,140 @@
+import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import {
+  DocumentEditorContainerComponent,
+  Toolbar
+} from '@syncfusion/ej2-react-documenteditor';
+import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
+import './DocumentEditor.css';
+
+// Note: Modules are now injected globally in utils/syncfusionModules.js
+
+const DocumentEditorDemo = forwardRef((props, ref) => {
+  const container = useRef(null);
+  const { 
+    document, 
+    initialContent, 
+    isReadOnly = false, 
+    onDocumentChange, 
+    onSave,
+    serviceUrl 
+  } = props;
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    getContent: () => {
+      if (container.current && container.current.documentEditor) {
+        return container.current.documentEditor.serialize();
+      }
+      return null;
+    },
+    setContent: (content) => {
+      if (container.current && container.current.documentEditor && content) {
+        container.current.documentEditor.open(content);
+      }
+    },
+    saveDocument: () => {
+      if (container.current && container.current.documentEditor) {
+        const content = container.current.documentEditor.serialize();
+        if (onSave) {
+          onSave(content);
+        }
+        return content;
+      }
+      return null;
+    }
+  }), [onSave]);
+
+  // Handle content changes
+  const handleContentChange = () => {
+    if (onDocumentChange && container.current && container.current.documentEditor) {
+      const content = container.current.documentEditor.serialize();
+      onDocumentChange(content);
+    }
+  };
+
+  // Initialize editor with content
+  useEffect(() => {
+    if (!container.current || !container.current.documentEditor) return;
+
+    const editor = container.current.documentEditor;
+    
+    // Simple 200ms delay for standard initialization
+    setTimeout(() => {
+      try {
+        // Determine content source
+        let contentToLoad = null;
+        
+        if (document && document.content) {
+          contentToLoad = document.content;
+        } else if (initialContent) {
+          contentToLoad = initialContent;
+        }
+
+        if (contentToLoad) {
+          // Load the content
+          if (typeof contentToLoad === 'string') {
+            // Parse if it's a string
+            try {
+              const parsed = JSON.parse(contentToLoad);
+              if (parsed.sections || parsed.sec || parsed.optimizeSfdt) {
+                editor.open(JSON.stringify(parsed));
+              } else {
+                editor.open(JSON.stringify({ "sfdt": parsed }));
+              }
+            } catch (e) {
+              // If parsing fails, treat as plain text
+              editor.open(JSON.stringify({
+                "sections": [{
+                  "blocks": [{
+                    "inlines": [{ "text": contentToLoad }]
+                  }]
+                }]
+              }));
+            }
+          } else if (typeof contentToLoad === 'object') {
+            // Already an object
+            if (contentToLoad.sections || contentToLoad.sec || contentToLoad.optimizeSfdt) {
+              editor.open(JSON.stringify(contentToLoad));
+            } else {
+              editor.open(JSON.stringify({ "sfdt": contentToLoad }));
+            }
+          }
+        } else {
+          // Load blank document
+          editor.openBlank();
+        }
+
+        // Set read-only mode
+        if (isReadOnly) {
+          editor.isReadOnly = true;
+        }
+
+      } catch (error) {
+        console.error('Error loading content:', error);
+        // Fallback to blank document
+        if (container.current && container.current.documentEditor) {
+          container.current.documentEditor.openBlank();
+        }
+      }
+    }, 200);
+  }, [document, initialContent, isReadOnly]);
+
+  return (
+    <DocumentEditorErrorBoundary>
+      <DocumentEditorContainerComponent
+        ref={container}
+        height="100%"
+        enableToolbar={true}
+        serviceUrl={serviceUrl}
+        contentChange={handleContentChange}
+        created={() => {
+          console.log('DocumentEditorComponent created');
+        }}
+      />
+    </DocumentEditorErrorBoundary>
+  );
+});
+
+DocumentEditorDemo.displayName = 'DocumentEditorDemo';
+
+export default DocumentEditorDemo;

@@ -1,0 +1,118 @@
+{
+  "id": "employment-contract-template",
+  "name": "Employment Contract Template",
+  "description": "Standard employment contract template with merge fields for HR department",
+  "category": "HR",
+  "documentType": "Contract",
+  "content": "{\"sfdt\":\"EMPLOYMENT CONTRACT\\n\\nThis Employment Contract is entered into between {{CompanyName}} and {{EmployeeName}}.\\n\\nEmployee Information:\\n- Full Name: {{EmployeeName}}\\n- Position: {{PositionTitle}}\\n- Department: {{Department}}\\n- Start Date: {{StartDate}}\\n- Employee ID: {{EmployeeID}}\\n\\nCompensation:\\n- Annual Salary: ${{Salary}}\\n- Pay Frequency: {{PayFrequency}}\\n- Benefits Package: {{BenefitsPackage}}\\n\\nWork Schedule:\\n- Hours per Week: {{WeeklyHours}}\\n- Work Location: {{WorkLocation}}\\n- Reporting Manager: {{ReportingManager}}\\n\\nTerms and Conditions:\\n{{TermsAndConditions}}\\n\\nThis contract is effective as of {{StartDate}} and remains in effect until terminated according to company policy.\\n\\nEmployee Signature: ___________________ Date: {{SignatureDate}}\\n\\nCompany Representative: {{HRRepresentative}}\\nTitle: {{HRTitle}}\\nSignature: ___________________ Date: {{SignatureDate}}\"}",
+  "mergeFields": [
+    {
+      "name": "EmployeeName",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "CompanyName",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "PositionTitle",
+      "type": "text",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "Department",
+      "type": "text",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "StartDate",
+      "type": "date",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "EmployeeID",
+      "type": "text",
+      "required": false,
+      "category": "Employment"
+    },
+    {
+      "name": "Salary",
+      "type": "number",
+      "required": true,
+      "category": "Compensation"
+    },
+    {
+      "name": "PayFrequency",
+      "type": "text",
+      "required": false,
+      "category": "Compensation"
+    },
+    {
+      "name": "BenefitsPackage",
+      "type": "text",
+      "required": false,
+      "category": "Compensation"
+    },
+    {
+      "name": "WeeklyHours",
+      "type": "number",
+      "required": false,
+      "category": "Employment"
+    },
+    {
+      "name": "WorkLocation",
+      "type": "text",
+      "required": false,
+      "category": "Employment"
+    },
+    {
+      "name": "ReportingManager",
+      "type": "text",
+      "required": false,
+      "category": "Employment"
+    },
+    {
+      "name": "TermsAndConditions",
+      "type": "text",
+      "required": false,
+      "category": "Legal"
+    },
+    {
+      "name": "HRRepresentative",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "HRTitle",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "SignatureDate",
+      "type": "date",
+      "required": true,
+      "category": "Legal"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T12:00:00.000Z",
+  "updatedAt": "2025-01-09T12:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Confidential",
+    "retentionPeriod": "10 years",
+    "accessControl": "HR Only",
+    "documentType": "Contract",
+    "department": "HR",
+    "reviewCycle": "2 years"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "sample-letter-template",
+  "name": "Sample Business Letter",
+  "description": "A simple business letter template with merge fields",
+  "category": "Business",
+  "documentType": "Letter",
+  "content": "{\"sfdt\":\"Hello {{FirstName}} {{LastName}},\\n\\nWe are pleased to inform you that your application for {{PositionTitle}} at {{CompanyName}} has been approved.\\n\\nYour start date will be {{StartDate}} and your annual salary will be {{Salary}}.\\n\\nPlease contact us at {{ContactEmail}} if you have any questions.\\n\\nBest regards,\\n{{ManagerName}}\\n{{CompanyName}}\"}",
+  "mergeFields": [
+    {
+      "name": "FirstName",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "LastName", 
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "PositionTitle",
+      "type": "text",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "CompanyName",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "StartDate",
+      "type": "date",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "Salary",
+      "type": "text",
+      "required": true,
+      "category": "Employment"
+    },
+    {
+      "name": "ContactEmail",
+      "type": "email",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "ManagerName",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T00:00:00.000Z",
+  "updatedAt": "2025-01-09T00:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Unclassified",
+    "retentionPeriod": "7 years",
+    "accessControl": "Public",
+    "documentType": "Letter",
+    "department": "HR",
+    "reviewCycle": "1 year"
+  }
+}

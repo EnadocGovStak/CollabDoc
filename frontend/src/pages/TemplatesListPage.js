@@ -1,20 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { documentService } from '../services/DocumentService';
+import TemplateService from '../services/TemplateService';
+import CategoryFilter from '../components/TemplateSelector/CategoryFilter';
+import SearchBar from '../components/TemplateSelector/SearchBar';
+import TemplatePreviewModal from '../components/TemplateSelector/TemplatePreviewModal';
 import './TemplatesListPage.css';
 
 const TemplatesListPage = () => {
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filteredTemplates, setFilteredTemplates] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   // Load templates
   useEffect(() => {
     const loadTemplates = async () => {
       try {
         setLoading(true);
-        const templatesData = await documentService.getTemplates();
+        const templatesData = await TemplateService.getTemplates();
         setTemplates(templatesData);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(templatesData
+          .filter(template => template.category)
+          .map(template => template.category))];
+        
+        setCategories(uniqueCategories);
         setError(null);
       } catch (err) {
         console.error('Error loading templates:', err);
@@ -37,13 +53,76 @@ const TemplatesListPage = () => {
     }
     
     try {
-      await documentService.deleteTemplate(templateId);
+      await TemplateService.deleteTemplate(templateId);
       // Update the templates list after deletion
-      setTemplates(templates.filter(template => template.id !== templateId));
+      const updatedTemplates = templates.filter(template => template.id !== templateId);
+      setTemplates(updatedTemplates);
+      
+      // Re-extract categories after deletion
+      const uniqueCategories = [...new Set(updatedTemplates
+        .filter(template => template.category)
+        .map(template => template.category))];
+      
+      setCategories(uniqueCategories);
     } catch (err) {
       console.error('Error deleting template:', err);
       alert('Failed to delete template');
     }
+  };
+
+  // Handle search
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  // Apply filters whenever search term or category changes
+  useEffect(() => {
+    let filtered = [...templates];
+    
+    // Apply search filter
+    if (searchTerm) {
+      const lowercaseTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(template => 
+        template.name.toLowerCase().includes(lowercaseTerm) ||
+        (template.description && template.description.toLowerCase().includes(lowercaseTerm))
+      );
+    }
+    
+    // Apply category filter
+    if (selectedCategory) {
+      filtered = filtered.filter(template => template.category === selectedCategory);
+    }
+    
+    setFilteredTemplates(filtered);
+  }, [templates, searchTerm, selectedCategory]);
+
+  // Handle template preview
+  const handlePreviewTemplate = async (templateId, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      setLoading(true);
+      const templateData = await TemplateService.getTemplateContent(templateId);
+      setSelectedTemplate(templateData);
+      setPreviewModalOpen(true);
+    } catch (err) {
+      console.error('Error loading template for preview:', err);
+      alert('Failed to load template for preview');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Close preview modal
+  const handleClosePreview = () => {
+    setPreviewModalOpen(false);
+    setSelectedTemplate(null);
   };
 
   return (
@@ -67,71 +146,106 @@ const TemplatesListPage = () => {
           </p>
         </div>
       ) : (
-        <div className="templates-grid">
-          {templates.map((template) => (
-            <Link 
-              to={`/templates/${template.id}`} 
-              key={template.id}
-              className="template-card"
-            >
-              <div className="template-icon">📄</div>
-              <div className="template-details">
-                <h3 className="template-name">{template.name}</h3>
-                {template.description && (
-                  <p className="template-description">{template.description}</p>
-                )}
-                <div className="template-meta">
-                  <span className="template-date">
-                    {template.modifiedAt 
-                      ? `Modified: ${new Date(template.modifiedAt).toLocaleDateString()}` 
-                      : `Created: ${new Date(template.createdAt).toLocaleDateString()}`
-                    }
-                  </span>
-                </div>
-              </div>
+        <>
+          <div className="templates-filters">
+            <SearchBar onSearch={handleSearch} />
+            {categories.length > 0 && (
+              <CategoryFilter 
+                categories={categories} 
+                selectedCategory={selectedCategory} 
+                onCategoryChange={handleCategoryChange} 
+              />
+            )}
+          </div>
+          
+          {filteredTemplates.length === 0 ? (
+            <div className="no-results-message">
+              <p>No templates match your search criteria.</p>
               <button 
-                className="template-delete-btn" 
-                onClick={(e) => handleDeleteTemplate(template.id, e)}
-                title="Delete Template"
+                className="clear-filters-button"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedCategory(null);
+                }}
               >
-                ×
+                Clear Filters
               </button>
-            </Link>
-          ))}
-        </div>
+            </div>
+          ) : (
+            <div className="templates-grid">
+              {filteredTemplates.map((template) => (
+                <div key={template.id} className="template-card">
+                  <div className="template-content">
+                    <div className="template-icon">
+                      {template.category === 'Legal' ? '⚖️' :
+                       template.category === 'Finance' ? '💰' :
+                       template.category === 'HR' ? '👥' :
+                       template.category === 'Business' ? '💼' : '📄'}
+                    </div>
+                    <div className="template-details">
+                      <h3 className="template-name">{template.name}</h3>
+                      {template.description && (
+                        <p className="template-description">{template.description}</p>
+                      )}
+                      <div className="template-meta">
+                        {template.category && (
+                          <span className="template-category">{template.category}</span>
+                        )}
+                        <span className="template-date">
+                          {template.modifiedAt 
+                            ? `Modified: ${new Date(template.modifiedAt).toLocaleDateString()}` 
+                            : `Created: ${new Date(template.createdAt).toLocaleDateString()}`
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="template-actions">
+                    <Link 
+                      to={`/templates/${template.id}/generate`}
+                      className="template-action-btn template-generate-btn"
+                      title="Generate Document"
+                    >
+                      Generate Document
+                    </Link>
+                    <Link 
+                      to={`/templates/${template.id}/edit`}
+                      className="template-action-btn template-edit-btn"
+                      title="Edit Template"
+                    >
+                      Edit
+                    </Link>
+                    <button 
+                      className="template-action-btn template-delete-btn" 
+                      onClick={(e) => handleDeleteTemplate(template.id, e)}
+                      title="Delete Template"
+                    >
+                      Delete
+                    </button>
+                    <button 
+                      className="template-action-btn template-preview-btn"
+                      onClick={(e) => handlePreviewTemplate(template.id, e)}
+                      title="Preview Template"
+                    >
+                      Preview
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
-      <div className="templates-info-section">
-        <h2>About Templates</h2>
-        <p>
-          Templates provide standardized layouts and content for documents when preparing them
-          for finalization and digital signing. Create templates with placeholders that will
-          be automatically filled with document data.
-        </p>
-        <div className="templates-info-columns">
-          <div className="templates-info-column">
-            <h3>Template Usage</h3>
-            <ol>
-              <li>Create a template with the necessary structure</li>
-              <li>Include placeholders for dynamic content</li>
-              <li>When finalizing a document, select the appropriate template</li>
-              <li>The system will merge the document with the template</li>
-              <li>The merged document will be prepared for digital signing</li>
-            </ol>
-          </div>
-          <div className="templates-info-column">
-            <h3>Template Placeholders</h3>
-            <ul>
-              <li><code>{'{{document_title}}'}</code> - Title of the document</li>
-              <li><code>{'{{document_id}}'}</code> - ID of the document</li>
-              <li><code>{'{{date}}'}</code> - Current date</li>
-              <li><code>{'{{signature_field}}'}</code> - Place for digital signature</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      {/* Template Preview Modal */}
+      <TemplatePreviewModal
+        isOpen={previewModalOpen}
+        template={selectedTemplate}
+        onClose={handleClosePreview}
+      />
     </div>
   );
 };
 
-export default TemplatesListPage; 
+export default TemplatesListPage;

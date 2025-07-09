@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { DocumentEditorContainerComponent, Toolbar } from '@syncfusion/ej2-react-documenteditor';
+import { DocumentEditorContainerComponent } from '@syncfusion/ej2-react-documenteditor';
 import { registerLicense } from '@syncfusion/ej2-base';
 import './DocumentPreview.css';
 
@@ -10,8 +10,7 @@ try {
   console.warn('Error registering Syncfusion license:', error);
 }
 
-// Inject required modules
-DocumentEditorContainerComponent.Inject(Toolbar);
+// Note: Modules are now injected globally in utils/syncfusionModules.js
 
 /**
  * Document Preview component for displaying merged documents

@@ -1,0 +1,158 @@
+{
+  "id": "invoice-template",
+  "name": "Professional Invoice Template",
+  "description": "Standard invoice template for billing clients and customers",
+  "category": "Finance",
+  "documentType": "Invoice",
+  "content": "{\"sfdt\":\"INVOICE\\n\\n{{CompanyName}}\\n{{CompanyAddress}}\\n{{CompanyPhone}} | {{CompanyEmail}}\\n\\n---\\n\\nBILL TO:\\n{{ClientName}}\\n{{ClientAddress}}\\n{{ClientEmail}}\\n\\nINVOICE DETAILS:\\nInvoice Number: {{InvoiceNumber}}\\nInvoice Date: {{InvoiceDate}}\\nDue Date: {{DueDate}}\\nPayment Terms: {{PaymentTerms}}\\n\\n---\\n\\nDESCRIPTION OF SERVICES:\\n{{ServiceDescription}}\\n\\nAmount: ${{Amount}}\\nTax ({{TaxRate}}%): ${{TaxAmount}}\\nTotal Due: ${{TotalAmount}}\\n\\n---\\n\\nPayment Instructions:\\nPlease remit payment to:\\nAccount: {{AccountNumber}}\\nRouting: {{RoutingNumber}}\\n\\nThank you for your business!\\n\\n{{CompanyName}}\"}",
+  "mergeFields": [
+    {
+      "name": "CompanyName",
+      "type": "text",
+      "required": true,
+      "category": "Company",
+      "description": "Your company name"
+    },
+    {
+      "name": "CompanyAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Company",
+      "description": "Your company address"
+    },
+    {
+      "name": "CompanyPhone",
+      "type": "text",
+      "required": false,
+      "category": "Company",
+      "description": "Company phone number"
+    },
+    {
+      "name": "CompanyEmail",
+      "type": "email",
+      "required": true,
+      "category": "Company",
+      "description": "Company email address"
+    },
+    {
+      "name": "ClientName",
+      "type": "text",
+      "required": true,
+      "category": "Personal",
+      "description": "Client or customer name"
+    },
+    {
+      "name": "ClientAddress",
+      "type": "textarea",
+      "required": true,
+      "category": "Personal",
+      "description": "Client billing address"
+    },
+    {
+      "name": "ClientEmail",
+      "type": "email",
+      "required": false,
+      "category": "Personal",
+      "description": "Client email address"
+    },
+    {
+      "name": "InvoiceNumber",
+      "type": "text",
+      "required": true,
+      "category": "Finance",
+      "description": "Unique invoice number"
+    },
+    {
+      "name": "InvoiceDate",
+      "type": "date",
+      "required": true,
+      "category": "Finance",
+      "description": "Invoice date"
+    },
+    {
+      "name": "DueDate",
+      "type": "date",
+      "required": true,
+      "category": "Finance",
+      "description": "Payment due date"
+    },
+    {
+      "name": "PaymentTerms",
+      "type": "dropdown",
+      "required": false,
+      "category": "Finance",
+      "description": "Payment terms",
+      "options": ["Net 15", "Net 30", "Net 60", "Due on Receipt"],
+      "defaultValue": "Net 30"
+    },
+    {
+      "name": "ServiceDescription",
+      "type": "textarea",
+      "required": true,
+      "category": "Finance",
+      "description": "Description of services or products"
+    },
+    {
+      "name": "Amount",
+      "type": "number",
+      "required": true,
+      "category": "Finance",
+      "description": "Service amount before tax",
+      "validation": {
+        "min": 0
+      }
+    },
+    {
+      "name": "TaxRate",
+      "type": "number",
+      "required": false,
+      "category": "Finance",
+      "description": "Tax rate percentage",
+      "defaultValue": 8.5,
+      "validation": {
+        "min": 0,
+        "max": 100
+      }
+    },
+    {
+      "name": "TaxAmount",
+      "type": "number",
+      "required": false,
+      "category": "Finance",
+      "description": "Tax amount calculated"
+    },
+    {
+      "name": "TotalAmount",
+      "type": "number",
+      "required": true,
+      "category": "Finance",
+      "description": "Total amount due"
+    },
+    {
+      "name": "AccountNumber",
+      "type": "text",
+      "required": false,
+      "category": "Finance",
+      "description": "Bank account number for payment"
+    },
+    {
+      "name": "RoutingNumber",
+      "type": "text",
+      "required": false,
+      "category": "Finance",
+      "description": "Bank routing number"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T12:00:00.000Z",
+  "updatedAt": "2025-01-09T12:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Internal",
+    "retentionPeriod": "7 years",
+    "accessControl": "Internal",
+    "documentType": "Invoice",
+    "department": "Finance",
+    "reviewCycle": "1 year"
+  }
+}

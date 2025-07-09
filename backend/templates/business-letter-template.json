@@ -1,0 +1,100 @@
+{
+  "id": "business-letter-template",
+  "name": "Business Letter Template",
+  "description": "A simple business letter template with merge fields for company communication",
+  "category": "Business",
+  "documentType": "Letter",
+  "content": "{\"sfdt\":\"Dear {{CustomerName}},\\n\\nThank you for your interest in {{CompanyName}}. We are pleased to inform you that your request for {{ServiceType}} has been received and is being processed.\\n\\nProject Details:\\n- Project Name: {{ProjectName}}\\n- Budget: ${{Budget}}\\n- Timeline: {{Timeline}}\\n- Contact Person: {{ContactPerson}}\\n\\nWe will contact you within {{ResponseTime}} business days to discuss the next steps.\\n\\nBest regards,\\n{{SenderName}}\\n{{SenderTitle}}\\n{{CompanyName}}\\n{{CompanyAddress}}\\nPhone: {{CompanyPhone}}\\nEmail: {{CompanyEmail}}\"}",
+  "mergeFields": [
+    {
+      "name": "CustomerName",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "CompanyName",
+      "type": "text", 
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "ServiceType",
+      "type": "text",
+      "required": true,
+      "category": "Project"
+    },
+    {
+      "name": "ProjectName",
+      "type": "text",
+      "required": false,
+      "category": "Project"
+    },
+    {
+      "name": "Budget",
+      "type": "number",
+      "required": false,
+      "category": "Project"
+    },
+    {
+      "name": "Timeline",
+      "type": "text",
+      "required": false,
+      "category": "Project"
+    },
+    {
+      "name": "ContactPerson",
+      "type": "text",
+      "required": true,
+      "category": "Company"
+    },
+    {
+      "name": "ResponseTime",
+      "type": "text",
+      "required": false,
+      "category": "Company"
+    },
+    {
+      "name": "SenderName",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "SenderTitle",
+      "type": "text",
+      "required": true,
+      "category": "Personal"
+    },
+    {
+      "name": "CompanyAddress",
+      "type": "text",
+      "required": false,
+      "category": "Company"
+    },
+    {
+      "name": "CompanyPhone",
+      "type": "text",
+      "required": false,
+      "category": "Company"
+    },
+    {
+      "name": "CompanyEmail",
+      "type": "email",
+      "required": false,
+      "category": "Company"
+    }
+  ],
+  "createdBy": "system",
+  "createdByName": "System",
+  "createdAt": "2025-01-09T12:00:00.000Z",
+  "updatedAt": "2025-01-09T12:00:00.000Z",
+  "recordsManagement": {
+    "classification": "Unclassified",
+    "retentionPeriod": "7 years",
+    "accessControl": "Public",
+    "documentType": "Template",
+    "department": "General",
+    "reviewCycle": "1 year"
+  }
+}

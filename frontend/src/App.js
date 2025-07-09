@@ -14,6 +14,9 @@ function App() {
                     <NavLink to="/templates" className={({ isActive }) => isActive ? 'active-nav-link' : 'nav-link'}>
                         Templates
                     </NavLink>
+                    <NavLink to="/editor-test" className={({ isActive }) => isActive ? 'active-nav-link' : 'nav-link'}>
+                        Editor Test
+                    </NavLink>
                 </nav>
             </header>
             <main className="app-main">
@@ -23,4 +26,4 @@ function App() {
     );
 }
 
-export default App; 
+export default App;

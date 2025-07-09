@@ -1,0 +1,225 @@
+import React, { forwardRef, useImperativeHandle, useState, useEffect, useRef } from 'react';
+import {
+  DocumentEditorContainerComponent,
+  Toolbar,
+  SfdtExport,
+  Selection,
+  Editor,
+  EditorHistory,
+  WordExport,
+  TextExport,
+  FormatPainter,
+  HyperlinkDialog,
+  TableDialog,
+  BookmarkDialog,
+  TableOfContentsDialog,
+  PageSetupDialog,
+  StyleDialog,
+  ListDialog,
+  ParagraphDialog,
+  BulletsAndNumberingDialog,
+  FontDialog,
+  TablePropertiesDialog,
+  BordersAndShadingDialog,
+  TableOptionsDialog,
+  CellOptionsDialog,
+  StylesDialog,
+  ImageResizer,
+  ContextMenu,
+  Print
+} from '@syncfusion/ej2-react-documenteditor';
+import { registerLicense } from '@syncfusion/ej2-base';
+import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
+import './DocumentEditor.css';
+
+// Register Syncfusion license
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
+
+// Inject necessary modules for Document Editor features
+DocumentEditorContainerComponent.Inject(
+  Toolbar, SfdtExport, Selection, Editor, EditorHistory, ImageResizer, TableDialog, ContextMenu, Print, WordExport, TextExport, FormatPainter
+);
+
+const DocumentEditorDemo = forwardRef(({ initialContent, onContentChange, documentSettings, onDocumentLoaded, isReadOnly, serviceUrl }, ref) => {
+  const editorInstance = useRef(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
+  const debounceTimeout = useRef(null);
+  
+  // Debounced content change handler
+  const debouncedContentChange = useRef((content) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      if (onContentChange) {
+        onContentChange(content);
+      }
+    }, 1000); // Debounce for 1 second
+  }).current;
+  
+  // Effect for cleanup
+  useEffect(() => {
+    return () => {
+      // Clear debounce timeout
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+      
+      const editor = editorInstance.current?.documentEditor;
+      if (editor && !editor.isDestroyed) {
+        try {
+          if (editor.selection) editor.selection.destroy();
+          if (editor.editor) editor.editor.destroy();
+          if (editor.viewer) editor.viewer.destroy();
+          editor.destroy();
+        } catch (error) {
+          console.warn('Error during editor cleanup:', error);
+        }
+      }
+    };
+  }, []);
+
+  // Expose editor methods via ref
+  useImperativeHandle(ref, () => ({
+    editor: editorInstance.current?.documentEditor,
+    getContent: async () => {
+      if (editorInstance.current?.documentEditor) {
+        try {
+          return editorInstance.current.documentEditor.serializeContent();
+        } catch (error) {
+          console.error("Error getting content:", error);
+          return null;
+        }
+      }
+      return null;
+    },
+    loadContent: (contentToLoad) => {
+      if (editorInstance.current?.documentEditor && isEditorReady) {
+        try {
+          const editor = editorInstance.current.documentEditor;
+          if (typeof contentToLoad === 'string') {
+            editor.open(contentToLoad === '' ? JSON.stringify({ "sfdt": "" }) : contentToLoad);
+          } else if (typeof contentToLoad === 'object' && contentToLoad !== null) {
+            const contentStr = JSON.stringify(contentToLoad);
+            editor.open(!contentStr.includes('"sfdt"') ? 
+              JSON.stringify({ "sfdt": contentStr }) : contentStr);
+          } else {
+            editor.open(JSON.stringify({ "sfdt": "" }));
+          }
+        } catch (error) {
+          console.error("Error loading content:", error);
+          editorInstance.current.documentEditor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      }
+    },
+    setReadOnly: (readOnlyStatus) => {
+      if (editorInstance.current?.documentEditor) {
+        editorInstance.current.documentEditor.isReadOnly = readOnlyStatus;
+      }
+    }
+  }));
+
+  // Effect for editor initialization and content loading
+  useEffect(() => {
+    const initializeEditor = async () => {
+      if (!editorInstance.current?.documentEditor || !isEditorReady) return;
+      
+      try {
+        const editor = editorInstance.current.documentEditor;
+        
+        // Skip if editor is not ready
+        if (editor.isDestroyed || !editor.editor) {
+          console.warn('Editor not ready for initialization');
+          return;
+        }
+        
+        // Set read-only state
+        editor.isReadOnly = !!isReadOnly;
+        
+        // Initialize modules
+        if (editor.selection && !editor.selection.isInitialized) {
+          editor.selection.initSelectionModule();
+        }
+        
+        if (editor.viewer?.scroller && !editor.viewer.scroller.initialized) {
+          editor.viewer.initViewerScroller();
+        }
+        
+        // Load content with a small delay to ensure initialization is complete
+        await new Promise(resolve => setTimeout(resolve, 0));
+        
+        if (typeof initialContent === 'object' && initialContent !== null) {
+          const contentStr = JSON.stringify(initialContent);
+          editor.open(!contentStr.includes('"sfdt"') ? 
+            JSON.stringify({ "sfdt": contentStr }) : contentStr);
+        } else if (typeof initialContent === 'string' && initialContent) {
+          editor.open(!initialContent.includes('"sfdt"') ? 
+            JSON.stringify({ "sfdt": initialContent }) : initialContent);
+        } else {
+          editor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      } catch (error) {
+        console.error("Error during editor initialization:", error);
+        const editor = editorInstance.current?.documentEditor;
+        if (editor && !editor.isDestroyed) {
+          editor.open(JSON.stringify({ "sfdt": "" }));
+        }
+      }
+    };
+    
+    initializeEditor();
+  }, [initialContent, isEditorReady, isReadOnly]);
+
+  return (
+    <DocumentEditorErrorBoundary>
+      <div className="document-editor-container" style={{ height: '100%', width: '100%' }}>
+        <DocumentEditorContainerComponent
+          id="doc_editor_container"
+          ref={editorInstance}
+          style={{ display: 'block', height: '100%' }}
+          enableToolbar={true}
+          showPropertiesPane={false}
+          serviceUrl={serviceUrl || 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/'}
+          created={() => {
+            console.log("DocumentEditorComponent created");
+            setIsEditorReady(true);
+            if (onDocumentLoaded) {
+              onDocumentLoaded();
+            }
+          }}
+          contentChange={() => {
+            if (onContentChange && editorInstance.current?.documentEditor) {
+              try {
+                const content = editorInstance.current.documentEditor.serializeContent();
+                debouncedContentChange(content);
+              } catch (error) {
+                console.error('Error serializing content:', error);
+              }
+            }
+          }}
+          height="100%"
+          width="100%"
+          documentEditorSettings={{
+            enableImageResizer: true,
+            enableSelection: true,
+            enableContextMenu: true,
+            enableEditorHistory: true,
+            enableTableDialog: true,
+            enablePrint: true,
+            enableWordExport: true,
+            ...documentSettings
+          }}
+          toolbarItems={[
+            { prefixIcon: 'e-de-icon-New', tooltipText: 'New', id: 'new' },
+            { prefixIcon: 'e-de-icon-Undo', tooltipText: 'Undo', id: 'undo' },
+            { prefixIcon: 'e-de-icon-Redo', tooltipText: 'Redo', id: 'redo' }
+          ]}
+        />
+      </div>
+    </DocumentEditorErrorBoundary>
+  );
+});
+
+DocumentEditorDemo.displayName = 'DocumentEditorDemo';
+
+export default DocumentEditorDemo;
