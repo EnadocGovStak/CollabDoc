@@ -5,6 +5,8 @@ import '@syncfusion/ej2-react-documenteditor/styles/material.css';
 import '@syncfusion/ej2-react-buttons/styles/material.css';
 import '@syncfusion/ej2-react-popups/styles/material.css';
 import { documentService } from '../services/DocumentService';
+import '../styles/design-system.css';
+import '../styles/components.css';
 import './DocumentEditorPage.css';
 import VersionHistory from '../components/VersionHistory';
 
@@ -469,201 +471,273 @@ const DocumentEditorPage = () => {
   return (
     <div className="document-editor-page">
       <div className="document-editor-header">
-        <Link to="/documents" className="back-link">
-          ← Back to Documents
+        <Link to="/documents" className="btn btn-ghost btn-sm">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M10.5 2L5.5 8l5 6"/>
+          </svg>
+          Back to Documents
         </Link>
-        <div className="document-editor-title">
-          <h1>{document?.title || 'Untitled'}</h1>
+        <div className="document-editor-title-section">
+          <h1 className="document-title">{document?.title || 'Untitled'}</h1>
           {isDocumentFinal() && (
-            <div className="final-document-badge">
-              <span className="final-icon">🔒</span> Final Document
+            <div className="status-badge status-badge-success">
+              <span className="status-icon">🔒</span>
+              Final Document
             </div>
           )}
         </div>
         <div className="document-editor-actions">
-          {saveStatus && <span className="save-status">{saveStatus}</span>}
+          {saveStatus && (
+            <div className={`save-status-notification ${saveStatus.includes('Error') ? 'error' : saveStatus.includes('Success') ? 'success' : 'info'}`}>
+              <span className="save-status-icon">
+                {saveStatus.includes('Error') ? '⚠️' : saveStatus.includes('Success') ? '✅' : 'ℹ️'}
+              </span>
+              <span className="save-status-text">{saveStatus}</span>
+            </div>
+          )}
           <button 
             onClick={handleSave}
-            className="save-button"
+            className="btn btn-primary"
             disabled={!!selectedVersion || isDocumentFinal()}
           >
-            Save
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2 2v12h12V4.414L11.586 2H2zm8 0v3H6V2h4zm0 4v3H6V6h4z"/>
+            </svg>
+            Save Document
           </button>
         </div>
       </div>
       <div className="document-editor-content">
         <div className="document-sidebar" ref={sidebarRef}>
-          <div className="sidebar-section">
-            <label>Title</label>
-            <input
-              type="text"
-              value={document?.title || ''}
-              onChange={handleTitleChange}
-              onFocus={() => {
-                console.log('Title field got focus');
-                setSidebarHasFocus(true);
-              }}
-              onBlur={() => {
-                console.log('Title field lost focus');
-                setSidebarHasFocus(false);
-              }}
-              placeholder="Enter document title"
-            />
+          {/* Document Title Card */}
+          <div className="sidebar-card">
+            <div className="sidebar-card-header">
+              <h3 className="sidebar-card-title">Document Title</h3>
+            </div>
+            <div className="sidebar-card-content">
+              <input
+                type="text"
+                value={document?.title || ''}
+                onChange={handleTitleChange}
+                onFocus={() => {
+                  console.log('Title field got focus');
+                  setSidebarHasFocus(true);
+                }}
+                onBlur={() => {
+                  console.log('Title field lost focus');
+                  setSidebarHasFocus(false);
+                }}
+                placeholder="Enter document title"
+                className="form-input"
+                disabled={!!selectedVersion || isDocumentFinal()}
+              />
+            </div>
           </div>
 
-          <div className="sidebar-section">
-            <label>Document Info</label>
-            <div className="document-info">
-              <div className="info-row">
-                <span className="info-label">Version:</span>
-                <span className="info-value">{document?.version || 1}</span>
-              </div>
-              {selectedVersion && (
-                <div className="info-row preview-warning">
-                  <span className="info-label">Previewing:</span>
-                  <span className="info-value">Version {selectedVersion}</span>
+          {/* Document Info Card */}
+          <div className="sidebar-card">
+            <div className="sidebar-card-header">
+              <h3 className="sidebar-card-title">Document Info</h3>
+              {isDocumentFinal() && (
+                <div className="status-badge status-badge-success">
+                  <span className="status-icon">🔒</span>
+                  Final
                 </div>
               )}
-              {selectedVersion && (
-                <div className="info-row">
-                  <button 
-                    onClick={returnToCurrent}
-                    className="return-current-btn"
-                    title="Return to current version"
-                  >
-                    Return to Current
-                  </button>
+            </div>
+            <div className="sidebar-card-content">
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="info-label">Version</span>
+                  <span className="info-value">{document?.version || 1}</span>
                 </div>
-              )}
-              <div className="info-row">
-                <span className="info-label">Last Modified:</span>
-                <span className="info-value">
-                  {document?.lastModified ? new Date(document.lastModified).toLocaleString() : 'Unknown'}
-                </span>
+                {selectedVersion && (
+                  <div className="info-item info-item-warning">
+                    <span className="info-label">Previewing</span>
+                    <span className="info-value">Version {selectedVersion}</span>
+                  </div>
+                )}
+                <div className="info-item">
+                  <span className="info-label">Last Modified</span>
+                  <span className="info-value text-xs">
+                    {document?.lastModified ? new Date(document.lastModified).toLocaleString() : 'Unknown'}
+                  </span>
+                </div>
               </div>
+              {selectedVersion && (
+                <button 
+                  onClick={returnToCurrent}
+                  className="btn btn-secondary btn-sm w-full"
+                  title="Return to current version"
+                >
+                  Return to Current Version
+                </button>
+              )}
             </div>
           </div>
           
-          <div className="sidebar-section collapsible">
-            <div className="section-header" onClick={toggleRecordsSection}>
-              <h3>Records Management</h3>
-              <span className={`toggle-icon ${recordsExpanded ? 'expanded' : ''}`}>▼</span>
+          {/* Records Management Card */}
+          <div className="sidebar-card collapsible">
+            <div 
+              className="sidebar-card-header clickable" 
+              onClick={toggleRecordsSection}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleRecordsSection();
+                }
+              }}
+              tabIndex="0"
+              role="button"
+              aria-expanded={recordsExpanded}
+              aria-controls="records-management-content"
+            >
+              <h3 className="sidebar-card-title">Records Management</h3>
+              <span className={`toggle-icon ${recordsExpanded ? 'expanded' : ''}`}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 9.5L4.5 6 5.9 4.6 8 6.7l2.1-2.1L11.5 6 8 9.5z"/>
+                </svg>
+              </span>
             </div>
             {recordsExpanded && (
-              <div className="section-content">
-                <div className="sidebar-field">
-                  <label>Classification</label>
-                  <select 
-                    name="classification"
-                    value={document?.recordsManagement?.classification || ''}
-                    onChange={handleRecordsChange}
-                    onFocus={() => setSidebarHasFocus(true)}
-                    onBlur={() => setSidebarHasFocus(false)}
-                    disabled={!!selectedVersion || isDocumentFinal()}
-                  >
-                    <option value="">Select Classification</option>
-                    {classifications.map(classification => (
-                      <option key={classification} value={classification}>
-                        {classification}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="sidebar-card-content records-management-compact" id="records-management-content">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Classification</label>
+                    <select 
+                      name="classification"
+                      value={document?.recordsManagement?.classification || ''}
+                      onChange={handleRecordsChange}
+                      onFocus={() => setSidebarHasFocus(true)}
+                      onBlur={() => setSidebarHasFocus(false)}
+                      disabled={!!selectedVersion || isDocumentFinal()}
+                      className="form-select"
+                    >
+                      <option value="">Select Classification</option>
+                      {classifications.map(classification => (
+                        <option key={classification} value={classification}>
+                          {classification}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div className="sidebar-field">
-                  <label>Document Type</label>
-                  <select 
-                    name="documentType"
-                    value={document?.recordsManagement?.documentType || ''}
-                    onChange={handleRecordsChange}
-                    onFocus={() => setSidebarHasFocus(true)}
-                    onBlur={() => setSidebarHasFocus(false)}
-                    disabled={!!selectedVersion || isDocumentFinal()}
-                  >
-                    <option value="">Select Document Type</option>
-                    {documentTypes.map(type => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  <div className="form-group">
+                    <label className="form-label">Document Type</label>
+                    <select 
+                      name="documentType"
+                      value={document?.recordsManagement?.documentType || ''}
+                      onChange={handleRecordsChange}
+                      onFocus={() => setSidebarHasFocus(true)}
+                      onBlur={() => setSidebarHasFocus(false)}
+                      disabled={!!selectedVersion || isDocumentFinal()}
+                      className="form-select"
+                    >
+                      <option value="">Select Document Type</option>
+                      {documentTypes.map(type => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div className="sidebar-field">
-                  <label>Retention Period</label>
-                  <select 
-                    name="retentionPeriod"
-                    value={document?.recordsManagement?.retentionPeriod || ''}
-                    onChange={handleRecordsChange}
-                    onFocus={() => setSidebarHasFocus(true)}
-                    onBlur={() => setSidebarHasFocus(false)}
-                    disabled={!!selectedVersion || isDocumentFinal()}
-                  >
-                    <option value="">Select Retention Period</option>
-                    {retentionPeriods.map(period => (
-                      <option key={period} value={period}>
-                        {period}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  <div className="form-group">
+                    <label className="form-label">Retention Period</label>
+                    <select 
+                      name="retentionPeriod"
+                      value={document?.recordsManagement?.retentionPeriod || ''}
+                      onChange={handleRecordsChange}
+                      onFocus={() => setSidebarHasFocus(true)}
+                      onBlur={() => setSidebarHasFocus(false)}
+                      disabled={!!selectedVersion || isDocumentFinal()}                    >
+                      <option value="">Select Retention Period</option>
+                      {retentionPeriods.map(period => (
+                        <option key={period} value={period}>
+                          {period}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div className="sidebar-field">
-                  <label>Record Number</label>
-                  <input 
-                    type="text"
-                    name="recordNumber"
-                    value={document?.recordsManagement?.recordNumber || ''}
-                    onChange={handleRecordsChange}
-                    onFocus={() => setSidebarHasFocus(true)}
-                    onBlur={() => setSidebarHasFocus(false)}
-                    placeholder="Enter record number"
-                    disabled={!!selectedVersion || isDocumentFinal()}
-                  />
-                </div>
-
-                <div className="sidebar-field">
-                  <label>Notes</label>
-                  <textarea 
-                    name="notes"
-                    value={document?.recordsManagement?.notes || ''}
-                    onChange={handleRecordsChange}
-                    onFocus={() => setSidebarHasFocus(true)}
-                    onBlur={() => setSidebarHasFocus(false)}
-                    placeholder="Enter notes"
-                    rows="3"
-                    disabled={!!selectedVersion || isDocumentFinal()}
-                  />
-                </div>
-
-                <div className="sidebar-field">
-                  <label className="checkbox-label">
+                  <div className="form-group">
+                    <label className="form-label">Record Number</label>
                     <input 
-                      type="checkbox"
-                      name="isFinal"
-                      checked={document?.recordsManagement?.isFinal || false}
-                      onChange={handleToggleFinal}
-                      disabled={!!selectedVersion}
+                      type="text"
+                      name="recordNumber"
+                      value={document?.recordsManagement?.recordNumber || ''}
+                      onChange={handleRecordsChange}
+                      onFocus={() => setSidebarHasFocus(true)}
+                      onBlur={() => setSidebarHasFocus(false)}
+                      placeholder="Enter record number"
+                      disabled={!!selectedVersion || isDocumentFinal()}
+                      className="form-input"
                     />
-                    Mark as Final
-                  </label>
-                  {isDocumentFinal() && (
-                    <p className="final-warning">
-                      This document is marked as final and cannot be edited.
-                    </p>
-                  )}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Notes</label>
+                    <textarea 
+                      name="notes"
+                      value={document?.recordsManagement?.notes || ''}
+                      onChange={handleRecordsChange}
+                      onFocus={() => setSidebarHasFocus(true)}
+                      onBlur={() => setSidebarHasFocus(false)}
+                      placeholder="Enter notes"
+                      rows="3"
+                      disabled={!!selectedVersion || isDocumentFinal()}
+                      className="form-textarea"
+                    />
+                  </div>
+
+                  <div className="form-group form-group-compact">
+                    <label className="form-checkbox-label">
+                      <input 
+                        type="checkbox"
+                        name="isFinal"
+                        checked={document?.recordsManagement?.isFinal || false}
+                        onChange={handleToggleFinal}
+                        disabled={!!selectedVersion}
+                        className="form-checkbox"
+                      />
+                      <span className="form-checkbox-text">Mark as Final</span>
+                    </label>
+                    {isDocumentFinal() && (
+                      <p className="form-help-text text-warning-600">
+                        This document is marked as final and cannot be edited.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="sidebar-section collapsible">
-            <div className="section-header" onClick={toggleVersionHistory}>
-              <h3>Version History</h3>
-              <span className={`toggle-icon ${versionHistoryExpanded ? 'expanded' : ''}`}>▼</span>
+          {/* Version History Card */}
+          <div className="sidebar-card collapsible">
+            <div 
+              className="sidebar-card-header clickable" 
+              onClick={toggleVersionHistory}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleVersionHistory();
+                }
+              }}
+              tabIndex="0"
+              role="button"
+              aria-expanded={versionHistoryExpanded}
+              aria-controls="version-history-content"
+            >
+              <h3 className="sidebar-card-title">Version History</h3>
+              <span className={`toggle-icon ${versionHistoryExpanded ? 'expanded' : ''}`}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 9.5L4.5 6 5.9 4.6 8 6.7l2.1-2.1L11.5 6 8 9.5z"/>
+                </svg>
+              </span>
             </div>
             {versionHistoryExpanded && (
-              <div className="section-content">
+              <div className="sidebar-card-content" id="version-history-content">
                 <VersionHistory 
                   documentId={document?.id}
                   onVersionSelect={handleVersionSelect}

@@ -1,0 +1,49 @@
+/* Card Component Styles */
+/* Base card styles are defined in components.css */
+
+.card-hoverable {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.card-hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-300);
+}
+
+.card-padding-none .card-body {
+  padding: 0;
+}
+
+.card-padding-sm .card-body {
+  padding: var(--space-4);
+}
+
+.card-padding-lg .card-body {
+  padding: var(--space-8);
+}
+
+.card-padding-none .card-header {
+  padding: 0;
+}
+
+.card-padding-sm .card-header {
+  padding: var(--space-4);
+}
+
+.card-padding-lg .card-header {
+  padding: var(--space-8);
+}
+
+.card-padding-none .card-footer {
+  padding: 0;
+}
+
+.card-padding-sm .card-footer {
+  padding: var(--space-4);
+}
+
+.card-padding-lg .card-footer {
+  padding: var(--space-8);
+}

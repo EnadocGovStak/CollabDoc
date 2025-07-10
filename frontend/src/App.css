@@ -475,9 +475,30 @@ div[id*="_viewer_"] {
 }
 
 .app-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 1.4rem;
   font-weight: 700;
   color: #007bff;
+}
+
+.app-logo-image {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.app-logo-image:hover {
+  transform: scale(1.05);
+}
+
+.app-logo-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #007bff;
+  text-decoration: none;
 }
 
 .app-nav {
