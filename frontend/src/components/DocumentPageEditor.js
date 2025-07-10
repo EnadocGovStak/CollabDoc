@@ -429,7 +429,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           height="100%"
           width="100%"
           enableToolbar={enableToolbar}
-          showPropertiesPane={false}
+          showPropertiesPane={true}
           enableContextMenu={false}
           enableMiniToolbar={false}
           enableSelection={true}
