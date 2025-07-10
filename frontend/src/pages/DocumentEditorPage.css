@@ -110,7 +110,7 @@
   border: 1px solid var(--color-primary-200);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm), 0 0 0 1px var(--color-primary-100);
-  overflow: hidden;
+  overflow: visible;
   transition: all var(--transition-base);
   animation: slideInFromLeft 0.3s ease-out;
   position: relative;
@@ -911,4 +911,46 @@
   padding: 2px 4px;
   margin-top: 1px;
   line-height: 1.2;
+}
+
+/* Minimal fixes for sidebar formatting */
+
+/* Reduce gaps between dropdown fields */
+.form-grid {
+  gap: var(--space-2); /* Reduced from original for tighter spacing */
+}
+
+/* Ensure consistent styling for all three dropdown fields */
+select[name="classification"],
+select[name="documentType"], 
+select[name="retentionPeriod"] {
+  font-size: 13px !important;
+  padding: var(--space-2) !important;
+  min-height: 36px !important;
+}
+
+/* Remove height restriction from Records Management section */
+.records-management-compact {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* Ensure Notes field is properly sized and visible */
+.records-management-compact .form-textarea {
+  min-height: 80px !important;
+  max-height: 120px !important;
+  font-size: 13px !important;
+}
+
+/* Ensure checkbox is visible and properly sized */
+.records-management-compact .form-checkbox {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.records-management-compact .form-checkbox-label {
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--space-2) !important;
 }

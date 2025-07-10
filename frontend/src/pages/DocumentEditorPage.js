@@ -650,7 +650,9 @@ const DocumentEditorPage = () => {
                       onChange={handleRecordsChange}
                       onFocus={() => setSidebarHasFocus(true)}
                       onBlur={() => setSidebarHasFocus(false)}
-                      disabled={!!selectedVersion || isDocumentFinal()}                    >
+                      disabled={!!selectedVersion || isDocumentFinal()}
+                      className="form-select"
+                    >
                       <option value="">Select Retention Period</option>
                       {retentionPeriods.map(period => (
                         <option key={period} value={period}>
