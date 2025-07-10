@@ -436,6 +436,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           isReadOnly={isReadOnly}
           enableAutoFocus={false}
           enableLocalPaste={false}
+          enableTooltip={true}
           contentChange={handleContentChange}
           created={handleCreated}
           serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
