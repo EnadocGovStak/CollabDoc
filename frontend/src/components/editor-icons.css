@@ -1,10 +1,5 @@
 /* Icons for document editor toolbar */
-@font-face {
-    font-family: 'e-icons';
-    src: url('https://cdn.syncfusion.com/ej2/20.4.38/material/e-icons.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+/* Syncfusion fonts are automatically loaded by the component - removing CDN reference to avoid CORS */
 
 /* Toolbar item icons */
 .e-de-icon-New::before {

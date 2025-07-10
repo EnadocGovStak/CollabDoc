@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
+const API_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 /**
  * Service for handling document operations
@@ -285,239 +285,72 @@ export const documentService = {
 
   /**
    * Get available document types for records management
-   * @returns {Promise<Array>} List of document types
+   * @returns {Promise<Array>} - Array of document types
    */
   async getDocumentTypes() {
     try {
-      console.log('Fetching document types from API');
-      const response = await axios.get(`${API_URL}/api/records/document-types`);
-      console.log('Document types response:', response.data);
-      return response.data;
+      // For now, return static list - can be made dynamic later
+      return [
+        'Policy',
+        'Contract', 
+        'Report',
+        'Manual',
+        'Procedure',
+        'Standard',
+        'Form',
+        'Template',
+        'Correspondence',
+        'Legal Document'
+      ];
     } catch (error) {
       console.error('Error getting document types:', error);
-      // Return default types if API fails
-      const defaultTypes = [
-        'Standard Document',
-        'Policy',
-        'Procedure',
-        'Report',
-        'Legal Contract',
-        'Correspondence',
-        'Operation Manual',
-        'Technical Manual'
-      ];
-      console.log('Using default document types:', defaultTypes);
-      return defaultTypes;
+      return [];
     }
   },
 
   /**
-   * Get available record classifications
-   * @returns {Promise<Array>} List of classifications
+   * Get available classifications for records management
+   * @returns {Promise<Array>} - Array of classifications
    */
   async getClassifications() {
     try {
-      console.log('Fetching classifications from API');
-      const response = await axios.get(`${API_URL}/api/records/classifications`);
-      console.log('Classifications response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error getting classifications:', error);
-      // Return default classifications if API fails
-      const defaultClassifications = [
+      // For now, return static list - can be made dynamic later
+      return [
         'Public',
         'Internal',
         'Confidential',
-        'Restricted'
+        'Restricted',
+        'Secret',
+        'Top Secret'
       ];
-      console.log('Using default classifications:', defaultClassifications);
-      return defaultClassifications;
+    } catch (error) {
+      console.error('Error getting classifications:', error);
+      return [];
     }
   },
 
   /**
-   * Get available retention periods
-   * @returns {Promise<Array>} List of retention periods
+   * Get available retention periods for records management
+   * @returns {Promise<Array>} - Array of retention periods
    */
   async getRetentionPeriods() {
     try {
-      console.log('Fetching retention periods from API');
-      const response = await axios.get(`${API_URL}/api/records/retention-periods`);
-      console.log('Retention periods response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error getting retention periods:', error);
-      // Return default retention periods if API fails
-      const defaultPeriods = [
+      // For now, return static list - can be made dynamic later
+      return [
         '1 Year',
+        '2 Years',
         '3 Years',
         '5 Years',
         '7 Years',
         '10 Years',
-        'Permanent'
+        '15 Years',
+        '25 Years',
+        'Permanent',
+        'Until Superseded'
       ];
-      console.log('Using default retention periods:', defaultPeriods);
-      return defaultPeriods;
-    }
-  },
-
-  /**
-   * Get available templates
-   * @returns {Promise<Array>} List of templates
-   */
-  async getTemplates() {
-    try {
-      console.log('Fetching templates from API');
-      const response = await axios.get(`${API_URL}/api/templates`);
-      console.log('Templates response:', response.data);
-      return response.data;
     } catch (error) {
-      console.error('Error getting templates:', error);
-      // Return default templates if API fails
-      const defaultTemplates = [
-        { id: 'template1', name: 'Approval Template', description: 'Template for approval workflow documents' },
-        { id: 'template2', name: 'Contract Template', description: 'Template for legal contracts' },
-        { id: 'template3', name: 'Report Template', description: 'Template for formal reports' }
-      ];
-      console.log('Using default templates:', defaultTemplates);
-      return defaultTemplates;
-    }
-  },
-
-  /**
-   * Merge document with template and send for signing
-   * @param {string} documentId - Document ID to merge
-   * @param {string} templateId - Template ID to use for merge
-   * @param {Object} mergeFields - Values for merge fields
-   * @returns {Promise<Object>} Result of merge operation
-   */
-  async mergeWithTemplate(documentId, templateId, mergeFields = {}) {
-    try {
-      console.log(`Merging document ${documentId} with template ${templateId}`);
-      console.log('Using merge fields:', mergeFields);
-      
-      const response = await axios.post(`${API_URL}/api/documents/${documentId}/merge`, {
-        templateId,
-        mergeFields
-      });
-      
-      console.log('Merge response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error merging document with template:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Send document for digital signing
-   * @param {string} documentId - Document ID to send for signing
-   * @returns {Promise<Object>} Result of signing request
-   */
-  async sendForSigning(documentId) {
-    try {
-      console.log(`Sending document ${documentId} for digital signing`);
-      const response = await axios.post(`${API_URL}/api/documents/${documentId}/sign`);
-      console.log('Signing response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error sending document for signing:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Get a specific template by ID
-   * @param {string} templateId - Template ID to retrieve
-   * @returns {Promise<Object>} Template data
-   */
-  async getTemplate(templateId) {
-    try {
-      console.log(`Getting template with ID: ${templateId}`);
-      const response = await axios.get(`${API_URL}/api/templates/${templateId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error getting template:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Save a template (create new or update existing)
-   * @param {Object} templateData - Template data to save
-   * @param {string} existingId - Optional ID of existing template to update
-   * @returns {Promise<Object>} Saved template information
-   */
-  async saveTemplate(templateData, existingId) {
-    try {
-      console.log(`saveTemplate called with existingId: ${existingId || 'none'}`);
-      
-      // Validate required fields
-      if (!templateData.name) {
-        throw new Error('Template name is required');
-      }
-      
-      // Determine if this is a create or update operation
-      const method = existingId ? 'PUT' : 'POST';
-      const url = existingId 
-        ? `${API_URL}/api/templates/${existingId}` 
-        : `${API_URL}/api/templates`;
-      
-      // Send request
-      const response = await axios({
-        method,
-        url,
-        data: templateData,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      console.log('Template save response:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error saving template:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Delete a template
-   * @param {string} templateId - Template ID to delete
-   * @returns {Promise<Object>} Response data
-   */
-  async deleteTemplate(templateId) {
-    try {
-      console.log(`Deleting template with ID: ${templateId}`);
-      const response = await axios.delete(`${API_URL}/api/templates/${templateId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error deleting template:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Create a new document from a template
-   * @param {string} templateId - Template ID to use
-   * @param {Object} mergeFields - Values for merge fields
-   * @returns {Promise<Object>} - The created document
-   */
-  async createFromTemplate(templateId, mergeFields) {
-    try {
-      console.log(`Creating document from template ${templateId} with merge fields:`, mergeFields);
-      
-      // Call the API to create document from template
-      const response = await axios.post(`${API_URL}/api/documents/create-from-template`, {
-        templateId,
-        mergeFields
-      });
-      
-      console.log('Document created from template:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating document from template:', error);
-      throw error;
+      console.error('Error getting retention periods:', error);
+      return [];
     }
   }
 }; 

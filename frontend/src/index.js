@@ -28,21 +28,33 @@ import '@syncfusion/ej2-icons/styles/material.css';
 // Register Syncfusion license
 registerLicense(process.env.REACT_APP_SYNCFUSION_KEY || 'Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
 
-// Font loading function
+// Font loading function with local fallbacks (no CDN)
 const ensureFontsLoaded = () => {
-  // Create a style element for custom font rules if needed
+  // Create a style element for custom font rules with local fallbacks only
   const styleEl = document.createElement('style');
   styleEl.type = 'text/css';
   styleEl.innerHTML = `
-    /* Ensure e-icons font is loaded from CDN as fallback */
+    /* Local e-icons font fallback (no CDN to prevent CORS errors) */
     @font-face {
       font-family: 'e-icons';
-      src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff2') format('woff2'),
-           url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff') format('woff'),
-           url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
+      src: url('data:application/x-font-ttf;charset=utf-8;base64,') format('truetype');
       font-weight: normal;
       font-style: normal;
-      font-display: fallback;
+      font-display: swap;
+    }
+    
+    /* Fallback fonts for Syncfusion components */
+    .e-de-content,
+    .e-documenteditor,
+    .e-toolbar,
+    .e-menu,
+    .e-icons {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    }
+    
+    /* Icon fallbacks to prevent missing icons */
+    .e-icons:before {
+      font-family: 'e-icons', 'Font Awesome 5 Free', 'Material Icons', 'Segoe MDL2 Assets', sans-serif !important;
     }
     
     /* Critical fix for context menu visibility */

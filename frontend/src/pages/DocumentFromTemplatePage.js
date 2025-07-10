@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import TemplateService from '../services/TemplateService';
 import { documentService } from '../services/DocumentService';
-import DynamicForm from '../components/DynamicForm/DynamicForm';
-import DocumentPreview from '../components/DocumentPreview/DocumentPreview';
+import { TemplateMergeForm, TemplateMergePreview, useTemplateMerge } from '../components/TemplateMerge';
 import './DocumentFromTemplatePage.css';
 
 const DocumentFromTemplatePage = () => {
@@ -11,12 +10,20 @@ const DocumentFromTemplatePage = () => {
   const navigate = useNavigate();
   
   const [template, setTemplate] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [previewContent, setPreviewContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [documentName, setDocumentName] = useState('');
+
+  // Use the template merge hook for form management
+  const {
+    mergeData,
+    setMergeData,
+    updateMergeData,
+    mergedContent,
+    validationResult,
+    isValid
+  } = useTemplateMerge(template);
 
   // Load template on mount
   useEffect(() => {
@@ -36,7 +43,7 @@ const DocumentFromTemplatePage = () => {
             initialData[field.name] = field.defaultValue;
           }
         });
-        setFormData(initialData);
+        setMergeData(initialData);
         
         setError(null);
       } catch (err) {
@@ -50,50 +57,38 @@ const DocumentFromTemplatePage = () => {
     if (templateId) {
       loadTemplate();
     }
-  }, [templateId]);
+  }, [templateId, setMergeData]);
 
-  // Update preview when form data changes
-  useEffect(() => {
-    const updatePreview = async () => {
-      if (template && Object.keys(formData).length > 0) {
-        try {
-          const preview = await TemplateService.previewTemplate(templateId, formData);
-          if (preview.success) {
-            setPreviewContent(preview.content);
-          }
-        } catch (err) {
-          console.error('Error generating preview:', err);
-        }
-      }
-    };
-
-    // Debounce preview updates
-    const timeout = setTimeout(updatePreview, 500);
-    return () => clearTimeout(timeout);
-  }, [template, formData, templateId]);
-
-  const handleFormChange = (newData) => {
-    setFormData(newData);
-  };
-
-  const handleGenerateDocument = async () => {
+  const handleGenerateDocument = async (formData) => {
     if (!template) return;
 
     try {
       setGenerating(true);
+      console.log('Starting document generation with template:', templateId);
+      console.log('Form data:', formData);
       
       // Generate document from template
       const result = await TemplateService.generateDocument(templateId, formData);
+      console.log('Generation result:', result);
       
       if (result.success) {
+        console.log('Document generated successfully, documentId:', result.documentId);
+        
+        // Clear saved draft after successful generation
+        localStorage.removeItem(`template_form_${templateId}`);
+        
         // Navigate to the generated document
-        navigate(`/editor/${result.documentId}`, {
+        const documentPath = `/editor/${result.documentId}`;
+        console.log('Navigating to:', documentPath);
+        
+        navigate(documentPath, {
           state: { 
             message: 'Document generated successfully from template',
             templateName: template.name 
           }
         });
       } else {
+        console.error('Generation failed:', result.error);
         setError(result.error || 'Failed to generate document');
       }
     } catch (err) {
@@ -102,46 +97,6 @@ const DocumentFromTemplatePage = () => {
     } finally {
       setGenerating(false);
     }
-  };
-
-  const handleSubmit = async (submittedData) => {
-    if (!template) return;
-
-    try {
-      setGenerating(true);
-      
-      // Generate document from template
-      const result = await TemplateService.generateDocument(templateId, submittedData);
-      
-      if (result.success) {
-        // Clear saved draft after successful generation
-        localStorage.removeItem(`form_draft_${templateId}`);
-        
-        // Navigate to the generated document
-        navigate(`/editor/${result.documentId}`, {
-          state: { 
-            message: 'Document generated successfully from template',
-            templateName: template.name 
-          }
-        });
-      } else {
-        setError(result.error || 'Failed to generate document');
-        setGenerating(false);
-      }
-    } catch (err) {
-      console.error('Error generating document:', err);
-      setError('An error occurred while generating the document');
-      setGenerating(false);
-    }
-  };
-
-  const validateForm = () => {
-    if (!template?.mergeFields) return true;
-    
-    const requiredFields = template.mergeFields.filter(field => field.required);
-    return requiredFields.every(field => 
-      formData[field.name] && formData[field.name].toString().trim() !== ''
-    );
   };
 
   if (loading) {
@@ -180,8 +135,6 @@ const DocumentFromTemplatePage = () => {
     );
   }
 
-  const isFormValid = validateForm();
-
   return (
     <div className="document-from-template-page">
       <header className="page-header">
@@ -214,10 +167,14 @@ const DocumentFromTemplatePage = () => {
             />
           </div>
 
-          <DynamicForm
+          <TemplateMergeForm
             template={template}
-            formData={formData}
-            onChange={handleFormChange}
+            mergeData={mergeData}
+            onDataChange={updateMergeData}
+            onSubmit={handleGenerateDocument}
+            submitLabel={generating ? 'Generating...' : 'Generate Document'}
+            showValidation={true}
+            enableAutoSave={true}
           />
 
           <div className="form-actions">
@@ -226,13 +183,6 @@ const DocumentFromTemplatePage = () => {
               onClick={() => navigate('/templates')}
             >
               Cancel
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={handleGenerateDocument}
-              disabled={!isFormValid || generating}
-            >
-              {generating ? 'Generating...' : 'Generate Document'}
             </button>
           </div>
         </div>
@@ -243,10 +193,11 @@ const DocumentFromTemplatePage = () => {
             <p>Preview of your document with current data</p>
           </div>
           
-          <DocumentPreview 
-            content={previewContent}
+          <TemplateMergePreview 
             template={template}
-            formData={formData}
+            mergeData={mergeData}
+            showRawContent={false}
+            height="500px"
           />
         </div>
       </div>

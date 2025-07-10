@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import DocumentEditorDemo from '../components/DocumentEditorDemo';
+import DocumentPageEditor from '../components/DocumentPageEditor';
 import '@syncfusion/ej2-react-documenteditor/styles/material.css';
 import '@syncfusion/ej2-react-buttons/styles/material.css';
 import '@syncfusion/ej2-react-popups/styles/material.css';
@@ -24,6 +24,8 @@ const DocumentEditorPage = () => {
   const [recordsExpanded, setRecordsExpanded] = useState(true);
   const [versionHistoryExpanded, setVersionHistoryExpanded] = useState(false);
   const [contentLoaded, setContentLoaded] = useState(false);
+  const [sidebarHasFocus, setSidebarHasFocus] = useState(false);
+  const sidebarRef = useRef(null);
 
   // Load reference data
   useEffect(() => {
@@ -53,7 +55,7 @@ const DocumentEditorPage = () => {
     if (editorRef.current && content) {
       console.log('Explicitly updating editor with content via updateEditorContent');
       try {
-        // DocumentEditorDemo's setContent handles stringification and readiness.
+        // DocumentPageEditor's setContent handles stringification and readiness.
         editorRef.current.setContent(content);
       } catch (err) {
         console.error('Error loading content into editor via updateEditorContent:', err);
@@ -70,7 +72,7 @@ const DocumentEditorPage = () => {
       setLoading(true);
       setError(null);
       setSelectedVersion(null);
-      setContentLoaded(false); // Unmount DocumentEditorDemo, editorRef will become null temporarily
+      setContentLoaded(false); // Unmount DocumentPageEditor, editorRef will become null temporarily
 
       let newDocumentData;
 
@@ -78,12 +80,16 @@ const DocumentEditorPage = () => {
         console.log(`Loading document: ${id}`);
         // Determine the current/target version to load
         const versionsResponse = await documentService.getDocumentVersions(id);
+        console.log('versionsResponse:', versionsResponse);
         // Ensure versionsResponse and versionsResponse.versions are checked before accessing currentVersion
-        const currentVersion = versionsResponse?.versions?.length > 0 ? versionsResponse.currentVersion : 1;
+        const currentVersion = (versionsResponse?.versions?.length > 0 && versionsResponse.currentVersion) 
+          ? versionsResponse.currentVersion 
+          : 1;
         console.log(`Target version is ${currentVersion}`);
 
         // Fetch the specific version content
         const versionData = await documentService.getDocumentVersion(id, currentVersion);
+        console.log('versionData:', versionData);
         if (!versionData || versionData.content === undefined) {
           console.error(`Failed to load content for version ${currentVersion} of document ${id}`);
           throw new Error(`Document content for version ${currentVersion} could not be loaded.`);
@@ -105,9 +111,10 @@ const DocumentEditorPage = () => {
             documentType: '',
             retentionPeriod: '',
             recordNumber: '',
-            notes: ''
+            notes: '',
+            isFinal: false
           },
-          version: versionData.version || currentVersion
+          version: versionData?.version || currentVersion || 1
         };
         console.log("Document state to be set after loading:", newDocumentData);
 
@@ -126,7 +133,8 @@ const DocumentEditorPage = () => {
             documentType: '',
             retentionPeriod: '',
             recordNumber: '',
-            notes: ''
+            notes: '',
+            isFinal: false
           },
           version: 1
         };
@@ -134,7 +142,7 @@ const DocumentEditorPage = () => {
 
       setDocument(newDocumentData); // Update the document state
       setContentLoaded(true);       // NOW set contentLoaded to true.
-                                    // This will render DocumentEditorDemo,
+                                    // This will render DocumentPageEditor,
                                     // which will use newDocumentData.content as its initialContent prop.
 
     } catch (err) {
@@ -145,8 +153,15 @@ const DocumentEditorPage = () => {
         id: id || null,
         title: 'Error Loading Document',
         content: '', // Empty content on error
-        version: 0,
-        recordsManagement: {},
+        version: 1,
+        recordsManagement: {
+          classification: '',
+          documentType: '',
+          retentionPeriod: '',
+          recordNumber: '',
+          notes: '',
+          isFinal: false
+        },
         createdAt: new Date().toISOString(),
         lastModified: new Date().toISOString(),
         createdBy: 'System'
@@ -157,9 +172,10 @@ const DocumentEditorPage = () => {
     }
   }, [id]); // 'id' is the primary dependency.
 
+  // Load document data when ID changes
   useEffect(() => {
     loadDocument();
-  }, [loadDocument]); // React to changes in loadDocument (which means changes in 'id')
+  }, [id]); // React to changes in 'id' directly
 
   // Check if document is final
   const isDocumentFinal = useCallback(() => {
@@ -184,6 +200,31 @@ const DocumentEditorPage = () => {
       });
     }
   }, []); // No dependencies to prevent callback recreation
+
+  // Handle title changes
+  const handleTitleChange = useCallback((e) => {
+    const newTitle = e.target.value;
+    setDocument(prev => ({
+      ...prev,
+      title: newTitle,
+      lastModified: new Date().toISOString()
+    }));
+  }, []);
+
+  // Handle records management field changes
+  const handleRecordsChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setDocument(prev => ({
+      ...prev,
+      recordsManagement: {
+        ...prev.recordsManagement,
+        [name]: value
+      },
+      lastModified: new Date().toISOString()
+    }));
+  }, []);
+
+
 
   // Handle save with check for finalization
   const handleSave = useCallback(async () => {
@@ -228,7 +269,7 @@ const DocumentEditorPage = () => {
         id: result.id || result.filename,
         content,
         lastModified: new Date().toISOString(),
-        version: result.version || prev.version
+        version: result.version || prev.version || 1
       }));
       
       setSaveStatus('Document saved successfully');
@@ -252,7 +293,7 @@ const DocumentEditorPage = () => {
   }, [document, id, navigate, isDocumentFinal]);
 
   // Toggle document final status
-  const handleToggleFinal = (e) => {
+  const handleToggleFinal = useCallback((e) => {
     const isFinal = e.target.checked;
     
     if (isFinal) {
@@ -267,14 +308,15 @@ const DocumentEditorPage = () => {
       recordsManagement: {
         ...prev.recordsManagement,
         isFinal: isFinal
-      }
+      },
+      lastModified: new Date().toISOString()
     }));
     
     // If marking as final, immediately save
     if (isFinal) {
       handleSave();
     }
-  };
+  }, [handleSave]);
 
   // Create keyboard shortcut for save
   useEffect(() => {
@@ -290,36 +332,15 @@ const DocumentEditorPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleSave]);
 
-  const handleTitleChange = (e) => {
-    console.log('Title change attempt:', e.target.value);
-    console.log('Current selectedVersion:', selectedVersion);
-    console.log('Is document final:', isDocumentFinal());
-    console.log('Document:', document);
-    setDocument(prev => ({
-      ...prev,
-      title: e.target.value
-    }));
-  };
-
-  const handleRecordsChange = (e) => {
-    const { name, value } = e.target;
-    console.log('Records change attempt:', name, value);
-    console.log('Current selectedVersion:', selectedVersion);
-    console.log('Is document final:', isDocumentFinal());
-    
-    setDocument(prev => ({
-      ...prev,
-      recordsManagement: {
-        ...prev.recordsManagement,
-        [name]: value
-      }
-    }));
-  };
-
   // Handle version selection and preview
   const handleVersionSelect = useCallback(async (versionNumber) => {
     if (!document || !document.id) {
       console.warn('Cannot select version, document or document.id is missing.');
+      return;
+    }
+
+    if (!versionNumber || versionNumber < 1) {
+      console.warn('Invalid version number:', versionNumber);
       return;
     }
 
@@ -330,7 +351,7 @@ const DocumentEditorPage = () => {
         setSelectedVersion(versionNumber);
 
         // Directly update the editor with the selected version's content using the imperative method.
-        // DocumentEditorDemo's setContent handles stringification and editor readiness.
+        // DocumentPageEditor's setContent handles stringification and editor readiness.
         if (editorRef.current) {
           updateEditorContent(versionData.content);
         } else {
@@ -471,209 +492,206 @@ const DocumentEditorPage = () => {
         </div>
       </div>
       <div className="document-editor-content">
-        {document && (
-          <>
-            <div className="document-sidebar">
-              <div className="sidebar-section">
-                <label>Title</label>
-                <input 
-                  type="text" 
-                  value={document.title}
-                  onChange={handleTitleChange}
-                  // temporarily disabled: disabled={!!selectedVersion || isDocumentFinal()}
-                  title={`Debug: selectedVersion=${!!selectedVersion}, isFinal=${isDocumentFinal()}`}
-                />
-              </div>
-              
-              <div className="sidebar-section">
-                <label>Created by</label>
-                <div>{document.createdBy}</div>
-              </div>
-              
-              <div className="sidebar-section">
-                <label>Created</label>
-                <div>{new Date(document.createdAt).toLocaleDateString()}</div>
-              </div>
-              
-              <div className="sidebar-section">
-                <label>Last modified</label>
-                <div>{new Date(document.lastModified).toLocaleString()}</div>
-              </div>
+        <div className="document-sidebar" ref={sidebarRef}>
+          <div className="sidebar-section">
+            <label>Title</label>
+            <input
+              type="text"
+              value={document?.title || ''}
+              onChange={handleTitleChange}
+              onFocus={() => {
+                console.log('Title field got focus');
+                setSidebarHasFocus(true);
+              }}
+              onBlur={() => {
+                console.log('Title field lost focus');
+                setSidebarHasFocus(false);
+              }}
+              placeholder="Enter document title"
+            />
+          </div>
 
-              <div className="sidebar-section">
-                <label>Filename</label>
-                <div className="filename">{document.id || 'Not saved yet'}</div>
+          <div className="sidebar-section">
+            <label>Document Info</label>
+            <div className="document-info">
+              <div className="info-row">
+                <span className="info-label">Version:</span>
+                <span className="info-value">{document?.version || 1}</span>
               </div>
-
-              <div className="sidebar-section">
-                <button 
-                  className="sidebar-section-header compact"
-                  onClick={toggleVersionHistory}
-                >
-                  <span>Version History</span>
-                  <span className="toggle-icon">{versionHistoryExpanded ? '▼' : '►'}</span>
-                </button>
-                
-                {selectedVersion && (
-                  <div className="version-actions">
-                    <span className="viewing-version">Viewing v{selectedVersion}</span>
-                    <button onClick={handleRestoreVersion} className="restore-button">
-                      Restore This Version
-                    </button>
-                    <button 
-                      onClick={returnToCurrent} 
-                      className="cancel-button"
-                    >
-                      Back to Current
-                    </button>
-                  </div>
-                )}
-                
-                {versionHistoryExpanded && (
-                  <VersionHistory 
-                    documentId={document.id} 
-                    onVersionSelect={handleVersionSelect} 
-                    onVersionRestore={loadDocument}
-                    currentVersion={document.version}
-                  />
-                )}
-              </div>
-
-              <div className="sidebar-section records-management-section-container">
-                <button 
-                  className="sidebar-section-header"
-                  onClick={toggleRecordsSection}
-                >
-                  <span>Records Management</span>
-                  <span className="toggle-icon">{recordsExpanded ? '▼' : '►'}</span>
-                </button>
-                
-                {recordsExpanded && (
-                  <div className="records-management-section">
-                    <div className="form-group">
-                      <label>Classification</label>
-                      <select 
-                        name="classification"
-                        value={document.recordsManagement?.classification || ''}
-                        onChange={handleRecordsChange}
-                        // temporarily disabled: disabled={!!selectedVersion || isDocumentFinal()}
-                      >
-                        <option value="">Select Classification</option>
-                        {classifications.map(classification => (
-                          <option key={classification} value={classification}>
-                            {classification}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Document Type</label>
-                      <select 
-                        name="documentType"
-                        value={document.recordsManagement?.documentType || ''}
-                        onChange={handleRecordsChange}
-                        disabled={!!selectedVersion || isDocumentFinal()}
-                      >
-                        <option value="">Select Document Type</option>
-                        {documentTypes.map(type => (
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Retention Period</label>
-                      <select 
-                        name="retentionPeriod"
-                        value={document.recordsManagement?.retentionPeriod || ''}
-                        onChange={handleRecordsChange}
-                        disabled={!!selectedVersion || isDocumentFinal()}
-                      >
-                        <option value="">Select Retention Period</option>
-                        {retentionPeriods.map(period => (
-                          <option key={period} value={period}>
-                            {period}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Record Number</label>
-                      <input 
-                        type="text"
-                        name="recordNumber"
-                        value={document.recordsManagement?.recordNumber || ''}
-                        onChange={handleRecordsChange}
-                        placeholder="Enter record number"
-                        disabled={!!selectedVersion || isDocumentFinal()}
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label>Notes</label>
-                      <textarea 
-                        name="notes"
-                        value={document.recordsManagement?.notes || ''}
-                        onChange={handleRecordsChange}
-                        placeholder="Enter records management notes"
-                        rows={3}
-                        disabled={!!selectedVersion || isDocumentFinal()}
-                      ></textarea>
-                    </div>
-                    
-                    <div className="form-group checkbox-group">
-                      <label className="checkbox-label">
-                        <input 
-                          type="checkbox"
-                          name="isFinal"
-                          checked={document.recordsManagement?.isFinal || false}
-                          onChange={handleToggleFinal}
-                          disabled={!!selectedVersion || isDocumentFinal()}
-                        />
-                        Mark as Final (prevents further editing)
-                      </label>
-                      {isDocumentFinal() && (
-                        <div className="final-notice">
-                          This document is finalized and cannot be edited.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-
-              <div className="sidebar-section">
-                <button 
-                  onClick={handleSave} 
-                  className="sidebar-button"
-                  disabled={!!selectedVersion || isDocumentFinal()}
-                >
-                  Save Document (Ctrl+S)
-                </button>
-              </div>
-            </div>
-            <div className="document-editor-wrapper">
-              <DocumentEditorDemo
-                ref={editorRef}
-                document={document}
-                onContentChange={handleContentChange}
-                isReadOnly={!!selectedVersion || isDocumentFinal()}
-                key={document?.id || 'new'} // Add key to force re-render when document ID changes
-              />
-              {!contentLoaded && (
-                <div className="editor-loading-overlay">
-                  <div className="loading-spinner"></div>
-                  <p>Loading document content...</p>
+              {selectedVersion && (
+                <div className="info-row preview-warning">
+                  <span className="info-label">Previewing:</span>
+                  <span className="info-value">Version {selectedVersion}</span>
                 </div>
               )}
+              {selectedVersion && (
+                <div className="info-row">
+                  <button 
+                    onClick={returnToCurrent}
+                    className="return-current-btn"
+                    title="Return to current version"
+                  >
+                    Return to Current
+                  </button>
+                </div>
+              )}
+              <div className="info-row">
+                <span className="info-label">Last Modified:</span>
+                <span className="info-value">
+                  {document?.lastModified ? new Date(document.lastModified).toLocaleString() : 'Unknown'}
+                </span>
+              </div>
             </div>
-          </>
-        )}
+          </div>
+          
+          <div className="sidebar-section collapsible">
+            <div className="section-header" onClick={toggleRecordsSection}>
+              <h3>Records Management</h3>
+              <span className={`toggle-icon ${recordsExpanded ? 'expanded' : ''}`}>▼</span>
+            </div>
+            {recordsExpanded && (
+              <div className="section-content">
+                <div className="sidebar-field">
+                  <label>Classification</label>
+                  <select 
+                    name="classification"
+                    value={document?.recordsManagement?.classification || ''}
+                    onChange={handleRecordsChange}
+                    onFocus={() => setSidebarHasFocus(true)}
+                    onBlur={() => setSidebarHasFocus(false)}
+                    disabled={!!selectedVersion || isDocumentFinal()}
+                  >
+                    <option value="">Select Classification</option>
+                    {classifications.map(classification => (
+                      <option key={classification} value={classification}>
+                        {classification}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sidebar-field">
+                  <label>Document Type</label>
+                  <select 
+                    name="documentType"
+                    value={document?.recordsManagement?.documentType || ''}
+                    onChange={handleRecordsChange}
+                    onFocus={() => setSidebarHasFocus(true)}
+                    onBlur={() => setSidebarHasFocus(false)}
+                    disabled={!!selectedVersion || isDocumentFinal()}
+                  >
+                    <option value="">Select Document Type</option>
+                    {documentTypes.map(type => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sidebar-field">
+                  <label>Retention Period</label>
+                  <select 
+                    name="retentionPeriod"
+                    value={document?.recordsManagement?.retentionPeriod || ''}
+                    onChange={handleRecordsChange}
+                    onFocus={() => setSidebarHasFocus(true)}
+                    onBlur={() => setSidebarHasFocus(false)}
+                    disabled={!!selectedVersion || isDocumentFinal()}
+                  >
+                    <option value="">Select Retention Period</option>
+                    {retentionPeriods.map(period => (
+                      <option key={period} value={period}>
+                        {period}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sidebar-field">
+                  <label>Record Number</label>
+                  <input 
+                    type="text"
+                    name="recordNumber"
+                    value={document?.recordsManagement?.recordNumber || ''}
+                    onChange={handleRecordsChange}
+                    onFocus={() => setSidebarHasFocus(true)}
+                    onBlur={() => setSidebarHasFocus(false)}
+                    placeholder="Enter record number"
+                    disabled={!!selectedVersion || isDocumentFinal()}
+                  />
+                </div>
+
+                <div className="sidebar-field">
+                  <label>Notes</label>
+                  <textarea 
+                    name="notes"
+                    value={document?.recordsManagement?.notes || ''}
+                    onChange={handleRecordsChange}
+                    onFocus={() => setSidebarHasFocus(true)}
+                    onBlur={() => setSidebarHasFocus(false)}
+                    placeholder="Enter notes"
+                    rows="3"
+                    disabled={!!selectedVersion || isDocumentFinal()}
+                  />
+                </div>
+
+                <div className="sidebar-field">
+                  <label className="checkbox-label">
+                    <input 
+                      type="checkbox"
+                      name="isFinal"
+                      checked={document?.recordsManagement?.isFinal || false}
+                      onChange={handleToggleFinal}
+                      disabled={!!selectedVersion}
+                    />
+                    Mark as Final
+                  </label>
+                  {isDocumentFinal() && (
+                    <p className="final-warning">
+                      This document is marked as final and cannot be edited.
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="sidebar-section collapsible">
+            <div className="section-header" onClick={toggleVersionHistory}>
+              <h3>Version History</h3>
+              <span className={`toggle-icon ${versionHistoryExpanded ? 'expanded' : ''}`}>▼</span>
+            </div>
+            {versionHistoryExpanded && (
+              <div className="section-content">
+                <VersionHistory 
+                  documentId={document?.id}
+                  onVersionSelect={handleVersionSelect}
+                  selectedVersion={selectedVersion}
+                  onRestoreVersion={handleRestoreVersion}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="document-editor-wrapper">
+          {contentLoaded && document ? (
+            <DocumentPageEditor
+              ref={editorRef}
+              initialContent={document.content}
+              onContentChange={handleContentChange}
+              onSave={handleSave}
+              isReadOnly={!!selectedVersion || isDocumentFinal()}
+              enableToolbar={true}
+              sidebarHasFocus={sidebarHasFocus}
+            />
+          ) : (
+            <div className="editor-loading">
+              <p>Loading document editor...</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

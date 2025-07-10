@@ -195,10 +195,4 @@ html, body, #root {
     color: #333 !important;
 }
 
-/* Fix for Syncfusion font loading */
-@font-face {
-    font-family: 'e-icons';
-    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-} 
+/* Syncfusion fonts are automatically loaded by the component - removing CDN reference to avoid CORS */ 

@@ -41,16 +41,7 @@
     background: #f8f9fa;
 }
 
-/* Add Syncfusion icons font - Updated path to use CDN with latest version */
-@font-face {
-    font-family: 'e-icons';
-    src: url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff2') format('woff2'),
-         url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.woff') format('woff'),
-         url('https://cdn.syncfusion.com/ej2/22.2.5/material/e-icons.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: fallback;
-}
+/* Syncfusion icons are loaded automatically by the component CSS imports */
 
 /* Fix toolbar icon positioning */
 .e-toolbar .e-toolbar-items .e-toolbar-item .e-btn {
@@ -67,52 +58,62 @@
     font-weight: normal !important;
 }
 
-/* Context Menu Specific Fixes - Critical */
-/* These rules ensure context menu appears at mouse cursor position */
+/* Context Menu Hiding - Completely hide all context menus */
+/* These rules ensure context menus are completely hidden and non-interactive */
 .e-contextmenu-wrapper, 
 .e-contextmenu-container,
 .e-contextmenu,
 .e-menu-parent,
-.e-documenteditor-contextmenu {
-    position: fixed !important; /* Fixed positioning to escape container constraints */
-    z-index: 100000 !important;
-    visibility: visible !important;
-    display: block !important;
-    background-color: white !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-    border: 1px solid #ccc !important;
-    border-radius: 4px !important;
-    max-width: 200px !important;
-    min-width: 120px !important;
-    transform: none !important; /* Remove any transforms that could affect positioning */
-    -webkit-transform: none !important;
+.e-documenteditor-contextmenu,
+ul[id*="contextmenu-list"],
+ul[id*="editor_contextmenu"],
+div[class*="contextmenu-wrapper"],
+.e-menu-container,
+.e-menu-popup,
+.e-de-contextmenu,
+.e-de-contextmenu-container {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
 .e-contextmenu-wrapper ul.e-contextmenu,
 .e-documenteditor-contextmenu ul.e-contextmenu {
-    visibility: visible !important;
-    display: block !important;
-    background-color: white !important;
-    position: static !important; /* Use static so it doesn't create new positioning context */
-    margin: 0 !important;
-    padding: 4px 0 !important;
-    list-style: none !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
 }
 
 .e-contextmenu .e-menu-item,
 .e-contextmenu-wrapper .e-menu-item,
 .e-documenteditor-contextmenu .e-menu-item {
-    height: 36px !important;
-    line-height: 36px !important;
-    color: #333 !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .e-contextmenu .e-menu-item.e-focused,
 .e-contextmenu .e-menu-item:hover,
 .e-contextmenu-wrapper .e-menu-item:hover,
 .e-documenteditor-contextmenu .e-menu-item:hover {
-    background-color: #e6f2ff !important;
-    color: #0078d7 !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 /* Menu styling fixes */
@@ -141,28 +142,39 @@
     padding: 0 10px !important;
 }
 
-/* Fix for separators */
+/* Fix for separators - hide them too */
 .e-contextmenu .e-separator,
 .e-contextmenu-wrapper .e-separator,
 .e-documenteditor-contextmenu .e-separator {
-    height: 1px !important;
-    background-color: #e0e0e0 !important;
-    margin: 4px 0 !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
-/* Additional context menu positioning fixes */
+/* Additional context menu hiding - ensure they're completely hidden */
 .e-contextmenu-wrapper {
-    overflow: visible !important;
-    transform: none !important; /* Prevent CSS transforms from affecting positioning */
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
 }
 
-/* Ensure context menu doesn't get clipped by container overflow */
+/* Ensure context menu doesn't appear anywhere in document editor containers */
 .document-editor-wrapper .e-contextmenu-wrapper,
 .document-editor-content .e-contextmenu-wrapper {
-    overflow: visible !important;
-    clip: none !important;
-    -webkit-clip-path: none !important;
-    clip-path: none !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -9999 !important;
 }
 
 /* Style for document editor menu */
@@ -408,4 +420,58 @@
 .document-editor-container {
     width: 100% !important;
     height: 100% !important;
+}
+
+/* Focus isolation fixes */
+.document-editor-demo-container {
+    /* Prevent focus stealing by containing focus events */
+    contain: focus;
+    isolation: isolate;
+}
+
+/* Ensure editor only receives focus when explicitly clicked */
+.document-editor-demo-container * {
+    /* Prevent automatic focus capture */
+    outline: none;
+}
+
+/* Only allow focus when user explicitly interacts with editor */
+.document-editor-demo-container:not(:focus-within) .e-documenteditor {
+    pointer-events: auto;
+}
+
+/* Prevent focus events from bubbling outside editor container */
+.document-editor-demo-container {
+    /* Create a focus boundary */
+    position: relative;
+}
+
+/* Force hide any context menus that might still appear */
+.e-contextmenu,
+.e-contextmenu-container,
+.e-contextmenu-wrapper,
+.e-menu-container,
+.e-menu-popup,
+.e-de-contextmenu,
+.e-de-contextmenu-container,
+ul[id*="contextmenu-list"],
+ul[id*="editor_contextmenu"],
+div[class*="contextmenu-wrapper"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Hide mini toolbar */
+.e-de-mini-toolbar,
+.e-de-mini-toolbar-container {
+    display: none !important;
+    visibility: hidden !important;
 }
