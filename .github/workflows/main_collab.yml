@@ -1,21 +1,19 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
+# Legacy workflow - Use deploy-fullstack.yml instead
+# This workflow is kept for reference but should not be used
 
-name: Build and deploy Node.js app to Azure Web App - Collab
+name: Legacy - Build and deploy Node.js app to Azure Web App - Collab
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+  # Removed automatic trigger - use deploy-fullstack.yml instead
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-
+    if: false  # Disabled - use deploy-fullstack.yml instead
+    
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
@@ -88,4 +86,12 @@ jobs:
           app-name: 'Collab'
           slot-name: 'Production'
           package: .
+=======
+      - name: Workflow disabled
+        run: |
+          echo "This workflow has been disabled."
+          echo "Please use the deploy-fullstack.yml workflow instead."
+          echo "This file is kept for reference only."
+          exit 1
+>>>>>>> 70d45d17be070077ddd65a950927a3d2d49058b9
           

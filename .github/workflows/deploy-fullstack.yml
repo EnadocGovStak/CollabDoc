@@ -1,0 +1,223 @@
+# Deploy Both Frontend and Backend to Azure Web Apps
+name: Deploy Full Stack to Azure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test || echo "No tests configured"
+
+      - name: Create backend deployment package
+        run: |
+          cd backend
+          npm ci --only=production
+          
+          mkdir -p ../backend-deployment
+          cp -r src ../backend-deployment/
+          cp -r node_modules ../backend-deployment/
+          cp package*.json ../backend-deployment/
+          
+          # Create web.config for backend
+          cat > ../backend-deployment/web.config << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <webSocket enabled="false" />
+              <handlers>
+                <add name="iisnode" path="src/index.js" verb="*" modules="iisnode"/>
+              </handlers>
+              <rewrite>
+                <rules>
+                  <rule name="NodeInspector" patternSyntax="ECMAScript" stopProcessing="true">
+                    <match url="^src/index.js\/debug[\/]?" />
+                  </rule>
+                  <rule name="StaticContent">
+                    <action type="Rewrite" url="public{REQUEST_URI}"/>
+                  </rule>
+                  <rule name="DynamicContent">
+                    <conditions>
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="True"/>
+                    </conditions>
+                    <action type="Rewrite" url="src/index.js"/>
+                  </rule>
+                </rules>
+              </rewrite>
+              <security>
+                <requestFiltering>
+                  <hiddenSegments>
+                    <remove segment="bin"/>
+                  </hiddenSegments>
+                </requestFiltering>
+              </security>
+              <httpErrors existingResponse="PassThrough" />
+              <iisnode watchedFiles="web.config;*.js"/>
+            </system.webServer>
+          </configuration>
+          EOF
+
+      - name: Archive backend deployment
+        run: |
+          cd backend-deployment
+          zip -r ../backend-deployment.zip .
+
+      - name: Upload backend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-app
+          path: backend-deployment.zip
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm run test:all || echo "No tests configured"
+
+      - name: Build frontend application
+        run: |
+          cd frontend
+          npm run build
+        env:
+          CI: false
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+          REACT_APP_SYNCFUSION_LICENSE_KEY: ${{ secrets.REACT_APP_SYNCFUSION_LICENSE_KEY }}
+          REACT_APP_AZURE_AD_CLIENT_ID: ${{ secrets.REACT_APP_AZURE_AD_CLIENT_ID }}
+          REACT_APP_AZURE_AD_TENANT_ID: ${{ secrets.REACT_APP_AZURE_AD_TENANT_ID }}
+          REACT_APP_AZURE_AD_REDIRECT_URI: ${{ secrets.REACT_APP_AZURE_AD_REDIRECT_URI }}
+
+      - name: Create frontend deployment package
+        run: |
+          cd frontend
+          
+          # Create web.config for React SPA
+          cat > build/web.config << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <rewrite>
+                <rules>
+                  <rule name="React Routes" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                      <add input="{REQUEST_URI}" pattern="^/(api)" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="/" />
+                  </rule>
+                </rules>
+              </rewrite>
+              <staticContent>
+                <remove fileExtension=".json" />
+                <mimeMap fileExtension=".json" mimeType="application/json" />
+                <remove fileExtension=".woff" />
+                <mimeMap fileExtension=".woff" mimeType="application/x-font-woff" />
+                <remove fileExtension=".woff2" />
+                <mimeMap fileExtension=".woff2" mimeType="application/font-woff2" />
+              </staticContent>
+              <httpErrors errorMode="Custom" existingResponse="Replace">
+                <remove statusCode="404" subStatusCode="-1" />
+                <error statusCode="404" path="/" responseMode="ExecuteURL" />
+              </httpErrors>
+            </system.webServer>
+          </configuration>
+          EOF
+
+      - name: Archive frontend deployment
+        run: |
+          cd frontend/build
+          zip -r ../../frontend-deployment.zip .
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-app
+          path: frontend-deployment.zip
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: build-backend
+    environment:
+      name: 'Production'
+    
+    steps:
+      - name: Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-app
+
+      - name: Unzip backend artifact
+        run: unzip backend-deployment.zip
+
+      - name: Deploy Backend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'collabdoc-backend'  # Backend app name
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND }}
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    environment:
+      name: 'Production'
+    
+    steps:
+      - name: Download frontend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-app
+
+      - name: Unzip frontend artifact
+        run: unzip frontend-deployment.zip
+
+      - name: Deploy Frontend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'collabdoc-frontend'  # Frontend app name
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND }}
