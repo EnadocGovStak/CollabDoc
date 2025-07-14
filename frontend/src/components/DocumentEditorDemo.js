@@ -1,4 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
+import { registerLicense } from '@syncfusion/ej2-base';
 import {
   DocumentEditorContainerComponent,
   Toolbar,
@@ -33,8 +34,17 @@ import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
 import './DocumentEditor.css';
 import config from '../config';
 
-// Register Syncfusion license
-registerLicense(config.syncfusion.licenseKey);
+// Register Syncfusion license immediately at module load time
+try {
+  if (config.syncfusion && config.syncfusion.licenseKey) {
+    registerLicense(config.syncfusion.licenseKey);
+    console.log('Syncfusion license registered at module load');
+  } else {
+    console.warn('No Syncfusion license key found in config');
+  }
+} catch (error) {
+  console.error('Error registering Syncfusion license at module load:', error);
+}
 
 // Inject necessary modules for Document Editor features
 DocumentEditorContainerComponent.Inject(
@@ -69,6 +79,10 @@ DocumentEditorContainerComponent.Inject(
 
 const DocumentEditorDemo = forwardRef((props, ref) => {
   const container = useRef(null);
+  
+  // Add missing refs
+  const originalTemplateRef = useRef(null);
+  const isPreviewModeRef = useRef(false);
   const { 
     document, 
     initialContent, 
@@ -135,52 +149,17 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
     }
   };
 
-  // Initialize editor with content - use a ref to track if content has been loaded
-  const contentLoadedRef = useRef(false);
-  const lastLoadedContentRef = useRef(null);
-  // Store original template content separately for non-destructive preview
-  const originalTemplateRef = useRef(null);
-  const isPreviewModeRef = useRef(false);
-  
-  // Memoize content string to avoid unnecessary re-renders
-  const contentString = useMemo(() => {
-    let contentToLoad = null;
-    if (document && document.content) {
-      contentToLoad = document.content;
-    } else if (initialContent) {
-      contentToLoad = initialContent;
-    }
-    return typeof contentToLoad === 'string' ? contentToLoad : JSON.stringify(contentToLoad);
-  }, [document?.content, initialContent]);
-  
+  // Initialize editor with content - simplified approach
   useEffect(() => {
-    console.log('useEffect triggered - container.current:', !!container.current);
-    if (!container.current || !container.current.documentEditor) {
-      console.log('Editor not ready yet, waiting...');
+    if (!container.current?.documentEditor) {
       return;
     }
 
     const editor = container.current.documentEditor;
-    console.log('Editor found:', !!editor);
     
-    // Only load content if it's different from what was last loaded
-    if (contentString === lastLoadedContentRef.current) {
-      console.log('Content unchanged, skipping reload');
-      return; // Don't reload the same content
-    }
-    
-    console.log('Loading content:', contentString ? 'content available' : 'no content');
-    
-    // Simple 200ms delay for standard initialization
-    const timeoutId = setTimeout(() => {
+    // Simple content loading
+    const loadContent = () => {
       try {
-        // Check if component is still mounted and editor is available
-        if (!container.current || !container.current.documentEditor) {
-          console.log('Editor no longer available during content load');
-          return;
-        }
-        
-        // Determine content source again inside timeout
         let contentToLoad = null;
         
         if (document && document.content) {
@@ -190,214 +169,53 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
         }
 
         if (contentToLoad) {
-          // Create a proper SFDT document structure for any content
-          const createProperSfdt = (textContent) => {
-            // Split text into lines and create proper paragraph blocks
-            const lines = textContent.split('\n');
-            const blocks = [];
-            
-            lines.forEach((line, lineIndex) => {
-              // Create a paragraph block for each line
-              const paragraph = {
-                "paragraphFormat": {
-                  "styleName": "Normal",
-                  "listFormat": {},
-                  "lineSpacing": 1.15,
-                  "lineSpacingType": "Multiple"
-                },
-                "characterFormat": {
-                  "fontSize": 11,
-                  "fontFamily": "Calibri"
-                },
-                "inlines": []
-              };
-              
-              if (line.trim() === '') {
-                // Empty line - just add a line break
-                paragraph.inlines.push({
-                  "characterFormat": {
-                    "fontSize": 11,
-                    "fontFamily": "Calibri"
-                  },
-                  "text": ""
-                });
-              } else {
-                // Line with content
-                paragraph.inlines.push({
-                  "characterFormat": {
-                    "fontSize": 11,
-                    "fontFamily": "Calibri"
-                  },
-                  "text": line
-                });
-              }
-              
-              blocks.push(paragraph);
-            });
-            
-            return {
-              "sections": [{
-                "sectionFormat": {
-                  "pageWidth": 612,
-                  "pageHeight": 792,
-                  "leftMargin": 72,
-                  "rightMargin": 72,
-                  "topMargin": 72,
-                  "bottomMargin": 72,
-                  "differentFirstPage": false,
-                  "differentOddAndEvenPages": false,
-                  "headerDistance": 36,
-                  "footerDistance": 36,
-                  "bidi": false
-                },
-                "blocks": blocks,
-                "headersFooters": {}
-              }],
-              "characterFormat": {
-                "fontSize": 11,
-                "fontFamily": "Calibri"
-              },
-              "paragraphFormat": {
-                "lineSpacing": 1.15,
-                "lineSpacingType": "Multiple"
-              },
-              "defaultTabWidth": 36,
-              "trackChanges": false,
-              "enforcement": false,
-              "hashValue": "",
-              "saltValue": "",
-              "formatting": false,
-              "protectionType": "NoProtection",
-              "dontUseHTMLParagraphAutoSpacing": false,
-              "formFieldShading": true,
-              "styles": [
-                {
-                  "name": "Normal",
-                  "type": "Paragraph",
-                  "paragraphFormat": {
-                    "lineSpacing": 1.15,
-                    "lineSpacingType": "Multiple",
-                    "listFormat": {}
-                  },
-                  "characterFormat": {
-                    "fontSize": 11,
-                    "fontFamily": "Calibri",
-                    "fontSizeBidi": 11,
-                    "fontFamilyBidi": "Calibri"
-                  },
-                  "next": "Normal"
-                }
-              ]
-            };
-          };
-
-          // Load the content
           if (typeof contentToLoad === 'string') {
             try {
-              // Try to parse as JSON first
               const parsed = JSON.parse(contentToLoad);
-              
-              // Check if it's a proper SFDT document
-              if (parsed.sections || parsed.sec || parsed.optimizeSfdt) {
-                // It's already a proper SFDT document
-                console.log('Loading pre-formatted SFDT document');
-                const sfdtString = JSON.stringify(parsed);
-                editor.open(sfdtString);
-                // Store original template for non-destructive preview
-                originalTemplateRef.current = sfdtString;
-              } else if (parsed.sfdt && typeof parsed.sfdt === 'string') {
-                // It's wrapped in a {sfdt: "text"} format - create proper SFDT from text
-                console.log('Converting wrapped SFDT text to proper document');
-                const properSfdt = createProperSfdt(parsed.sfdt);
-                const sfdtString = JSON.stringify(properSfdt);
-                editor.open(sfdtString);
-                // Store original template for non-destructive preview
-                originalTemplateRef.current = sfdtString;
+              if (parsed.sections || parsed.sec) {
+                editor.open(contentToLoad);
+                originalTemplateRef.current = contentToLoad;
               } else {
-                // Unknown JSON format, treat as plain text
-                console.log('Converting unknown JSON format to document');
-                const properSfdt = createProperSfdt(JSON.stringify(parsed));
-                const sfdtString = JSON.stringify(properSfdt);
-                editor.open(sfdtString);
-                // Store original template for non-destructive preview
-                originalTemplateRef.current = sfdtString;
+                editor.openBlank();
+                if (parsed.sfdt) {
+                  editor.editor.insertText(parsed.sfdt);
+                } else {
+                  editor.editor.insertText(contentToLoad);
+                }
+                originalTemplateRef.current = editor.serialize();
               }
-            } catch (e) {
-              // If parsing fails, it's plain text - create proper SFDT
-              console.log('Converting plain text to SFDT document');
-              const properSfdt = createProperSfdt(contentToLoad);
-              const sfdtString = JSON.stringify(properSfdt);
-              editor.open(sfdtString);
-              // Store original template for non-destructive preview
-              originalTemplateRef.current = sfdtString;
+            } catch {
+              editor.openBlank();
+              editor.editor.insertText(contentToLoad);
+              originalTemplateRef.current = editor.serialize();
             }
-          } else if (typeof contentToLoad === 'object') {
-            // Already an object
-            if (contentToLoad.sections || contentToLoad.sec || contentToLoad.optimizeSfdt) {
-              // It's already a proper SFDT document
-              console.log('Loading SFDT object document');
-              const sfdtString = JSON.stringify(contentToLoad);
-              editor.open(sfdtString);
-              // Store original template for non-destructive preview
-              originalTemplateRef.current = sfdtString;
-            } else if (contentToLoad.sfdt && typeof contentToLoad.sfdt === 'string') {
-              // It's wrapped in a {sfdt: "text"} format
-              console.log('Converting wrapped SFDT object to proper document');
-              const properSfdt = createProperSfdt(contentToLoad.sfdt);
-              const sfdtString = JSON.stringify(properSfdt);
-              editor.open(sfdtString);
-              // Store original template for non-destructive preview
-              originalTemplateRef.current = sfdtString;
-            } else {
-              // Unknown object format, convert to text first
-              console.log('Converting unknown object format to document');
-              const properSfdt = createProperSfdt(JSON.stringify(contentToLoad));
-              const sfdtString = JSON.stringify(properSfdt);
-              editor.open(sfdtString);
-              // Store original template for non-destructive preview
-              originalTemplateRef.current = sfdtString;
-            }
-          }
-          
-          // Mark content as loaded and store the loaded content
-          lastLoadedContentRef.current = contentString;
-          contentLoadedRef.current = true;
-          
-          // Signal content is loaded
-          if (onContentChange) {
-            console.log('Content loaded, signaling via onContentChange');
-            setTimeout(onContentChange, 100);
+          } else {
+            const jsonString = JSON.stringify(contentToLoad);
+            editor.open(jsonString);
+            originalTemplateRef.current = jsonString;
           }
         } else {
-          // Load blank document
           editor.openBlank();
-          lastLoadedContentRef.current = '';
-          contentLoadedRef.current = true;
-          // Store blank template
           originalTemplateRef.current = editor.serialize();
         }
 
-        // Set read-only mode
         if (isReadOnly) {
           editor.isReadOnly = true;
         }
 
+        if (onContentChange) {
+          setTimeout(onContentChange, 100);
+        }
       } catch (error) {
         console.error('Error loading content:', error);
-        // Fallback to blank document
-        if (container.current && container.current.documentEditor) {
-          container.current.documentEditor.openBlank();
-        }
-      }
-    }, 200);
-    
-    // Cleanup function to clear timeout if component unmounts
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+        editor.openBlank();
+        originalTemplateRef.current = editor.serialize();
       }
     };
-  }, [contentString, isReadOnly]); // Keep dependencies minimal and stable
+
+    // Load content after a short delay
+    setTimeout(loadContent, 300);
+  }, [document?.content, initialContent, isReadOnly, onContentChange]);
 
   // Separate effect for handling merge data without interfering with content loading
   useEffect(() => {
