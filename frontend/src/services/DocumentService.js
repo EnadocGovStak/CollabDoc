@@ -1,11 +1,7 @@
 import axios from 'axios';
 import config from '../config';
 
-<<<<<<< HEAD
 const API_URL = config.api.baseUrl;
-=======
-const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://collabdoc-backend.azurewebsites.net';
->>>>>>> 70d45d17be070077ddd65a950927a3d2d49058b9
 
 /**
  * Service for handling document operations

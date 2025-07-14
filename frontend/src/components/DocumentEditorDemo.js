@@ -31,17 +31,12 @@ import {
 } from '@syncfusion/ej2-react-documenteditor';
 import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
 import './DocumentEditor.css';
-
-<<<<<<< HEAD
-// Inject modules directly into DocumentEditorContainer
-=======
 import config from '../config';
 
 // Register Syncfusion license
 registerLicense(config.syncfusion.licenseKey);
 
 // Inject necessary modules for Document Editor features
->>>>>>> 70d45d17be070077ddd65a950927a3d2d49058b9
 DocumentEditorContainerComponent.Inject(
   Toolbar,
   SfdtExport,

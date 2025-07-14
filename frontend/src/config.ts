@@ -28,11 +28,7 @@ const config: Config = {
     redirectUri: `${window.location.origin}/`,
   },
   api: {
-<<<<<<< HEAD
     baseUrl: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000',
-=======
-    baseUrl: process.env.REACT_APP_API_BASE_URL || 'https://collabdoc-backend.azurewebsites.net',
->>>>>>> 70d45d17be070077ddd65a950927a3d2d49058b9
   },
 };
 
