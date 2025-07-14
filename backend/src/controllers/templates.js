@@ -257,50 +257,146 @@ const generateDocument = (req, res) => {
     const metadataPath = path.join(documentsDir, `${documentId}.meta.json`);
     
     // Save document content
-    // Ensure the content is properly formatted for Syncfusion DocumentEditor
+    // Create a proper minimal SFDT document structure for the main document editor
     let contentToSave;
     try {
-      // If result.content is already a JSON string, parse and re-stringify it
+      console.log('=== BACKEND DOCUMENT GENERATION DEBUG ===');
+      console.log('Processing content for document generation...');
+      console.log('Content type:', typeof result.content);
+      console.log('Content sample:', result.content?.substring ? result.content.substring(0, 100) : result.content);
+      
+      // Get the merged text content
+      let textContent = '';
       if (typeof result.content === 'string') {
-        // Try to parse it as JSON first
         try {
+          // Try to parse if it's JSON
           const parsed = JSON.parse(result.content);
-          contentToSave = JSON.stringify(parsed);
-        } catch (parseError) {
-          // If it's not valid JSON, wrap it in a simple SFDT structure
-          contentToSave = JSON.stringify({
-            "sections": [{
-              "blocks": [{
-                "inlines": [{ "text": result.content }]
-              }]
-            }]
+          textContent = parsed.sfdt || result.content;
+        } catch {
+          // It's plain text
+          textContent = result.content;
+        }
+      } else {
+        textContent = JSON.stringify(result.content);
+      }
+      
+      // Split text into lines and create proper paragraph blocks
+      const lines = textContent.split('\n');
+      const blocks = [];
+      
+      lines.forEach((line) => {
+        const paragraph = {
+          "paragraphFormat": {
+            "styleName": "Normal",
+            "listFormat": {},
+            "lineSpacing": 1.15,
+            "lineSpacingType": "Multiple"
+          },
+          "characterFormat": {
+            "fontSize": 11,
+            "fontFamily": "Calibri"
+          },
+          "inlines": []
+        };
+        
+        if (line.trim() === '') {
+          // Empty line - just add a line break
+          paragraph.inlines.push({
+            "characterFormat": {
+              "fontSize": 11,
+              "fontFamily": "Calibri"
+            },
+            "text": ""
+          });
+        } else {
+          // Line with content
+          paragraph.inlines.push({
+            "characterFormat": {
+              "fontSize": 11,
+              "fontFamily": "Calibri"
+            },
+            "text": line
           });
         }
-      } else if (typeof result.content === 'object') {
-        contentToSave = JSON.stringify(result.content);
-      } else {
-        // Fallback: wrap in simple SFDT structure
-        contentToSave = JSON.stringify({
-          "sections": [{
-            "blocks": [{
-              "inlines": [{ "text": result.content?.toString() || '' }]
-            }]
-          }]
-        });
-      }
-    } catch (error) {
-      console.error('Error formatting content for document:', error);
-      // Fallback to simple text structure
-      contentToSave = JSON.stringify({
-        "sections": [{
-          "blocks": [{
-            "inlines": [{ "text": result.content?.toString() || '' }]
-          }]
-        }]
+        
+        blocks.push(paragraph);
       });
+
+      // Create a proper SFDT document structure that matches DocumentEditor expectations
+      const sfdtDocument = {
+        "sections": [{
+          "sectionFormat": {
+            "pageWidth": 612,
+            "pageHeight": 792,
+            "leftMargin": 72,
+            "rightMargin": 72,
+            "topMargin": 72,
+            "bottomMargin": 72,
+            "differentFirstPage": false,
+            "differentOddAndEvenPages": false,
+            "headerDistance": 36,
+            "footerDistance": 36,
+            "bidi": false
+          },
+          "blocks": blocks,
+          "headersFooters": {}
+        }],
+        "characterFormat": {
+          "fontSize": 11,
+          "fontFamily": "Calibri"
+        },
+        "paragraphFormat": {
+          "lineSpacing": 1.15,
+          "lineSpacingType": "Multiple"
+        },
+        "defaultTabWidth": 36,
+        "trackChanges": false,
+        "enforcement": false,
+        "hashValue": "",
+        "saltValue": "",
+        "formatting": false,
+        "protectionType": "NoProtection",
+        "dontUseHTMLParagraphAutoSpacing": false,
+        "formFieldShading": true,
+        "styles": [{
+          "name": "Normal",
+          "type": "Paragraph",
+          "paragraphFormat": {
+            "lineSpacing": 1.15,
+            "lineSpacingType": "Multiple",
+            "listFormat": {}
+          },
+          "characterFormat": {
+            "fontSize": 11,
+            "fontFamily": "Calibri",
+            "fontSizeBidi": 11,
+            "fontFamilyBidi": "Calibri"
+          },
+          "next": "Normal"
+        }]
+      };
+      
+      contentToSave = JSON.stringify(sfdtDocument);
+      console.log('=== NEW SFDT DOCUMENT GENERATED ===');
+      console.log('Generated proper SFDT document structure for main DocumentEditor');
+      console.log('Document structure has sections:', !!sfdtDocument.sections);
+      console.log('Document sections count:', sfdtDocument.sections?.length || 0);
+      console.log('Content sample:', contentToSave.substring(0, 200));
+      
+    } catch (error) {
+      console.error('=== ERROR IN SFDT GENERATION ===');
+      console.error('Error formatting content for document:', error);
+      // Fallback to simple format if SFDT generation fails
+      contentToSave = JSON.stringify({ "sfdt": result.content?.toString() || '' });
+      console.log('=== FALLBACK FORMAT USED ===');
     }
     
     fs.writeFileSync(documentPath, contentToSave);
+    
+    console.log('=== DOCUMENT FILE SAVED ===');
+    console.log('File path:', documentPath);
+    console.log('Content written to file, length:', contentToSave.length);
+    console.log('First 200 chars of saved content:', contentToSave.substring(0, 200));
     
     // Save document metadata
     const documentMetadata = {

@@ -1,0 +1,29 @@
+{
+  "test_cases": [
+    {
+      "name": "corrupted_sfdt",
+      "content": "{\"sections\":[{\"blocks\":[{\"paragraphFormat\":{\"styleName\":\"Normal\"},\"characterFormat\":{},\"inlines\":[{\"characterFormat\":{},\"text\":\"Hello world with corrupted base64: !!!INVALID_BASE64!!!\"}}]",
+      "description": "Malformed JSON - missing closing braces"
+    },
+    {
+      "name": "invalid_base64_image",
+      "content": "{\"sections\":[{\"blocks\":[{\"paragraphFormat\":{\"styleName\":\"Normal\"},\"characterFormat\":{},\"inlines\":[{\"characterFormat\":{},\"text\":\"Test\"},{\"characterFormat\":{},\"imageString\":\"data:image/png;base64,INVALID_BASE64_STRING_HERE!!!\"}]}]}]}",
+      "description": "SFDT with invalid base64 image data"
+    },
+    {
+      "name": "empty_content",
+      "content": "",
+      "description": "Empty content"
+    },
+    {
+      "name": "null_content",
+      "content": null,
+      "description": "Null content"
+    },
+    {
+      "name": "plain_text",
+      "content": "This is just plain text, not SFDT",
+      "description": "Plain text content"
+    }
+  ]
+}

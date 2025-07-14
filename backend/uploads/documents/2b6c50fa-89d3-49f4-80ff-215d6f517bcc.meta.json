@@ -1,0 +1,20 @@
+{
+  "id": "2b6c50fa-89d3-49f4-80ff-215d6f517bcc",
+  "name": "Business Letter Template - Generated",
+  "templateId": "business-letter-template",
+  "templateName": "Business Letter Template",
+  "category": "Business",
+  "documentType": "Letter",
+  "mergeData": {
+    "CustomerName": "Wasantha W Weerakoone",
+    "SenderName": "Andrew",
+    "SenderTitle": "MR",
+    "CompanyName": "TechOneGlobal",
+    "ContactPerson": "Wasantha W Weerakoone",
+    "ServiceType": "cleaning"
+  },
+  "createdAt": "2025-07-14T14:01:31.019Z",
+  "updatedAt": "2025-07-14T14:01:31.019Z",
+  "currentVersion": 1,
+  "status": "draft"
+}

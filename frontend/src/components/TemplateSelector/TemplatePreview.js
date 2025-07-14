@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import DocumentEditorDemo from '../DocumentEditorDemo';
+import TemplatePreviewEditor from '../TemplateMerge/TemplatePreviewEditor';
 import TemplateService from '../../services/TemplateService';
 import './TemplatePreview.css';
 
@@ -105,6 +105,7 @@ const TemplatePreview = ({ templateId, template, isModal = false, onClose }) => 
 
   // Handle editor loaded event
   const handleEditorLoaded = () => {
+    console.log('Template preview editor loaded successfully');
     setEditorLoaded(true);
   };
 
@@ -112,7 +113,9 @@ const TemplatePreview = ({ templateId, template, isModal = false, onClose }) => 
   useEffect(() => {
     const loadTemplate = async () => {
       if (template) {
+        console.log('Using provided template:', template);
         setTemplateData(template);
+        setLoading(false);
         return;
       }
       
@@ -124,7 +127,11 @@ const TemplatePreview = ({ templateId, template, isModal = false, onClose }) => 
       
       try {
         setLoading(true);
+        console.log('Loading template with ID:', templateId);
         const response = await TemplateService.getTemplateContent(templateId);
+        console.log('Template loaded successfully:', response);
+        console.log('Template content type:', typeof response?.content);
+        console.log('Template content preview:', response?.content?.substring ? response.content.substring(0, 100) : 'Not a string');
         setTemplateData(response);
         setError(null);
       } catch (err) {
@@ -178,25 +185,14 @@ const TemplatePreview = ({ templateId, template, isModal = false, onClose }) => 
               </div>
             )}
             <div className="document-editor-container" style={{ opacity: editorLoaded ? 1 : 0.3 }}>
-              <DocumentEditorDemo
+              <TemplatePreviewEditor
                 ref={editorRef}
-                document={templateData}
+                initialContent={templateData?.content}
                 isReadOnly={true}
                 enableToolbar={false}
-                onContentChange={handleEditorLoaded}
-                mergeData={sampleMergeData}
-                isPreview={true}
+                onCreated={handleEditorLoaded}
+                height="500px"
               />
-              {editorLoaded && editorRef.current && (
-                <div className="preview-controls">
-                  <button 
-                    className="preview-toggle-button"
-                    onClick={() => editorRef.current.previewWithMergeFields(sampleMergeData)}
-                  >
-                    Show with Sample Data
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         ) : (

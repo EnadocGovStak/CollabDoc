@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 600px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: white;
@@ -75,6 +76,19 @@
   position: relative;
   flex: 1;
   overflow: hidden;
+  min-height: 500px;
+}
+
+/* Ensure TemplatePreviewEditor respects height */
+.template-preview-editor {
+  height: 100% !important;
+  min-height: inherit;
+}
+
+/* Force Syncfusion DocumentEditor to respect height */
+.template-preview-editor .e-documenteditor {
+  height: 100% !important;
+  min-height: inherit;
 }
 
 .preview-loading {

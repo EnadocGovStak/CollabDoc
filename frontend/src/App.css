@@ -468,7 +468,7 @@ div[id*="_viewer_"] {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  height: 60px;
+  height: 48px;
   background-color: #ffffff;
   border-bottom: 1px solid #e9ecef;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -484,7 +484,7 @@ div[id*="_viewer_"] {
 }
 
 .app-logo-image {
-  height: 40px;
+  height: 32px;
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -509,7 +509,7 @@ div[id*="_viewer_"] {
 .nav-link {
   color: #495057;
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   font-weight: 500;
   transition: color 0.3s, background-color 0.3s;
@@ -524,7 +524,7 @@ div[id*="_viewer_"] {
 .active-nav-link {
   color: #007bff;
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
   font-weight: 700;
   background-color: #f1f8ff;

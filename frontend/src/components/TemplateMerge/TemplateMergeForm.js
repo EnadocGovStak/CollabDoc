@@ -44,23 +44,26 @@ const TemplateMergeForm = ({
     }
   }, [formData, template?.id, enableAutoSave]);
 
-  // Load saved form data on mount
+  // Load saved form data on mount - separate effect to avoid conflicts
   useEffect(() => {
-    if (enableAutoSave && template?.id && Object.keys(formData).length === 0) {
+    if (enableAutoSave && template?.id) {
       try {
         const saved = localStorage.getItem(`template_form_${template.id}`);
         if (saved) {
           const { data } = JSON.parse(saved);
-          setFormData(data);
-          if (onDataChange) {
-            onDataChange(data);
+          // Only load if form is empty to avoid overwriting external changes
+          if (Object.keys(formData).length === 0) {
+            setFormData(data);
+            if (onDataChange) {
+              onDataChange(data);
+            }
           }
         }
       } catch (error) {
         console.warn('Failed to load saved form data:', error);
       }
     }
-  }, [template?.id, enableAutoSave]);
+  }, [template?.id, enableAutoSave]); // Removed formData and onDataChange dependencies
 
   // Validate form when data changes
   useEffect(() => {

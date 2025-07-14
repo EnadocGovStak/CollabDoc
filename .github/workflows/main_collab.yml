@@ -23,14 +23,31 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install, build, and test
+      - name: Install dependencies for all projects
         run: |
           npm install
-          npm run build --if-present
+          cd frontend && npm install
+          cd ../backend && npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Copy frontend build to backend public folder
+        run: |
+          mkdir -p backend/public
+          cp -r frontend/build/* backend/public/
+
+      - name: Test backend
+        run: |
+          cd backend
           npm run test --if-present
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+      - name: Zip backend with frontend for deployment
+        run: |
+          cd backend
+          zip -r ../release.zip . -x "node_modules/*" "*.log"
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4

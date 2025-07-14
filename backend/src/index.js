@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const path = require('path');
 // const { auth } = require('./middleware/auth');
 
 // Import routes
@@ -21,6 +22,9 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('dev'));
 
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Temporarily disable authentication for testing
 // app.use('/api', auth());
 
@@ -33,6 +37,11 @@ app.use('/api/fields', fieldsRouter);
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
+});
+
+// Catch all handler: send back React's index.html file for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Error handling middleware

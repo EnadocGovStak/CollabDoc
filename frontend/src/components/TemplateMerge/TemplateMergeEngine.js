@@ -51,11 +51,33 @@ class TemplateMergeEngine {
           console.log(`Replaced merge field {{${key}}} with "${replacement}"`);
         }
       });
+
+      // Ensure content is in proper format for DocumentEditor
+      console.log('TemplateMergeEngine: Checking content format after merge...');
       
-      return content;
+      // Check if content is already in SFDT format
+      if (content.includes('"sfdt"') || content.includes('"sections"')) {
+        console.log('TemplateMergeEngine: Content is already in SFDT format');
+        return content;
+      }
+      
+      // If content looks like plain text that starts with {"sfdt":"...
+      if (content.startsWith('{"sfdt":"') && content.endsWith('"}')) {
+        console.log('TemplateMergeEngine: Content is wrapped SFDT string');
+        return content;
+      }
+      
+      // If content is plain text, wrap it in SFDT format
+      console.log('TemplateMergeEngine: Converting plain text to SFDT format');
+      const sfdtWrapped = JSON.stringify({ "sfdt": content });
+      console.log('TemplateMergeEngine: Wrapped content sample:', sfdtWrapped.substring(0, 200));
+      return sfdtWrapped;
+      
     } catch (error) {
       console.error('Error merging template:', error);
-      return templateContent || '';
+      console.error('Template content type:', typeof templateContent);
+      console.error('Template content sample:', templateContent?.substring ? templateContent.substring(0, 200) : templateContent);
+      return JSON.stringify({ "sfdt": "Error loading template content" });
     }
   }
 

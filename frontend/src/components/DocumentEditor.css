@@ -491,11 +491,12 @@ div[class*="contextmenu-wrapper"] {
   position: relative;
   min-height: 46px !important;
   height: 46px !important;
-  padding: var(--space-1) var(--space-1) !important;
+  padding: var(--space-1) 50px var(--space-1) var(--space-1) !important;
   overflow-x: auto !important;
   overflow-y: visible !important;
   display: flex !important;
   align-items: center !important;
+  align-content: flex-start !important;
   z-index: 10 !important;
   box-sizing: border-box !important;
   width: 100% !important;
@@ -519,14 +520,15 @@ div[class*="contextmenu-wrapper"] {
   padding: 0 !important;
   min-height: auto !important;
   height: auto !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   display: flex !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
   flex: 1 !important;
-  max-width: calc(100% - 20px) !important;
-  margin-right: var(--space-2) !important;
+  width: max-content !important;
+  min-width: calc(100% - 50px) !important;
+  margin-right: 0 !important;
 }
 
 /* Toolbar Buttons */
@@ -1007,12 +1009,16 @@ div[class*="contextmenu-wrapper"] {
   border: 1px solid var(--color-primary-200) !important;
   border-radius: var(--radius-md) !important;
   color: var(--color-primary-700) !important;
-  margin-left: var(--space-2) !important;
-  position: relative !important;
-  z-index: 20 !important;
+  margin-left: auto !important;
+  margin-right: var(--space-2) !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 30 !important;
   flex-shrink: 0 !important;
   min-width: 32px !important;
-  width: auto !important;
+  width: 32px !important;
   height: 32px !important;
 }
 
@@ -1077,4 +1083,102 @@ div[class*="contextmenu-wrapper"] {
 
 .e-documenteditorcontainer .e-de-prop-split-btn:hover .e-icons {
   color: var(--color-primary-800) !important;
+}
+
+/* Responsive Design for Syncfusion Toolbar */
+@media (max-width: 1200px) {
+  /* On medium screens, reduce toolbar item spacing */
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item {
+    margin: 1px !important;
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-items {
+    max-width: calc(100% - 80px) !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* On smaller screens, allow toolbar to wrap to two lines */
+  .e-documenteditorcontainer .e-toolbar {
+    height: auto !important;
+    min-height: 46px !important;
+    max-height: 92px !important; /* Allow for two rows */
+    flex-wrap: wrap !important;
+    align-content: flex-start !important;
+    overflow-y: auto !important;
+    padding: var(--space-1) !important;
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-items {
+    flex-wrap: wrap !important;
+    max-width: calc(100% - 90px) !important;
+    min-height: 40px !important;
+    align-content: flex-start !important;
+  }
+  
+  /* Ensure buttons wrap properly */
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item {
+    flex-shrink: 0 !important;
+    margin: 1px !important;
+  }
+  
+  /* Adjust properties pane toggle for two-line toolbar */
+  .e-documenteditorcontainer .e-de-prop-split-btn {
+    align-self: flex-start !important;
+    margin-top: 2px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* On mobile screens, more aggressive wrapping */
+  .e-documenteditorcontainer .e-toolbar {
+    max-height: 138px !important; /* Allow for three rows if needed */
+    padding: 2px !important;
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-items {
+    max-width: calc(100% - 100px) !important;
+    gap: 1px !important;
+  }
+  
+  /* Make buttons even more compact on mobile */
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item .e-btn {
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 4px !important;
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item .e-btn .e-icons {
+    font-size: 11px !important;
+  }
+  
+  /* Adjust properties pane toggle for mobile */
+  .e-documenteditorcontainer .e-de-prop-split-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+  }
+  
+  .e-documenteditorcontainer .e-de-prop-split-btn .e-icons {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Ultra-compact for very small screens */
+  .e-documenteditorcontainer .e-toolbar {
+    max-height: 184px !important; /* Allow for four rows if absolutely needed */
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item .e-btn {
+    min-width: 24px !important;
+    width: 24px !important;
+    height: 24px !important;
+    padding: 2px !important;
+  }
+  
+  .e-documenteditorcontainer .e-toolbar .e-toolbar-item .e-btn .e-icons {
+    font-size: 10px !important;
+  }
 }

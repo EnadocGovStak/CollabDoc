@@ -15,6 +15,20 @@
 				"cwd": "${workspaceFolder}/backend"
 			},
 			"problemMatcher": []
+		},
+		{
+			"label": "Start Frontend",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"start"
+			],
+			"group": "build",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"problemMatcher": []
 		}
 	]
 }

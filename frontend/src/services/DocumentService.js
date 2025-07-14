@@ -1,6 +1,7 @@
 import axios from 'axios';
+import config from '../config';
 
-const API_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const API_URL = config.api.baseUrl;
 
 /**
  * Service for handling document operations

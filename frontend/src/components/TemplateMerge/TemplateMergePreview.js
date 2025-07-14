@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import DocumentEditorDemo from '../DocumentEditorDemo';
+import TemplatePreviewEditor from './TemplatePreviewEditor';
 import TemplateMergeEngine from './TemplateMergeEngine';
 import './TemplateMergePreview.css';
 
 /**
  * Template Merge Preview Component
- * Uses DocumentEditorDemo (NOT DocumentPageEditor) to maintain separation
- * This component is specifically for template previewing and does not interfere with the main editor
+ * Uses TemplatePreviewEditor (DocumentEditorComponent) instead of DocumentEditorDemo
+ * This maintains complete separation from the main document editor
  */
 const TemplateMergePreview = ({ 
   template, 
@@ -71,6 +71,9 @@ const TemplateMergePreview = ({
       return <div className="no-preview">No template content available</div>;
     }
 
+    // Log the merged content for debugging
+    console.log('Rendering editor preview with merged content:', typeof mergedContent, mergedContent);
+
     return (
       <div className="editor-preview" style={{ height }}>
         {isLoading && (
@@ -78,7 +81,7 @@ const TemplateMergePreview = ({
             <div className="loading-spinner">Loading preview...</div>
           </div>
         )}
-        <DocumentEditorDemo
+        <TemplatePreviewEditor
           ref={editorRef}
           initialContent={mergedContent}
           isReadOnly={true}

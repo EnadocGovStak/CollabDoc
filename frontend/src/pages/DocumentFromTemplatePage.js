@@ -36,15 +36,6 @@ const DocumentFromTemplatePage = () => {
         // Set default document name
         setDocumentName(`${templateData.name} - Generated`);
         
-        // Initialize form data with default values
-        const initialData = {};
-        templateData.mergeFields?.forEach(field => {
-          if (field.defaultValue) {
-            initialData[field.name] = field.defaultValue;
-          }
-        });
-        setMergeData(initialData);
-        
         setError(null);
       } catch (err) {
         console.error('Error loading template:', err);
@@ -57,7 +48,20 @@ const DocumentFromTemplatePage = () => {
     if (templateId) {
       loadTemplate();
     }
-  }, [templateId, setMergeData]);
+  }, [templateId]); // Removed setMergeData dependency
+
+  // Initialize form data with default values when template loads
+  useEffect(() => {
+    if (template?.mergeFields) {
+      const initialData = {};
+      template.mergeFields.forEach(field => {
+        if (field.defaultValue) {
+          initialData[field.name] = field.defaultValue;
+        }
+      });
+      setMergeData(initialData);
+    }
+  }, [template, setMergeData]);
 
   const handleGenerateDocument = async (formData) => {
     if (!template) return;
@@ -197,7 +201,7 @@ const DocumentFromTemplatePage = () => {
             template={template}
             mergeData={mergeData}
             showRawContent={false}
-            height="500px"
+            height="600px"
           />
         </div>
       </div>

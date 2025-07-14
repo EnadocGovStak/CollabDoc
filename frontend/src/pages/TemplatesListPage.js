@@ -173,66 +173,121 @@ const TemplatesListPage = () => {
             </div>
           ) : (
             <div className="templates-grid">
-              {filteredTemplates.map((template) => (
-                <div key={template.id} className="template-card">
-                  <div className="template-content">
+              {filteredTemplates.map((template) => {
+                // Determine category color and styling similar to document classification
+                let bgColor = '#ffffff';
+                let borderColor = '#e9ecef';
+                const category = template.category?.toLowerCase() || 'other';
+                
+                switch (category) {
+                  case 'legal':
+                    bgColor = 'rgba(255,200,200,0.6)';
+                    borderColor = '#dc3545';
+                    break;
+                  case 'finance':
+                    bgColor = 'rgba(255,240,180,0.6)';
+                    borderColor = '#ffc107';
+                    break;
+                  case 'hr':
+                    bgColor = 'rgba(200,230,255,0.6)';
+                    borderColor = '#0dcaf0';
+                    break;
+                  case 'business':
+                    bgColor = 'rgba(200,255,200,0.6)';
+                    borderColor = '#28a745';
+                    break;
+                  default:
+                    bgColor = '#ffffff';
+                    borderColor = '#e9ecef';
+                }
+                
+                return (
+                  <div 
+                    key={template.id} 
+                    className="template-card"
+                    style={{ 
+                      borderLeft: `6px solid ${borderColor}`,
+                      backgroundColor: bgColor
+                    }}
+                  >
                     <div className="template-icon">
                       {template.category === 'Legal' ? '⚖️' :
                        template.category === 'Finance' ? '💰' :
                        template.category === 'HR' ? '👥' :
                        template.category === 'Business' ? '💼' : '📄'}
                     </div>
-                    <div className="template-details">
-                      <h3 className="template-name">{template.name}</h3>
-                      {template.description && (
-                        <p className="template-description">{template.description}</p>
-                      )}
+                    <div className="template-info">
+                      <h3>{template.name}</h3>
+                      
                       <div className="template-meta">
+                        <div className="template-status">
+                          <span className="status-icon">📋</span>
+                          <span className="status-text">Template</span>
+                        </div>
+                        
                         {template.category && (
-                          <span className="template-category">{template.category}</span>
+                          <div className="template-category-badge">
+                            {template.category}
+                          </div>
                         )}
-                        <span className="template-date">
-                          {template.modifiedAt 
-                            ? `Modified: ${new Date(template.modifiedAt).toLocaleDateString()}` 
-                            : `Created: ${new Date(template.createdAt).toLocaleDateString()}`
-                          }
-                        </span>
+                      </div>
+                      
+                      <div className="template-compact-info">
+                        {template.description && (
+                          <div className="template-description">
+                            <p>{template.description}</p>
+                          </div>
+                        )}
+                        
+                        <div className="template-dates">
+                          <p className="template-date">
+                            Modified: {template.modifiedAt 
+                              ? new Date(template.modifiedAt).toLocaleDateString()
+                              : new Date(template.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        
+                        <div className="template-footer">
+                          <span className="template-id">
+                            ID: {template.id.substring(0, 8)}...
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    
+                    <div className="template-actions">
+                      <Link 
+                        to={`/templates/${template.id}/generate`}
+                        className="template-action-btn template-generate-btn"
+                        title="Generate Document"
+                      >
+                        Generate
+                      </Link>
+                      <Link 
+                        to={`/templates/${template.id}`}
+                        className="template-action-btn template-edit-btn"
+                        title="Edit Template"
+                      >
+                        Edit
+                      </Link>
+                      <button 
+                        className="template-action-btn template-preview-btn"
+                        onClick={(e) => handlePreviewTemplate(template.id, e)}
+                        title="Preview Template"
+                      >
+                        Preview
+                      </button>
+                      <button 
+                        className="template-action-btn template-delete-btn" 
+                        onClick={(e) => handleDeleteTemplate(template.id, e)}
+                        title="Delete Template"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div className="template-actions">
-                    <Link 
-                      to={`/templates/${template.id}/generate`}
-                      className="template-action-btn template-generate-btn"
-                      title="Generate Document"
-                    >
-                      Generate Document
-                    </Link>
-                    <Link 
-                      to={`/templates/${template.id}/edit`}
-                      className="template-action-btn template-edit-btn"
-                      title="Edit Template"
-                    >
-                      Edit
-                    </Link>
-                    <button 
-                      className="template-action-btn template-delete-btn" 
-                      onClick={(e) => handleDeleteTemplate(template.id, e)}
-                      title="Delete Template"
-                    >
-                      Delete
-                    </button>
-                    <button 
-                      className="template-action-btn template-preview-btn"
-                      onClick={(e) => handlePreviewTemplate(template.id, e)}
-                      title="Preview Template"
-                    >
-                      Preview
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
