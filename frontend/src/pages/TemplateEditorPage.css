@@ -273,6 +273,82 @@
   line-height: 1.35;
 }
 
+.template-readiness-panel {
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px solid var(--evia-border);
+  border-radius: 8px;
+  background: var(--evia-surface-container-lowest);
+}
+
+.template-readiness-panel.attention {
+  border-color: color-mix(in srgb, var(--evia-warning) 24%, var(--evia-border));
+  background: color-mix(in srgb, var(--evia-warning-soft) 52%, var(--evia-surface-container-lowest));
+}
+
+.template-readiness-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.template-readiness-heading h3 {
+  margin: 0;
+  color: var(--evia-text-primary);
+  font-size: 0.95rem;
+}
+
+.template-readiness-heading span {
+  border: 1px solid var(--evia-border);
+  border-radius: 999px;
+  background: var(--evia-surface-muted);
+  color: var(--evia-text-secondary);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 7px;
+}
+
+.template-readiness-panel.ready .template-readiness-heading span {
+  border-color: color-mix(in srgb, var(--evia-success) 30%, transparent);
+  background: var(--evia-success-soft);
+  color: var(--evia-success);
+}
+
+.template-readiness-list {
+  display: grid;
+  gap: 8px;
+}
+
+.template-readiness-item,
+.template-readiness-complete {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  margin: 0;
+  color: var(--evia-text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.template-readiness-item svg {
+  color: var(--evia-warning);
+  margin-top: 1px;
+}
+
+.template-readiness-complete svg {
+  color: var(--evia-success);
+  margin-top: 1px;
+}
+
+.template-readiness-item strong {
+  display: block;
+  color: var(--evia-text-primary);
+  font-size: 12px;
+}
+
 .field-library-picker {
   border: 1px solid var(--evia-border);
   border-radius: 8px;
@@ -554,6 +630,116 @@
   background: var(--evia-danger-soft);
   color: var(--evia-danger);
   font-weight: 700;
+}
+
+.template-field-migration-review {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--evia-warning) 30%, var(--evia-border));
+  border-radius: 8px;
+  background: var(--evia-surface-muted);
+}
+
+.template-field-review-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.template-field-review-heading h4 {
+  margin: 0;
+  color: var(--evia-text-primary);
+  font-size: 0.92rem;
+}
+
+.template-field-review-heading p {
+  margin: 2px 0 0;
+  color: var(--evia-text-secondary);
+  font-family: monospace;
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.template-field-review-heading button,
+.template-field-review-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.template-field-review-heading button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--evia-border);
+  background: var(--evia-surface-container-lowest);
+  color: var(--evia-text-secondary);
+}
+
+.template-field-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.template-field-review-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--evia-text-secondary) !important;
+  font-size: 12px;
+}
+
+.template-field-review-checkbox input {
+  width: auto;
+}
+
+.template-field-review-error {
+  border: 1px solid color-mix(in srgb, var(--evia-warning) 30%, transparent);
+  border-radius: 6px;
+  background: var(--evia-warning-soft);
+  color: var(--evia-warning);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 8px;
+}
+
+.template-field-review-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.template-field-review-actions button {
+  min-height: 30px;
+  padding: 6px 8px;
+}
+
+.template-field-review-secondary {
+  border: 1px solid var(--evia-border);
+  background: var(--evia-surface-container-lowest);
+  color: var(--evia-text-secondary);
+}
+
+.template-field-review-primary {
+  border: 1px solid var(--evia-primary);
+  background: var(--evia-primary);
+  color: var(--evia-on-primary);
+}
+
+.template-field-review-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
 }
 
 .template-field-list {

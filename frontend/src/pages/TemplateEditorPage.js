@@ -11,7 +11,8 @@ import {
   PlusCircle,
   Save,
   Search,
-  ShieldCheck
+  ShieldCheck,
+  X
 } from 'lucide-react';
 import DocumentEditorDemo from '../components/DocumentEditorDemo';
 import TemplateService from '../services/TemplateService';
@@ -24,6 +25,8 @@ const DOCUMENT_TYPE_OPTIONS = ['Standard Document', 'Template', 'Policy', 'Proce
 const RETENTION_PERIOD_OPTIONS = ['1 Year', '2 Years', '3 Years', '5 Years', '7 Years', '10 Years', '15 Years', '25 Years', 'Permanent', 'Until Superseded'];
 const ACCESS_CONTROL_OPTIONS = ['Public', 'Internal', 'Confidential', 'Restricted'];
 const REVIEW_CYCLE_OPTIONS = ['3 Months', '6 Months', '1 Year', '2 Years', '3 Years', 'Not Required'];
+const FIELD_TYPE_OPTIONS = ['text', 'textarea', 'number', 'email', 'date', 'select', 'dropdown'];
+const DEFAULT_UNMANAGED_FIELD_DESCRIPTION = 'Detected from template content. Add it to the field library to govern reuse and validation.';
 
 const DEFAULT_TEMPLATE_RECORDS_MANAGEMENT = {
   classification: 'Internal',
@@ -62,6 +65,123 @@ const humanizeFieldName = (fieldName) => String(fieldName || '')
   .replace(/[_-]+/g, ' ')
   .trim();
 
+const toOptionsText = (options = []) => Array.isArray(options)
+  ? options.map(option => option.label || option.value || option).join('\n')
+  : '';
+
+const toFieldOptions = (optionsText = '') => optionsText
+  .split('\n')
+  .map(option => option.trim())
+  .filter(Boolean);
+
+const buildMigrationDraft = (field, templateName) => {
+  const fieldName = field?.name || '';
+  const fieldDescription = field?.description && field.description !== DEFAULT_UNMANAGED_FIELD_DESCRIPTION
+    ? field.description
+    : `Reusable field detected while authoring ${templateName || 'this template'}.`;
+
+  return {
+    name: fieldName,
+    label: field?.label || humanizeFieldName(fieldName) || fieldName,
+    type: field?.type || 'text',
+    category: field?.category && field.category !== 'Unmanaged Fields' ? field.category : 'General',
+    required: field?.required === true,
+    defaultValue: field?.defaultValue || '',
+    description: fieldDescription,
+    exampleValue: field?.exampleValue || '',
+    optionsText: toOptionsText(field?.options || [])
+  };
+};
+
+const getMigrationDraftIssues = (draft) => {
+  if (!draft) return [];
+
+  const issues = [];
+  if (!draft.name?.trim()) issues.push('Field name is required.');
+  if (!draft.label?.trim()) issues.push('Add a field label before adding it to the library.');
+  if (!draft.category?.trim()) issues.push('Set a field category before adding it to the library.');
+  if (!draft.type) issues.push('Choose a field type before adding it to the library.');
+  if (['select', 'dropdown'].includes(draft.type) && toFieldOptions(draft.optionsText).length === 0) {
+    issues.push('Add at least one option for select or dropdown fields.');
+  }
+
+  return issues;
+};
+
+const toFieldLibraryPayload = (draft, templateName) => ({
+  name: draft.name.trim(),
+  label: draft.label.trim(),
+  type: draft.type || 'text',
+  category: draft.category.trim() || 'General',
+  required: draft.required === true,
+  defaultValue: draft.defaultValue || '',
+  description: draft.description?.trim() || `Reusable field detected while authoring ${templateName || 'this template'}.`,
+  options: ['select', 'dropdown'].includes(draft.type) ? toFieldOptions(draft.optionsText) : [],
+  validation: {},
+  exampleValue: draft.exampleValue || ''
+});
+
+const getTemplateReadinessIssues = (sourceTemplate = {}) => {
+  if (!sourceTemplate) return [];
+
+  const issues = [];
+  const recordsPolicy = normalizeTemplateRecordsManagement(sourceTemplate.recordsManagement, sourceTemplate);
+  const mergeFields = Array.isArray(sourceTemplate.mergeFields) ? sourceTemplate.mergeFields : [];
+  const hasNamedTemplate = Boolean(sourceTemplate.name?.trim() && sourceTemplate.name !== 'Untitled Template');
+  const hasLifecyclePolicy = Boolean(
+    recordsPolicy.classification
+      && recordsPolicy.classification !== 'Unclassified'
+      && recordsPolicy.retentionPeriod
+      && recordsPolicy.documentType
+      && recordsPolicy.department
+  );
+  const unmanagedFields = mergeFields.filter(field => field.managed === false);
+  const weakMetadataFields = mergeFields.filter(field => (
+    !field.name
+      || !field.label
+      || !field.type
+      || !field.category
+      || (!field.description && !field.exampleValue)
+  ));
+
+  if (!hasNamedTemplate) {
+    issues.push({
+      label: 'Template name',
+      detail: 'Replace the default name with a recognizable business title.'
+    });
+  }
+
+  if (!hasLifecyclePolicy) {
+    issues.push({
+      label: 'Lifecycle policy',
+      detail: 'Set classification, retention, document type, and department before relying on this template.'
+    });
+  }
+
+  if (mergeFields.length === 0) {
+    issues.push({
+      label: 'Managed fields',
+      detail: 'Insert at least one reusable field token if this template will drive generation.'
+    });
+  }
+
+  if (unmanagedFields.length > 0) {
+    issues.push({
+      label: 'Field migration',
+      detail: `${unmanagedFields.length} unmanaged field${unmanagedFields.length === 1 ? '' : 's'} should be reviewed and added to the Field Library.`
+    });
+  }
+
+  if (weakMetadataFields.length > 0) {
+    issues.push({
+      label: 'Field metadata',
+      detail: `${weakMetadataFields.length} field${weakMetadataFields.length === 1 ? '' : 's'} need stronger labels, categories, descriptions, or examples.`
+    });
+  }
+
+  return issues;
+};
+
 const TemplateEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -78,6 +198,9 @@ const TemplateEditorPage = () => {
   const [fieldSearchQuery, setFieldSearchQuery] = useState('');
   const [migratingFieldName, setMigratingFieldName] = useState('');
   const [fieldMigrationError, setFieldMigrationError] = useState('');
+  const [migrationReviewField, setMigrationReviewField] = useState(null);
+  const [migrationDraft, setMigrationDraft] = useState(null);
+  const [migrationReviewError, setMigrationReviewError] = useState('');
 
   const loadFieldLibrary = useCallback(async () => {
     try {
@@ -201,7 +324,10 @@ const TemplateEditorPage = () => {
     if (!editorRef.current) return;
     
     try {
-      setSaveStatus('Saving...');
+      const readinessIssues = getTemplateReadinessIssues(template);
+      setSaveStatus(readinessIssues.length > 0
+        ? `Saving with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}...`
+        : 'Saving...');
       
       // Get the template content from the editor
       const content = await editorRef.current.getContent();
@@ -246,7 +372,9 @@ const TemplateEditorPage = () => {
         lastModified: new Date().toISOString()
       }));
       
-      setSaveStatus('Template saved successfully');
+      setSaveStatus(readinessIssues.length > 0
+        ? `Template saved with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}`
+        : 'Template saved successfully');
       
       // If this was a new template and we got an ID back, update the URL
       if (!id && result.id) {
@@ -390,28 +518,46 @@ const TemplateEditorPage = () => {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
-  const handlePromoteFieldToLibrary = useCallback(async (field) => {
+  const handleOpenMigrationReview = useCallback((field) => {
     if (!field?.name) return;
 
-    const fieldName = field.name;
-    const fieldPayload = {
-      name: fieldName,
-      label: field.label || humanizeFieldName(fieldName) || fieldName,
-      type: field.type || 'text',
-      category: field.category && field.category !== 'Unmanaged Fields' ? field.category : 'General',
-      required: field.required === true,
-      defaultValue: field.defaultValue || '',
-      description: field.description && field.description !== 'Detected from template content. Add it to the field library to govern reuse and validation.'
-        ? field.description
-        : `Reusable field detected while authoring ${template?.name || 'this template'}.`,
-      options: Array.isArray(field.options) ? field.options : [],
-      validation: field.validation || {},
-      exampleValue: field.exampleValue || ''
-    };
+    setFieldMigrationError('');
+    setMigrationReviewError('');
+    setMigrationReviewField(field);
+    setMigrationDraft(buildMigrationDraft(field, template?.name));
+  }, [template?.name]);
+
+  const handleCloseMigrationReview = useCallback(() => {
+    setMigrationReviewField(null);
+    setMigrationDraft(null);
+    setMigrationReviewError('');
+  }, []);
+
+  const handleMigrationDraftChange = (event) => {
+    const { name, value, type, checked } = event.target;
+
+    setMigrationDraft(prev => prev ? ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }) : prev);
+  };
+
+  const handlePromoteFieldToLibrary = useCallback(async (draft) => {
+    if (!draft?.name) return;
+
+    const draftIssues = getMigrationDraftIssues(draft);
+    if (draftIssues.length > 0) {
+      setMigrationReviewError(draftIssues[0]);
+      return;
+    }
+
+    const fieldName = draft.name.trim();
+    const fieldPayload = toFieldLibraryPayload(draft, template?.name);
 
     try {
       setMigratingFieldName(fieldName);
       setFieldMigrationError('');
+      setMigrationReviewError('');
       setSaveStatus(`Adding ${fieldName} to Field Library...`);
 
       const result = await TemplateService.upsertFieldLibraryField(fieldPayload);
@@ -468,19 +614,23 @@ const TemplateEditorPage = () => {
       });
 
       setSaveStatus(`${fieldName} added to Field Library`);
+      handleCloseMigrationReview();
       setTimeout(() => setSaveStatus(''), 3000);
     } catch (migrationError) {
       console.error('Error adding field to library:', migrationError);
       setFieldMigrationError(migrationError.message || 'Failed to add field to Field Library.');
+      setMigrationReviewError(migrationError.message || 'Failed to add field to Field Library.');
       setSaveStatus('Field migration failed');
     } finally {
       setMigratingFieldName('');
     }
-  }, [template?.name]);
+  }, [handleCloseMigrationReview, template?.name]);
 
   const managedFieldCount = template?.fieldAnalysis?.managedFieldCount ?? template?.mergeFields?.filter(field => field.managed).length ?? 0;
   const unmanagedFieldCount = template?.fieldAnalysis?.unmanagedFieldCount ?? template?.mergeFields?.filter(field => field.managed === false).length ?? 0;
   const fieldCount = template?.mergeFields?.length || 0;
+  const saveReadinessIssues = useMemo(() => getTemplateReadinessIssues(template), [template]);
+  const migrationDraftIssues = useMemo(() => getMigrationDraftIssues(migrationDraft), [migrationDraft]);
   const filteredFieldLibraryFields = useMemo(() => {
     const normalizedQuery = fieldSearchQuery.trim().toLowerCase();
 
@@ -498,8 +648,8 @@ const TemplateEditorPage = () => {
   const existingFieldNames = new Set((template?.mergeFields || []).map(field => field.name?.toLowerCase()).filter(Boolean));
   const recordsPolicy = template ? normalizeTemplateRecordsManagement(template.recordsManagement, template) : DEFAULT_TEMPLATE_RECORDS_MANAGEMENT;
   const isNewTemplate = !id && !template?.id;
-  const hasNamedTemplate = Boolean(template?.name && template.name !== 'Untitled Template');
-  const hasLifecyclePolicy = Boolean(recordsPolicy.classification && recordsPolicy.retentionPeriod);
+  const hasNamedTemplate = Boolean(template?.name?.trim() && template.name !== 'Untitled Template');
+  const hasLifecyclePolicy = Boolean(recordsPolicy.classification && recordsPolicy.classification !== 'Unclassified' && recordsPolicy.retentionPeriod && recordsPolicy.documentType && recordsPolicy.department);
   const authoringSteps = [
     {
       label: 'Name the template',
@@ -620,6 +770,31 @@ const TemplateEditorPage = () => {
                     );
                   })}
                 </div>
+              </div>
+
+              <div className={`template-readiness-panel ${saveReadinessIssues.length === 0 ? 'ready' : 'attention'}`}>
+                <div className="template-readiness-heading">
+                  <h3>Save readiness</h3>
+                  <span>{saveReadinessIssues.length === 0 ? 'Ready' : `${saveReadinessIssues.length} notes`}</span>
+                </div>
+                {saveReadinessIssues.length === 0 ? (
+                  <p className="template-readiness-complete">
+                    <CheckCircle2 size={15} aria-hidden="true" />
+                    Template has a name, lifecycle policy, and governed field metadata.
+                  </p>
+                ) : (
+                  <div className="template-readiness-list">
+                    {saveReadinessIssues.map(issue => (
+                      <div key={issue.label} className="template-readiness-item">
+                        <AlertTriangle size={15} aria-hidden="true" />
+                        <span>
+                          <strong>{issue.label}</strong>
+                          {issue.detail}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="sidebar-section field-library-picker" aria-label="Managed field list">
@@ -791,6 +966,96 @@ const TemplateEditorPage = () => {
                   </div>
                 )}
 
+                {migrationDraft && (
+                  <form
+                    className="template-field-migration-review"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      handlePromoteFieldToLibrary(migrationDraft);
+                    }}
+                  >
+                    <div className="template-field-review-heading">
+                      <span>
+                        <h4>Review field</h4>
+                        <p>{migrationReviewField?.name}</p>
+                      </span>
+                      <button type="button" onClick={handleCloseMigrationReview} aria-label="Close field review">
+                        <X size={14} aria-hidden="true" />
+                      </button>
+                    </div>
+
+                    <label>
+                      Field name
+                      <input name="name" value={migrationDraft.name} readOnly disabled />
+                    </label>
+
+                    <label>
+                      Label
+                      <input name="label" value={migrationDraft.label} onChange={handleMigrationDraftChange} placeholder="Client name" />
+                    </label>
+
+                    <div className="template-field-review-grid">
+                      <label>
+                        Category
+                        <input name="category" value={migrationDraft.category} onChange={handleMigrationDraftChange} placeholder="Client" />
+                      </label>
+                      <label>
+                        Type
+                        <select name="type" value={migrationDraft.type} onChange={handleMigrationDraftChange}>
+                          {FIELD_TYPE_OPTIONS.map(fieldType => (
+                            <option key={fieldType} value={fieldType}>{fieldType}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+
+                    <label className="template-field-review-checkbox">
+                      <input name="required" type="checkbox" checked={migrationDraft.required} onChange={handleMigrationDraftChange} />
+                      Required by default
+                    </label>
+
+                    <label>
+                      Description
+                      <textarea name="description" value={migrationDraft.description} onChange={handleMigrationDraftChange} rows={3} />
+                    </label>
+
+                    <div className="template-field-review-grid">
+                      <label>
+                        Default value
+                        <input name="defaultValue" value={migrationDraft.defaultValue} onChange={handleMigrationDraftChange} />
+                      </label>
+                      <label>
+                        Example value
+                        <input name="exampleValue" value={migrationDraft.exampleValue} onChange={handleMigrationDraftChange} />
+                      </label>
+                    </div>
+
+                    {['select', 'dropdown'].includes(migrationDraft.type) && (
+                      <label>
+                        Options
+                        <textarea name="optionsText" value={migrationDraft.optionsText} onChange={handleMigrationDraftChange} rows={4} placeholder="One option per line" />
+                      </label>
+                    )}
+
+                    {(migrationReviewError || migrationDraftIssues.length > 0) && (
+                      <div className="template-field-review-error">
+                        {migrationReviewError || migrationDraftIssues[0]}
+                      </div>
+                    )}
+
+                    <div className="template-field-review-actions">
+                      <button type="button" onClick={handleCloseMigrationReview} className="template-field-review-secondary">
+                        <X size={13} aria-hidden="true" />
+                        Cancel
+                      </button>
+                      <button type="submit" className="template-field-review-primary" disabled={migratingFieldName === migrationDraft.name}>
+                        <Save size={13} aria-hidden="true" />
+                        {migratingFieldName === migrationDraft.name ? 'Adding...' : 'Add to library'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
                 {fieldCount > 0 ? (
                   <div className="template-field-list">
                     {template.mergeFields.map(field => (
@@ -808,11 +1073,11 @@ const TemplateEditorPage = () => {
                               <button
                                 type="button"
                                 className="template-field-migrate-button"
-                                onClick={() => handlePromoteFieldToLibrary(field)}
+                                onClick={() => handleOpenMigrationReview(field)}
                                 disabled={migratingFieldName === field.name}
                               >
                                 <PlusCircle size={12} aria-hidden="true" />
-                                {migratingFieldName === field.name ? 'Adding' : 'Add to library'}
+                                {migratingFieldName === field.name ? 'Adding' : migrationReviewField?.name === field.name ? 'Reviewing' : 'Review'}
                               </button>
                             )}
                             <button type="button" onClick={() => handleInsertFieldToken(field.name, field)}>Insert</button>

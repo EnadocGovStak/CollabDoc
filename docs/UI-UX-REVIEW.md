@@ -13,7 +13,8 @@ The application has useful building blocks, and the first Evia Prism application
 - Updated Documents and Templates to use matching Prism card/gallery patterns, document-preview surfaces, tokenized filters, and clearer primary actions.
 - Restored the Templates Guided creation entry point with a Start from Blank card so template authoring is visible from the library again.
 - Added a first guided creation layer to `/templates/new`, with checklist states around the existing editor rather than inside Syncfusion.
-- Added a first Template Editor migration action so unmanaged detected placeholders can be promoted into the Field Library from Field Analysis.
+- Added a first Template Editor migration review action so unmanaged detected placeholders can be checked and promoted into the Field Library from Field Analysis.
+- Added save-readiness notes in Template Editor for default names, lifecycle policy gaps, unmanaged fields, and weak field metadata.
 - Updated Field Library and Generate from Template with first Prism workflow/data-surface passes while preserving their existing APIs and merge behavior.
 - Replaced bare Profile and Settings placeholders with account/preference panels.
 - Added Light/Dark appearance selection in Profile and Settings, plus a topbar quick toggle. The choice persists through `localStorage` and document-level theme tokens.
@@ -52,8 +53,8 @@ The comprehensive Stitch/Evia Prism review and planned design-adaptation sprints
 
 - The generation route now has a first guided Prism pass with summary cards, readiness state, lifecycle policy review, inline generation errors, field-library migration prompt, grouped fields, and tokenized preview chrome.
 - Raw SFDT/JSON must remain hidden from normal preview and generation workflows.
-- Templates with unmanaged placeholders now have a first backend-backed Add to Field Library action in the Template Editor, but richer field-detail review is still needed.
-- Template authoring now has a first guided banner/checklist and migration action, but still needs stronger save-time validation.
+- Templates with unmanaged placeholders now have a first backend-backed Add to Field Library review form in the Template Editor.
+- Template authoring now has a first guided banner/checklist, migration review action, and save-readiness notes, but still needs stronger validation enforcement.
 
 ### Document Editor
 

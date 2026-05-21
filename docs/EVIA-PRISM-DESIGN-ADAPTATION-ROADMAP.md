@@ -42,7 +42,7 @@ This roadmap reviews the Stitch design package against the current CollabDoc imp
 - Documents is missing the full Stitch interaction set: status tabs, sort controls, grid/list toggle, collaborator indicators, archived restore affordance, and create-card pattern.
 - Templates now has a Guided creation panel and Start from Blank card entry point, but still needs advanced filters, stronger category tabs, richer template preview assets, contributors/team metadata, and deeper template-authoring polish.
 - Field Library is no longer visually pre-Prism, but it still needs backend-backed import schema, usage count, migration status, and bulk-action decisions.
-- Generate from Template is now guided, and Template Editor has a first guided creation banner/checklist around the existing editor. Unmanaged placeholders can now be promoted into the Field Library from the editor sidebar; deeper authoring validation still needs work.
+- Generate from Template is now guided, and Template Editor has a first guided creation banner/checklist around the existing editor. Unmanaged placeholders can now be reviewed and promoted into the Field Library from the editor sidebar, and save-readiness notes flag weak governance metadata; deeper validation enforcement still needs work.
 - The Editor screen has records controls but has not yet adopted the Stitch editor chrome/sidebar. This must be done separately and carefully because Syncfusion behavior is fragile.
 - Profile is still a lightweight account page rather than the full Account Intelligence dashboard.
 - Settings is still a lightweight preferences page rather than the full settings console with category navigation, workspace identity, security, members, plan details, and save workflow.
@@ -204,7 +204,7 @@ Implementation note: The live Field Library now has a Prism page header, summary
 
 ### Design Sprint D4 - Template Generation And Authoring UX
 
-Status: Started; Generate from Template first pass and Template Editor migration action completed May 21, 2026.
+Status: Started; Generate from Template first pass, Template Editor migration review, and save-readiness notes completed May 21, 2026.
 
 Technical debt priority: P1.
 
@@ -227,7 +227,7 @@ Acceptance criteria:
 - Existing invoice generation still creates and opens a document.
 - Template editor content does not regress into blank editor or stuck loading states.
 
-Implementation note: The live Generate from Template route now has a guided Prism header, summary cards, readiness checklist, inline generation errors, document-name validation, lifecycle policy summary, field-library migration callout, tokenized merge form controls, and tokenized preview chrome. The `/templates/new` authoring route now also shows a Guided creation banner, creation checklist, Field Library shortcut, Save draft action, and tokenized sidebar styling around the existing editor. The Template Editor Field Analysis panel now lets authors add unmanaged placeholders directly to the Field Library and refreshes the local managed/unmanaged status after the API save. Deeper authoring validation remains in D4.
+Implementation note: The live Generate from Template route now has a guided Prism header, summary cards, readiness checklist, inline generation errors, document-name validation, lifecycle policy summary, field-library migration callout, tokenized merge form controls, and tokenized preview chrome. The `/templates/new` authoring route now also shows a Guided creation banner, creation checklist, Field Library shortcut, Save draft action, tokenized sidebar styling, save-readiness notes, and a field migration review form around the existing editor. The Template Editor Field Analysis panel now lets authors review unmanaged placeholder metadata before adding it to the Field Library and refreshes the local managed/unmanaged status after the API save. Deeper validation enforcement remains in D4.
 
 ### Design Sprint D5 - Editor Chrome And Records Sidebar
 

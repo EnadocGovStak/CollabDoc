@@ -209,6 +209,81 @@ test('field library lists and filters managed fields', async ({ page }) => {
   expect(pageErrors).toEqual([]);
 });
 
+test('template editor reviews unmanaged fields before library promotion', async ({ page }) => {
+  const consoleErrors = [];
+  const pageErrors = [];
+  let promotedFieldPayload;
+
+  page.on('console', (message) => {
+    const text = message.text();
+    if (message.type() === 'error' && !isIgnorableConsoleError(text)) {
+      consoleErrors.push(text);
+    }
+  });
+
+  page.on('pageerror', (error) => {
+    pageErrors.push(error.message);
+  });
+
+  await page.route('**/api/templates/field-library', async (route) => {
+    if (route.request().method() !== 'POST') {
+      await route.continue();
+      return;
+    }
+
+    promotedFieldPayload = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        success: true,
+        field: {
+          ...promotedFieldPayload,
+          managed: true,
+          libraryId: promotedFieldPayload.name
+        }
+      })
+    });
+  });
+
+  await page.goto('/templates/business-letter-template');
+  await expect(page.getByRole('heading', { name: 'Business Letter Template' })).toBeVisible();
+  await expect(page.locator('.template-readiness-panel')).toContainText('Save readiness');
+  await expect(page.locator('.template-field-summary')).toContainText('8 unmanaged');
+
+  await page.locator('.template-field-migrate-button').first().click();
+  const reviewForm = page.locator('.template-field-migration-review');
+  await expect(reviewForm).toBeVisible();
+  await expect(reviewForm.getByRole('heading', { name: 'Review field' })).toBeVisible();
+
+  const fieldName = await reviewForm.locator('input[name="name"]').inputValue();
+  expect(fieldName).not.toBe('');
+
+  await reviewForm.locator('input[name="label"]').fill('Reviewed service type');
+  await reviewForm.locator('input[name="category"]').fill('Project');
+  await reviewForm.locator('select[name="type"]').selectOption('select');
+  await reviewForm.locator('textarea[name="optionsText"]').fill('Discovery\nImplementation');
+  await reviewForm.locator('textarea[name="description"]').fill('Reviewed during template authoring.');
+  await reviewForm.locator('input[name="exampleValue"]').fill('Discovery');
+  await reviewForm.getByRole('button', { name: /Add to library/i }).click();
+
+  await expect(reviewForm).toBeHidden();
+  await expect(page.locator('.template-field-summary')).toContainText('6 managed');
+  await expect(page.locator('.template-field-summary')).toContainText('7 unmanaged');
+
+  expect(promotedFieldPayload).toEqual(expect.objectContaining({
+    name: fieldName,
+    label: 'Reviewed service type',
+    category: 'Project',
+    type: 'select',
+    description: 'Reviewed during template authoring.',
+    exampleValue: 'Discovery',
+    options: ['Discovery', 'Implementation']
+  }));
+  expect(consoleErrors).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});
+
 test('template preview renders optimized and legacy templates as formatted documents', async ({ page }) => {
   const consoleErrors = [];
   const pageErrors = [];
