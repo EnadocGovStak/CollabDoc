@@ -9,6 +9,11 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: collabdocweb
+  AZURE_RESOURCE_GROUP: collabdoc
+  NODE_VERSION: '22.x'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +26,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '22.x'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies for all projects
         run: |
@@ -29,20 +34,21 @@ jobs:
           cd frontend && npm install
           cd ../backend && npm install
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
-
-      - name: Copy frontend build to backend public folder
-        run: |
-          mkdir -p backend/public
-          cp -r frontend/build/* backend/public/
+      - name: Build application
+        env:
+          NODE_ENV: production
+          REACT_APP_API_BASE_URL: ''
+          REACT_APP_SYNCFUSION_LICENSE_KEY: ${{ secrets.REACT_APP_SYNCFUSION_LICENSE_KEY }}
+        run: npm run build
 
       - name: Test backend
         run: |
           cd backend
-          npm run test --if-present
+          if node -e "const pkg=require('./package.json'); const testScript=pkg.scripts && pkg.scripts.test; process.exit(testScript && !testScript.includes('no test specified') ? 0 : 1)"; then
+            npm test
+          else
+            echo "Skipping backend tests because no real backend test script is configured."
+          fi
 
       - name: Zip backend with frontend for deployment
         run: |
@@ -81,11 +87,28 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_78A8038E871C4FDEAB89BE437679D6DF }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_76E14732AEB64CEA975F947A3019625D }}
 
+      - name: Configure Azure Web App settings
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --name ${{ env.AZURE_WEBAPP_NAME }} \
+              --settings \
+                SCM_DO_BUILD_DURING_DEPLOYMENT=true \
+                NODE_ENV=production \
+                STORAGE_ROOT=/home/site/data/collabdoc
+
+            az webapp config set \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --name ${{ env.AZURE_WEBAPP_NAME }} \
+              --startup-file "npm start"
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'Collab'
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: 'Production'
           package: .
           

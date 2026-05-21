@@ -1,8 +1,5 @@
 const fs = require('fs');
-const path = require('path');
-
-// Path to templates directory
-const templatesDir = path.join(__dirname, '../../templates');
+const { templatesDir } = require('../config/storagePaths');
 
 // Ensure templates directory exists
 if (!fs.existsSync(templatesDir)) {

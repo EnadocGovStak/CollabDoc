@@ -6,13 +6,11 @@ const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const templatesController = require('../controllers/templates');
 const { requireRole } = require('../middleware/auth');
+const { templatesDir: TEMPLATES_DIR } = require('../config/storagePaths');
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-// Directory for storing templates
-const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 
 // Ensure templates directory exists
 async function ensureTemplatesDirExists() {

@@ -4,14 +4,13 @@ const fs = require('fs').promises;
 const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
-
-// Define upload directories
-const UPLOADS_DIR = path.join(__dirname, '../../uploads');
-const VERSIONS_DIR = path.join(__dirname, '../../uploads/versions');
-const TEMPLATES_DIR = path.join(__dirname, '../../templates');
-
-// Directory for storing document versions
-const DOCUMENTS_DIR = path.join(__dirname, '../../uploads/documents');
+const {
+  uploadsDir: UPLOADS_DIR,
+  versionsDir: VERSIONS_DIR,
+  templatesDir: TEMPLATES_DIR,
+  documentsDir: DOCUMENTS_DIR,
+  tempDir: TEMP_DIR,
+} = require('../config/storagePaths');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -20,7 +19,8 @@ const storage = multer.diskStorage({
         try {
             await fs.mkdir(DOCUMENTS_DIR, { recursive: true });
             await fs.mkdir(VERSIONS_DIR, { recursive: true });
-            cb(null, path.join(__dirname, '../../uploads/temp'));
+          await fs.mkdir(TEMP_DIR, { recursive: true });
+          cb(null, TEMP_DIR);
         } catch (error) {
             cb(error, null);
         }
@@ -129,7 +129,7 @@ router.post('/save', upload.single('document'), async (req, res) => {
         // Create directories if they don't exist
         await fs.mkdir(DOCUMENTS_DIR, { recursive: true });
         await fs.mkdir(VERSIONS_DIR, { recursive: true });
-        await fs.mkdir(path.join(__dirname, '../../uploads/temp'), { recursive: true });
+        await fs.mkdir(TEMP_DIR, { recursive: true });
         
         const tempFilePath = req.file.path;
         
@@ -185,7 +185,7 @@ router.post('/save', upload.single('document'), async (req, res) => {
             try {
                 // Load template information (simplified for this example)
                 // In a real application, you would fetch this from your template service
-                const templatePath = path.join(__dirname, '../../templates', `${templateId}.json`);
+                const templatePath = path.join(TEMPLATES_DIR, `${templateId}.json`);
                 if (await fileExists(templatePath)) {
                     const templateData = JSON.parse(await fs.readFile(templatePath, 'utf8'));
                     
