@@ -8,6 +8,7 @@ import {
   Eye,
   FilePlus2,
   Library,
+  PlusCircle,
   Save,
   Search,
   ShieldCheck
@@ -56,6 +57,11 @@ const normalizeTemplateRecordsManagement = (recordsManagement = {}, sourceTempla
   };
 };
 
+const humanizeFieldName = (fieldName) => String(fieldName || '')
+  .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  .replace(/[_-]+/g, ' ')
+  .trim();
+
 const TemplateEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -70,6 +76,8 @@ const TemplateEditorPage = () => {
   const [fieldLibraryLoading, setFieldLibraryLoading] = useState(false);
   const [fieldLibraryError, setFieldLibraryError] = useState('');
   const [fieldSearchQuery, setFieldSearchQuery] = useState('');
+  const [migratingFieldName, setMigratingFieldName] = useState('');
+  const [fieldMigrationError, setFieldMigrationError] = useState('');
 
   const loadFieldLibrary = useCallback(async () => {
     try {
@@ -382,6 +390,94 @@ const TemplateEditorPage = () => {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
+  const handlePromoteFieldToLibrary = useCallback(async (field) => {
+    if (!field?.name) return;
+
+    const fieldName = field.name;
+    const fieldPayload = {
+      name: fieldName,
+      label: field.label || humanizeFieldName(fieldName) || fieldName,
+      type: field.type || 'text',
+      category: field.category && field.category !== 'Unmanaged Fields' ? field.category : 'General',
+      required: field.required === true,
+      defaultValue: field.defaultValue || '',
+      description: field.description && field.description !== 'Detected from template content. Add it to the field library to govern reuse and validation.'
+        ? field.description
+        : `Reusable field detected while authoring ${template?.name || 'this template'}.`,
+      options: Array.isArray(field.options) ? field.options : [],
+      validation: field.validation || {},
+      exampleValue: field.exampleValue || ''
+    };
+
+    try {
+      setMigratingFieldName(fieldName);
+      setFieldMigrationError('');
+      setSaveStatus(`Adding ${fieldName} to Field Library...`);
+
+      const result = await TemplateService.upsertFieldLibraryField(fieldPayload);
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to add field to library');
+      }
+
+      const libraryField = {
+        ...fieldPayload,
+        ...(result.field || {}),
+        managed: true,
+        libraryId: fieldName
+      };
+
+      setFieldLibraryFields(prev => {
+        const existingIndex = prev.findIndex(item => item.name?.toLowerCase() === fieldName.toLowerCase());
+        if (existingIndex >= 0) {
+          return prev.map((item, index) => index === existingIndex ? libraryField : item);
+        }
+        return [...prev, libraryField];
+      });
+
+      setTemplate(prev => {
+        if (!prev) return prev;
+
+        const existingFields = Array.isArray(prev.mergeFields) ? prev.mergeFields : [];
+        const updatedFields = existingFields.map(existingField => (
+          existingField.name?.toLowerCase() === fieldName.toLowerCase()
+            ? { ...existingField, ...libraryField }
+            : existingField
+        ));
+        const managedFields = updatedFields.filter(existingField => existingField.managed);
+        const unmanagedFields = updatedFields.filter(existingField => existingField.managed === false);
+
+        return {
+          ...prev,
+          mergeFields: updatedFields,
+          fieldAnalysis: {
+            ...(prev.fieldAnalysis || {}),
+            mergeFields: updatedFields,
+            managedFields,
+            unmanagedFields,
+            managedFieldCount: managedFields.length,
+            unmanagedFieldCount: unmanagedFields.length,
+            unknownFields: unmanagedFields.map(existingField => existingField.name),
+            migrationRequired: unmanagedFields.length > 0,
+            extractedFields: Array.from(new Set([
+              ...(prev.fieldAnalysis?.extractedFields || []),
+              ...updatedFields.map(existingField => existingField.name)
+            ].filter(Boolean)))
+          },
+          lastModified: new Date().toISOString()
+        };
+      });
+
+      setSaveStatus(`${fieldName} added to Field Library`);
+      setTimeout(() => setSaveStatus(''), 3000);
+    } catch (migrationError) {
+      console.error('Error adding field to library:', migrationError);
+      setFieldMigrationError(migrationError.message || 'Failed to add field to Field Library.');
+      setSaveStatus('Field migration failed');
+    } finally {
+      setMigratingFieldName('');
+    }
+  }, [template?.name]);
+
   const managedFieldCount = template?.fieldAnalysis?.managedFieldCount ?? template?.mergeFields?.filter(field => field.managed).length ?? 0;
   const unmanagedFieldCount = template?.fieldAnalysis?.unmanagedFieldCount ?? template?.mergeFields?.filter(field => field.managed === false).length ?? 0;
   const fieldCount = template?.mergeFields?.length || 0;
@@ -683,6 +779,17 @@ const TemplateEditorPage = () => {
                   <span>{managedFieldCount} managed</span>
                   {unmanagedFieldCount > 0 && <span className="needs-migration">{unmanagedFieldCount} unmanaged</span>}
                 </div>
+                {unmanagedFieldCount > 0 && (
+                  <div className="template-field-migration-callout">
+                    <AlertTriangle size={15} aria-hidden="true" />
+                    <span>Add unmanaged fields to the Field Library so generated documents use governed labels, validation, and migration status.</span>
+                  </div>
+                )}
+                {fieldMigrationError && (
+                  <div className="template-field-migration-error">
+                    {fieldMigrationError}
+                  </div>
+                )}
 
                 {fieldCount > 0 ? (
                   <div className="template-field-list">
@@ -697,6 +804,17 @@ const TemplateEditorPage = () => {
                             {field.managed ? 'Managed' : 'Unmanaged'}
                           </span>
                           <div className="template-field-token-actions">
+                            {!field.managed && (
+                              <button
+                                type="button"
+                                className="template-field-migrate-button"
+                                onClick={() => handlePromoteFieldToLibrary(field)}
+                                disabled={migratingFieldName === field.name}
+                              >
+                                <PlusCircle size={12} aria-hidden="true" />
+                                {migratingFieldName === field.name ? 'Adding' : 'Add to library'}
+                              </button>
+                            )}
                             <button type="button" onClick={() => handleInsertFieldToken(field.name, field)}>Insert</button>
                             <button type="button" onClick={() => handleCopyFieldToken(field.name)}>Copy</button>
                           </div>

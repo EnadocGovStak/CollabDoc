@@ -18,7 +18,7 @@ Turn templates into governed reusable assets backed by a managed field library.
 
 ## Current Implementation Slice
 
-Status: In progress, backend/API, generation-form, Field Library UI, template editor analysis, direct insertion controls, and save-time field enrichment implemented.
+Status: In progress, backend/API, generation-form, Field Library UI, template editor analysis, direct insertion controls, unmanaged-field promotion, and save-time field enrichment implemented.
 
 Implemented in this slice:
 
@@ -38,13 +38,14 @@ Implemented in this slice:
 - Added primary navigation and Templates page entry points for the Field Library.
 - Added a Template Editor field-analysis panel showing managed/unmanaged field counts, governed metadata, and copyable placeholder tokens.
 - Added direct Insert controls in the Template Editor field-analysis panel for inserting managed placeholder tokens at the current editor cursor.
+- Added Add to Field Library actions in the Template Editor field-analysis panel for promoting unmanaged placeholders into managed reusable fields.
 - Added save-time merge-field enrichment so created/updated templates persist managed and unmanaged field metadata based on current placeholders.
 - Hardened Template Editor content loading so legacy `sfdt` wrapper content is normalized before direct editor loading and no longer leaves the loading overlay stuck if Syncfusion rejects a payload.
 
 Not implemented yet:
 
 - Server-side enforcement of all field validation rules beyond basic required/type checks.
-- A richer authoring workflow for adding new field definitions directly from unknown placeholders.
+- Richer field-detail review and validation when promoting unknown placeholders.
 
 ## Canonical Template Fields
 
@@ -79,6 +80,7 @@ Not implemented yet:
 
 - Admins can define a reusable field once and use it in many templates through the first Field Library UI.
 - Template authors can insert or copy managed field tokens from the Template Editor analysis panel.
+- Template authors can promote unmanaged detected placeholders into the Field Library from the Template Editor analysis panel.
 - Unknown placeholders are detected and reported through template field analysis.
 - Existing templates expose managed/unmanaged counts and are clearly flagged for migration.
 - Generated forms use field labels, types, validation, defaults, and options from the field library.
@@ -97,6 +99,7 @@ Not implemented yet:
 - Browser verification confirmed the invoice generation form renders managed labels, categories, descriptions, select options, and the field-library status badge.
 - Browser verification confirmed `/field-library` renders 33 fields, category/type filters, and the field editor.
 - Browser verification confirmed `/templates/invoice-template` renders 18 managed fields in the Template Editor sidebar, hides the loading overlay, and reports no page/console errors.
+- Browser verification confirmed `/templates/business-letter-template` renders 8 unmanaged fields, a migration callout, 8 Add to Field Library actions, and 13 field-analysis rows.
 - API verification created a temporary template and confirmed saved placeholders persisted as managed and unmanaged `mergeFields`; the temporary template was deleted after verification.
 - `npm run smoke:browser` passed all 5 browser/API smoke tests after adding coverage for Field Library, template field analysis, insertion controls, and save-time field enrichment.
 

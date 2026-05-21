@@ -4,7 +4,7 @@ Last updated: May 21, 2026.
 
 Short answer: I agree that the current UI/UX is not good enough for the intended product.
 
-The application has useful building blocks, and the first Evia Prism application pass has improved the shared shell, Documents, Templates, Field Library, Generate from Template, Profile, and Settings. It is still not a complete production UX: the editor frame, modals, records lifecycle enforcement, Template Editor side panels, and backend-backed migration actions need more deliberate work.
+The application has useful building blocks, and the first Evia Prism application pass has improved the shared shell, Documents, Templates, Field Library, Generate from Template, Profile, and Settings. It is still not a complete production UX: the editor frame, modals, records lifecycle enforcement, Template Editor side panels, validation, and migration-detail review need more deliberate work.
 
 ## Completed Design Pass - May 21, 2026
 
@@ -13,6 +13,7 @@ The application has useful building blocks, and the first Evia Prism application
 - Updated Documents and Templates to use matching Prism card/gallery patterns, document-preview surfaces, tokenized filters, and clearer primary actions.
 - Restored the Templates Guided creation entry point with a Start from Blank card so template authoring is visible from the library again.
 - Added a first guided creation layer to `/templates/new`, with checklist states around the existing editor rather than inside Syncfusion.
+- Added a first Template Editor migration action so unmanaged detected placeholders can be promoted into the Field Library from Field Analysis.
 - Updated Field Library and Generate from Template with first Prism workflow/data-surface passes while preserving their existing APIs and merge behavior.
 - Replaced bare Profile and Settings placeholders with account/preference panels.
 - Added Light/Dark appearance selection in Profile and Settings, plus a topbar quick toggle. The choice persists through `localStorage` and document-level theme tokens.
@@ -51,8 +52,8 @@ The comprehensive Stitch/Evia Prism review and planned design-adaptation sprints
 
 - The generation route now has a first guided Prism pass with summary cards, readiness state, lifecycle policy review, inline generation errors, field-library migration prompt, grouped fields, and tokenized preview chrome.
 - Raw SFDT/JSON must remain hidden from normal preview and generation workflows.
-- Templates with unmanaged placeholders still need backend-backed migration actions so the guidance becomes fully actionable.
-- Template authoring now has a first guided banner/checklist, but still needs backend-backed field migration actions and stronger save-time validation.
+- Templates with unmanaged placeholders now have a first backend-backed Add to Field Library action in the Template Editor, but richer field-detail review is still needed.
+- Template authoring now has a first guided banner/checklist and migration action, but still needs stronger save-time validation.
 
 ### Document Editor
 

@@ -42,6 +42,7 @@ The local Docker setup exists and has been verified:
 - Template detail, list, search, and field-analysis APIs can enrich placeholders with managed labels, categories, descriptions, defaults, options, and migration status.
 - A first Field Library UI at `/field-library` can list, filter, create, and edit managed fields.
 - The Template Editor sidebar shows managed/unmanaged field analysis with Insert and Copy controls for detected template fields.
+- The Template Editor sidebar can promote unmanaged detected fields into the Field Library from the Field Analysis panel.
 - The `/templates/new` authoring route now shows a Guided creation banner and checklist around the stable editor surface.
 - Template create/update saves now refresh persisted `mergeFields` metadata from the current placeholders, including unmanaged-field migration flags.
 - Generate from Template now renders a first guided Prism workflow for the invoice template, including summary cards, document-name validation, readiness checklist, lifecycle policy review, managed field metadata, grouped business categories, managed/unmanaged status badges, migration prompt, and tokenized preview chrome.
@@ -99,7 +100,7 @@ The UI now has a first Evia Prism application pass, but it is not yet complete a
 - Editor-adjacent flows, modals, Template Editor side panels, and the Syncfusion editor chrome still need careful design adaptation.
 - Raw implementation details such as SFDT/JSON are no longer visible in the smoke-tested flows, but broader template-by-template coverage is still needed.
 - Records lifecycle controls are visible but do not yet feel like required policy steps.
-- Template generation now has a first guided pass, but backend-backed migration actions and Template Editor authoring polish are still pending.
+- Template generation now has a first guided pass, and Template Editor has a first backend-backed migration action for unmanaged fields. Deeper authoring validation and richer migration review are still pending.
 
 The detailed UX critique lives in `UI-UX-REVIEW.md`. The comprehensive Stitch/Evia Prism review and design-adaptation sprint plan live in `EVIA-PRISM-DESIGN-ADAPTATION-ROADMAP.md`.
 
@@ -107,7 +108,7 @@ The detailed UX critique lives in `UI-UX-REVIEW.md`. The comprehensive Stitch/Ev
 
 Some templates contain placeholders but do not have managed `mergeFields` metadata. Example: `backend/templates/a2e8ed36-0112-4d3c-b698-131b76d49c91.json` includes invoice placeholders such as `{{CompanyName}}` and `{{ClientName}}`, but lacks a `mergeFields` array.
 
-Sprint 01 added a fallback that extracts placeholders for generation. Sprint 02 now adds the first managed reusable field-library bridge: extracted placeholders are analyzed against `backend/src/data/field-library.json`, known fields are enriched with governed metadata, and unknown fields are reported as migration-required. The first Field Library UI, Template Editor analysis panel, direct Insert controls, and save-time metadata write-back exist. A richer unknown-placeholder migration workflow is still pending.
+Sprint 01 added a fallback that extracts placeholders for generation. Sprint 02 now adds the first managed reusable field-library bridge: extracted placeholders are analyzed against `backend/src/data/field-library.json`, known fields are enriched with governed metadata, and unknown fields are reported as migration-required. The first Field Library UI, Template Editor analysis panel, direct Insert controls, Add to Field Library action for unmanaged fields, and save-time metadata write-back exist. Richer migration review and validation workflows are still pending.
 
 ### Preview And Rendering
 
@@ -140,7 +141,7 @@ Production-ready means the following are enforced server-side, tested, and docum
 - Authentication and authorization.
 - Classification before save.
 - Retention before save.
-- Managed template field library UI and enforcement. The first JSON/API-backed field-library slice exists, but authoring and migration workflows are not complete.
+- Managed template field library UI and enforcement. The first JSON/API-backed field-library slice and editor-side unmanaged-field promotion action exist, but validation enforcement and richer migration workflows are not complete.
 - Template-to-document generation with valid SFDT rendering.
 - Real-time collaboration with conflict handling.
 - Version history and audit events.
