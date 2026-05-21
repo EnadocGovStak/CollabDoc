@@ -355,6 +355,7 @@ const TemplateEditorPage = () => {
         category: template.category || recordsManagement.department || 'General',
         documentType: recordsManagement.documentType || template.documentType || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.documentType,
         recordsManagement,
+        saveMode: allowDraft ? 'draft' : 'governed',
         content: content
       };
       

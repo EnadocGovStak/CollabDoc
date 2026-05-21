@@ -154,6 +154,7 @@ test('template save enriches managed and unmanaged field metadata', async ({ req
       description: 'Temporary save-time enrichment check',
       category: 'Smoke',
       documentType: 'Smoke',
+      saveMode: 'draft',
       content: 'Hello {{CompanyName}} and {{CustomSaveField}}',
       mergeFields: []
     }
@@ -173,6 +174,60 @@ test('template save enriches managed and unmanaged field metadata', async ({ req
     ]));
   } finally {
     await request.delete(`${apiURL}/api/templates/${created.id}`);
+  }
+});
+
+test('template API rejects incomplete governed saves and accepts explicit drafts', async ({ request }) => {
+  const governedResponse = await request.post(`${apiURL}/api/templates`, {
+    data: {
+      name: 'Smoke Governed Validation Template',
+      description: 'Temporary governed validation check',
+      category: 'Smoke',
+      documentType: 'Smoke',
+      recordsManagement: {
+        classification: 'Unclassified',
+        retentionPeriod: '7 Years',
+        documentType: 'Smoke',
+        department: 'Smoke'
+      },
+      content: 'Hello {{CompanyName}} and {{CustomGovernedField}}',
+      mergeFields: []
+    }
+  });
+
+  expect(governedResponse.status()).toBe(400);
+  const governedResult = await governedResponse.json();
+  expect(governedResult.error).toBe('Template readiness validation failed');
+  expect(governedResult.saveMode).toBe('governed');
+  expect(governedResult.readinessIssues).toEqual(expect.arrayContaining([
+    expect.objectContaining({ code: 'lifecyclePolicy' }),
+    expect.objectContaining({ code: 'fieldMigration' })
+  ]));
+
+  const draftResponse = await request.post(`${apiURL}/api/templates`, {
+    data: {
+      name: 'Smoke Draft Validation Template',
+      description: 'Temporary draft validation check',
+      category: 'Smoke',
+      documentType: 'Smoke',
+      saveMode: 'draft',
+      content: 'Hello {{CompanyName}} and {{CustomDraftField}}',
+      mergeFields: []
+    }
+  });
+
+  expect(draftResponse.ok()).toBeTruthy();
+  const draftResult = await draftResponse.json();
+
+  try {
+    expect(draftResult.saveMode).toBe('draft');
+    expect(draftResult.governanceStatus).toBe('draft');
+    expect(draftResult.mergeFields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'CompanyName', managed: true, category: 'Organization' }),
+      expect.objectContaining({ name: 'CustomDraftField', managed: false, category: 'Unmanaged Fields' })
+    ]));
+  } finally {
+    await request.delete(`${apiURL}/api/templates/${draftResult.id}`);
   }
 });
 
@@ -345,7 +400,8 @@ test('template editor blocks governed save until readiness notes are resolved', 
   await expect(page.locator('.save-status')).toContainText('Draft saved with 2 readiness notes');
 
   expect(saveRequestBody).toEqual(expect.objectContaining({
-    name: 'Business Letter Template'
+    name: 'Business Letter Template',
+    saveMode: 'draft'
   }));
   expect(consoleErrors).toEqual([]);
   expect(pageErrors).toEqual([]);

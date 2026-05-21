@@ -34,6 +34,19 @@ async function fileExists(filePath) {
   }
 }
 
+function sendTemplateSaveError(res, error, fallbackMessage) {
+  if (error.code === 'TEMPLATE_READINESS_VALIDATION') {
+    return res.status(error.statusCode || 400).json({
+      error: error.message,
+      saveMode: error.saveMode,
+      readinessIssues: error.readinessIssues || [],
+      validationErrors: error.validationErrors || []
+    });
+  }
+
+  return res.status(500).json({ error: fallbackMessage });
+}
+
 /**
  * GET /api/templates
  * Get all available templates
@@ -109,6 +122,7 @@ router.post('/', async (req, res) => {
       content: req.body.content || '',
       mergeFields: req.body.mergeFields || [],
       recordsManagement: req.body.recordsManagement,
+      saveMode: req.body.saveMode,
       createdAt: timestamp,
       updatedAt: timestamp
     });
@@ -121,7 +135,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(templateData);
   } catch (error) {
     console.error('Error creating template:', error);
-    res.status(500).json({ error: 'Failed to create template' });
+    sendTemplateSaveError(res, error, 'Failed to create template');
   }
 });
 
@@ -152,6 +166,7 @@ router.put('/:id', async (req, res) => {
       content: req.body.content !== undefined ? req.body.content : existingData.content,
       mergeFields: req.body.mergeFields || existingData.mergeFields,
       recordsManagement: req.body.recordsManagement !== undefined ? req.body.recordsManagement : existingData.recordsManagement,
+      saveMode: req.body.saveMode,
       updatedAt: new Date().toISOString()
     });
     
@@ -162,7 +177,7 @@ router.put('/:id', async (req, res) => {
     res.json(updatedData);
   } catch (error) {
     console.error('Error updating template:', error);
-    res.status(500).json({ error: 'Failed to update template' });
+    sendTemplateSaveError(res, error, 'Failed to update template');
   }
 });
 

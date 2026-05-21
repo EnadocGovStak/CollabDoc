@@ -421,7 +421,21 @@ class TemplateService {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to save template: ${response.statusText}`);
+        let errorBody: any = null;
+        try {
+          errorBody = await response.json();
+        } catch {
+          errorBody = null;
+        }
+
+        const error: any = new Error(errorBody?.error || `Failed to save template: ${response.statusText}`);
+        if (errorBody?.readinessIssues) {
+          error.readinessIssues = errorBody.readinessIssues;
+        }
+        if (errorBody?.validationErrors) {
+          error.validationErrors = errorBody.validationErrors;
+        }
+        throw error;
       }
 
       return await response.json();

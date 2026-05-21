@@ -16,6 +16,13 @@ if (!fs.existsSync(documentsDir)) {
   fs.mkdirSync(documentsDir, { recursive: true });
 }
 
+const sendTemplateSaveResultError = (res, result) => res.status(result.statusCode || 500).json({
+  error: result.error,
+  saveMode: result.saveMode,
+  readinessIssues: result.readinessIssues || [],
+  validationErrors: result.validationErrors || []
+});
+
 /**
  * Get all available templates (metadata only)
  */
@@ -53,7 +60,7 @@ const getTemplateById = (req, res) => {
  */
 const createTemplate = (req, res) => {
   try {
-    const { name, description, content, category, documentType, mergeFields } = req.body;
+    const { name, description, content, category, documentType, mergeFields, recordsManagement, saveMode } = req.body;
     
     if (!name || !content) {
       return res.status(400).json({ error: 'Template name and content are required' });
@@ -68,6 +75,8 @@ const createTemplate = (req, res) => {
       documentType: documentType || 'Document',
       content,
       mergeFields: mergeFields || [],
+      recordsManagement,
+      saveMode,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -75,12 +84,12 @@ const createTemplate = (req, res) => {
     const result = templateService.saveTemplate(templateData);
     
     if (!result.success) {
-      return res.status(500).json({ error: result.error });
+      return sendTemplateSaveResultError(res, result);
     }
     
     res.status(201).json({
       templateId: result.templateId,
-      ...templateData
+      ...(result.template || templateData)
     });
   } catch (error) {
     console.error('Error creating template:', error);
@@ -93,7 +102,7 @@ const createTemplate = (req, res) => {
  */
 const createTemplateWithFields = (req, res) => {
   try {
-    const { name, description, content, category, documentType, mergeFields } = req.body;
+    const { name, description, content, category, documentType, mergeFields, recordsManagement, saveMode } = req.body;
     
     if (!name || !content) {
       return res.status(400).json({ error: 'Template name and content are required' });
@@ -118,6 +127,8 @@ const createTemplateWithFields = (req, res) => {
         type: 'text',
         required: false
       })),
+      recordsManagement,
+      saveMode,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -125,13 +136,13 @@ const createTemplateWithFields = (req, res) => {
     const result = templateService.saveTemplate(templateData);
     
     if (!result.success) {
-      return res.status(500).json({ error: result.error });
+      return sendTemplateSaveResultError(res, result);
     }
     
     res.status(201).json({
       templateId: result.templateId,
       extractedFields,
-      ...templateData
+      ...(result.template || templateData)
     });
   } catch (error) {
     console.error('Error creating template with fields:', error);
@@ -282,13 +293,13 @@ const updateTemplateMergeFields = (req, res) => {
     const result = templateService.saveTemplate(updatedTemplate);
     
     if (!result.success) {
-      return res.status(500).json({ error: result.error });
+      return sendTemplateSaveResultError(res, result);
     }
     
     res.status(200).json({
       templateId: id,
-      mergeFields: updatedTemplate.mergeFields,
-      updatedAt: updatedTemplate.updatedAt
+      mergeFields: result.template?.mergeFields || updatedTemplate.mergeFields,
+      updatedAt: result.template?.updatedAt || updatedTemplate.updatedAt
     });
   } catch (error) {
     console.error(`Error updating merge fields for template ${req.params.id}:`, error);
@@ -679,7 +690,7 @@ const uploadTemplate = (req, res) => {
     }
     
     const { originalname, buffer } = req.file;
-    const { name, description, category, documentType } = req.body;
+    const { name, description, category, documentType, recordsManagement, saveMode } = req.body;
     
     // For now, we'll assume the uploaded file is already in SFDT format
     // In a real implementation, you would convert DOCX to SFDT here
@@ -693,6 +704,8 @@ const uploadTemplate = (req, res) => {
       documentType: documentType || 'Document',
       content: buffer.toString('utf8'),
       mergeFields: [],
+      recordsManagement,
+      saveMode,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -708,13 +721,13 @@ const uploadTemplate = (req, res) => {
     const result = templateService.saveTemplate(templateData);
     
     if (!result.success) {
-      return res.status(500).json({ error: result.error });
+      return sendTemplateSaveResultError(res, result);
     }
     
     res.status(201).json({
       templateId: result.templateId,
       extractedFields,
-      ...templateData
+      ...(result.template || templateData)
     });
   } catch (error) {
     console.error('Error uploading template:', error);

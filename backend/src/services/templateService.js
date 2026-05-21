@@ -47,6 +47,103 @@ const normalizeTemplateRecordsManagement = (recordsManagement = {}, templateData
   };
 };
 
+const getTemplateSaveMode = (templateData = {}) => {
+  const requestedMode = String(templateData.saveMode || templateData.governanceStatus || '').toLowerCase();
+  return requestedMode === 'draft' ? 'draft' : 'governed';
+};
+
+const buildTemplateFieldAnalysis = (templateData = {}) => {
+  const extractedFields = extractMergeFields(templateData.content);
+  return fieldLibraryService.analyzeTemplateFields(templateData, extractedFields);
+};
+
+const getTemplateReadinessIssues = (templateData = {}, fieldAnalysis) => {
+  const issues = [];
+  const recordsPolicy = templateData.recordsManagement && typeof templateData.recordsManagement === 'object'
+    ? templateData.recordsManagement
+    : {};
+  const documentType = recordsPolicy.documentType || templateData.documentType;
+  const mergeFields = Array.isArray(fieldAnalysis?.mergeFields)
+    ? fieldAnalysis.mergeFields
+    : Array.isArray(templateData.mergeFields)
+      ? templateData.mergeFields
+      : [];
+  const extractedFields = Array.isArray(fieldAnalysis?.extractedFields)
+    ? fieldAnalysis.extractedFields
+    : mergeFields.map(field => field.name).filter(Boolean);
+  const unmanagedFields = mergeFields.filter(field => field.managed === false);
+  const weakMetadataFields = mergeFields.filter(field => (
+    !field.name
+      || !field.label
+      || !field.type
+      || !field.category
+      || (!field.description && !field.exampleValue)
+  ));
+
+  if (!templateData.name?.trim() || templateData.name === 'Untitled Template') {
+    issues.push({
+      code: 'templateName',
+      label: 'Template name',
+      detail: 'Replace the default name with a recognizable business title.'
+    });
+  }
+
+  if (!recordsPolicy.classification || recordsPolicy.classification === 'Unclassified' || !recordsPolicy.retentionPeriod || !documentType || !recordsPolicy.department) {
+    issues.push({
+      code: 'lifecyclePolicy',
+      label: 'Lifecycle policy',
+      detail: 'Set classification, retention, document type, and department before saving a governed template.'
+    });
+  }
+
+  if (extractedFields.length === 0) {
+    issues.push({
+      code: 'managedFields',
+      label: 'Managed fields',
+      detail: 'Insert at least one reusable field token before saving a governed generation template.'
+    });
+  }
+
+  if (unmanagedFields.length > 0) {
+    issues.push({
+      code: 'fieldMigration',
+      label: 'Field migration',
+      detail: `${unmanagedFields.length} unmanaged field${unmanagedFields.length === 1 ? '' : 's'} must be reviewed and added to the Field Library.`
+    });
+  }
+
+  if (weakMetadataFields.length > 0) {
+    issues.push({
+      code: 'fieldMetadata',
+      label: 'Field metadata',
+      detail: `${weakMetadataFields.length} field${weakMetadataFields.length === 1 ? '' : 's'} need stronger labels, categories, descriptions, or examples.`
+    });
+  }
+
+  return issues;
+};
+
+const validateTemplateReadiness = (templateData = {}, fieldAnalysis) => {
+  const saveMode = getTemplateSaveMode(templateData);
+  const readinessIssues = getTemplateReadinessIssues(templateData, fieldAnalysis);
+
+  return {
+    isValid: saveMode === 'draft' || readinessIssues.length === 0,
+    saveMode,
+    readinessIssues
+  };
+};
+
+const createTemplateReadinessError = (validation) => {
+  const error = new Error('Template readiness validation failed');
+  error.code = 'TEMPLATE_READINESS_VALIDATION';
+  error.statusCode = 400;
+  error.saveMode = validation.saveMode;
+  error.readinessIssues = validation.readinessIssues;
+  error.validationErrors = validation.readinessIssues.map(issue => issue.detail);
+  return error;
+};
+
 /**
  * Get all templates (metadata only, no content)
  * @returns {Array} Array of template metadata objects
@@ -99,11 +196,10 @@ const getTemplateFieldAnalysis = (templateId) => {
 
   if (!template) return null;
 
-  const extractedFields = extractMergeFields(template.content);
-  return fieldLibraryService.analyzeTemplateFields({
+  return buildTemplateFieldAnalysis({
     id: templateId,
     ...template
-  }, extractedFields);
+  });
 };
 
 const getTemplateWithManagedFields = (templateId) => {
@@ -129,16 +225,24 @@ const getTemplateWithManagedFields = (templateId) => {
 };
 
 const enrichTemplateForSave = (templateData) => {
-  const extractedFields = extractMergeFields(templateData.content);
-  const analysis = fieldLibraryService.analyzeTemplateFields(templateData, extractedFields);
+  const analysis = buildTemplateFieldAnalysis(templateData);
   const recordsManagement = normalizeTemplateRecordsManagement(templateData.recordsManagement, templateData);
-
-  return {
+  const saveMode = getTemplateSaveMode(templateData);
+  const enrichedTemplate = {
     ...templateData,
+    saveMode,
+    governanceStatus: saveMode,
     documentType: recordsManagement.documentType || templateData.documentType || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.documentType,
     recordsManagement,
     mergeFields: analysis.mergeFields
   };
+  const validation = validateTemplateReadiness(enrichedTemplate, analysis);
+
+  if (!validation.isValid) {
+    throw createTemplateReadinessError(validation);
+  }
+
+  return enrichedTemplate;
 };
 
 /**
@@ -323,13 +427,18 @@ const saveTemplate = (templateData) => {
     
     return {
       success: true,
-      templateId: templateData.id
+      templateId: templateData.id,
+      template: templateWithTimestamps
     };
   } catch (error) {
     console.error('Error saving template:', error);
     return {
       success: false,
-      error: error.message
+      error: error.message,
+      statusCode: error.statusCode,
+      saveMode: error.saveMode,
+      readinessIssues: error.readinessIssues,
+      validationErrors: error.validationErrors
     };
   }
 };
@@ -391,6 +500,9 @@ module.exports = {
   getTemplateFieldAnalysis,
   normalizeTemplateRecordsManagement,
   enrichTemplateForSave,
+  getTemplateSaveMode,
+  getTemplateReadinessIssues,
+  validateTemplateReadiness,
   extractMergeFields,
   validateMergeData,
   mergeTemplateData,

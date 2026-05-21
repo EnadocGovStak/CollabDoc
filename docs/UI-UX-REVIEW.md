@@ -15,7 +15,7 @@ The application has useful building blocks, and the first Evia Prism application
 - Added a first guided creation layer to `/templates/new`, with checklist states around the existing editor rather than inside Syncfusion.
 - Added a first Template Editor migration review action so unmanaged detected placeholders can be checked and promoted into the Field Library from Field Analysis.
 - Added save-readiness notes in Template Editor for default names, lifecycle policy gaps, unmanaged fields, and weak field metadata.
-- Added governed-save blocking in Template Editor, with an explicit draft-save path for incomplete templates.
+- Added governed-save blocking in Template Editor and backend create/update APIs, with an explicit draft-save path for incomplete templates.
 - Updated Field Library and Generate from Template with first Prism workflow/data-surface passes while preserving their existing APIs and merge behavior.
 - Replaced bare Profile and Settings placeholders with account/preference panels.
 - Added Light/Dark appearance selection in Profile and Settings, plus a topbar quick toggle. The choice persists through `localStorage` and document-level theme tokens.
@@ -55,7 +55,7 @@ The comprehensive Stitch/Evia Prism review and planned design-adaptation sprints
 - The generation route now has a first guided Prism pass with summary cards, readiness state, lifecycle policy review, inline generation errors, field-library migration prompt, grouped fields, and tokenized preview chrome.
 - Raw SFDT/JSON must remain hidden from normal preview and generation workflows.
 - Templates with unmanaged placeholders now have a first backend-backed Add to Field Library review form in the Template Editor.
-- Template authoring now has a first guided banner/checklist, migration review action, save-readiness notes, and governed-save blocking, but still needs server-side validation enforcement.
+- Template authoring now has a first guided banner/checklist, migration review action, save-readiness notes, and UI/API governed-save blocking, but still needs richer field validation rules.
 
 ### Document Editor
 
