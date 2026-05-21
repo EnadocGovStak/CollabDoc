@@ -201,6 +201,7 @@ const TemplateEditorPage = () => {
   const [migrationReviewField, setMigrationReviewField] = useState(null);
   const [migrationDraft, setMigrationDraft] = useState(null);
   const [migrationReviewError, setMigrationReviewError] = useState('');
+  const [readinessValidationError, setReadinessValidationError] = useState('');
 
   const loadFieldLibrary = useCallback(async () => {
     try {
@@ -320,13 +321,24 @@ const TemplateEditorPage = () => {
   }, []);
 
   // Handle save
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(async (options = {}) => {
     if (!editorRef.current) return;
+
+    const allowDraft = options?.allowDraft === true;
+    const readinessIssues = getTemplateReadinessIssues(template);
+
+    if (readinessIssues.length > 0 && !allowDraft) {
+      const validationMessage = 'Resolve readiness notes before saving as a governed template, or save a draft.';
+      setReadinessValidationError(validationMessage);
+      setSaveStatus('Resolve readiness notes before saving');
+      setTimeout(() => setSaveStatus(''), 3500);
+      return;
+    }
     
     try {
-      const readinessIssues = getTemplateReadinessIssues(template);
+      setReadinessValidationError('');
       setSaveStatus(readinessIssues.length > 0
-        ? `Saving with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}...`
+        ? `Saving draft with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}...`
         : 'Saving...');
       
       // Get the template content from the editor
@@ -372,8 +384,8 @@ const TemplateEditorPage = () => {
         lastModified: new Date().toISOString()
       }));
       
-      setSaveStatus(readinessIssues.length > 0
-        ? `Template saved with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}`
+      setSaveStatus(allowDraft && readinessIssues.length > 0
+        ? `Draft saved with ${readinessIssues.length} readiness note${readinessIssues.length === 1 ? '' : 's'}`
         : 'Template saved successfully');
       
       // If this was a new template and we got an ID back, update the URL
@@ -406,6 +418,7 @@ const TemplateEditorPage = () => {
   }, [handleSave]);
 
   const handleNameChange = (e) => {
+    setReadinessValidationError('');
     setTemplate(prev => ({
       ...prev,
       name: e.target.value
@@ -421,6 +434,7 @@ const TemplateEditorPage = () => {
 
   const handleRecordsPolicyChange = (e) => {
     const { name, value } = e.target;
+    setReadinessValidationError('');
 
     setTemplate(prev => {
       const recordsManagement = {
@@ -465,6 +479,8 @@ const TemplateEditorPage = () => {
 
   const addMergeFieldToTemplate = useCallback((fieldDefinition) => {
     if (!fieldDefinition?.name) return;
+
+    setReadinessValidationError('');
 
     setTemplate(prev => {
       if (!prev) return prev;
@@ -715,7 +731,7 @@ const TemplateEditorPage = () => {
             Preview
           </button>
           <button 
-            onClick={handleSave}
+            onClick={() => handleSave()}
             className="template-editor-action-button save-button"
           >
             <Save size={16} aria-hidden="true" />
@@ -740,7 +756,7 @@ const TemplateEditorPage = () => {
               <Library size={16} aria-hidden="true" />
               Field Library
             </Link>
-            <button type="button" onClick={handleSave} className="template-guided-save">
+            <button type="button" onClick={() => handleSave({ allowDraft: true })} className="template-guided-save">
               <Save size={16} aria-hidden="true" />
               Save draft
             </button>
@@ -793,6 +809,19 @@ const TemplateEditorPage = () => {
                         </span>
                       </div>
                     ))}
+                  </div>
+                )}
+                {readinessValidationError && (
+                  <div className="template-readiness-error">
+                    {readinessValidationError}
+                  </div>
+                )}
+                {saveReadinessIssues.length > 0 && (
+                  <div className="template-readiness-actions">
+                    <button type="button" className="template-readiness-draft-button" onClick={() => handleSave({ allowDraft: true })}>
+                      <Save size={13} aria-hidden="true" />
+                      Save draft anyway
+                    </button>
                   </div>
                 )}
               </div>
@@ -1095,8 +1124,8 @@ const TemplateEditorPage = () => {
               </div>
 
               <div className="sidebar-section">
-                <button 
-                  onClick={handleSave} 
+                <button
+                  onClick={() => handleSave()}
                   className="sidebar-button"
                 >
                   Save Template (Ctrl+S)

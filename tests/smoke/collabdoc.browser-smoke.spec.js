@@ -284,6 +284,73 @@ test('template editor reviews unmanaged fields before library promotion', async 
   expect(pageErrors).toEqual([]);
 });
 
+test('template editor blocks governed save until readiness notes are resolved', async ({ page }) => {
+  const consoleErrors = [];
+  const pageErrors = [];
+  let saveRequestCount = 0;
+  let saveRequestBody;
+
+  page.on('console', (message) => {
+    const text = message.text();
+    if (message.type() === 'error' && !isIgnorableConsoleError(text)) {
+      consoleErrors.push(text);
+    }
+  });
+
+  page.on('pageerror', (error) => {
+    pageErrors.push(error.message);
+  });
+
+  await page.route('**/api/templates/business-letter-template', async (route) => {
+    if (route.request().method() !== 'PUT') {
+      await route.continue();
+      return;
+    }
+
+    saveRequestCount += 1;
+    saveRequestBody = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 'business-letter-template',
+        name: saveRequestBody.name,
+        description: saveRequestBody.description,
+        category: saveRequestBody.category,
+        documentType: saveRequestBody.documentType,
+        recordsManagement: saveRequestBody.recordsManagement,
+        mergeFields: [],
+        fieldAnalysis: {
+          extractedFields: [],
+          managedFieldCount: 0,
+          unmanagedFieldCount: 0,
+          unknownFields: [],
+          migrationRequired: false
+        }
+      })
+    });
+  });
+
+  await page.goto('/templates/business-letter-template');
+  await expect(page.getByRole('heading', { name: 'Business Letter Template' })).toBeVisible();
+  await expect(page.locator('.editor-loading-overlay')).toBeHidden();
+  await expect(page.locator('.template-readiness-panel')).toContainText('2 notes');
+
+  await page.locator('.template-editor-actions .save-button').click();
+  await expect(page.locator('.template-readiness-error')).toContainText('Resolve readiness notes before saving as a governed template');
+  expect(saveRequestCount).toBe(0);
+
+  await page.locator('.template-readiness-draft-button').click();
+  await expect.poll(() => saveRequestCount).toBe(1);
+  await expect(page.locator('.save-status')).toContainText('Draft saved with 2 readiness notes');
+
+  expect(saveRequestBody).toEqual(expect.objectContaining({
+    name: 'Business Letter Template'
+  }));
+  expect(consoleErrors).toEqual([]);
+  expect(pageErrors).toEqual([]);
+});
+
 test('template preview renders optimized and legacy templates as formatted documents', async ({ page }) => {
   const consoleErrors = [];
   const pageErrors = [];
