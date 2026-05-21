@@ -6,9 +6,21 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #f5f7fa;
-  color: #333;
+  font-family: var(--font-family-sans);
+  background-color: var(--evia-background);
+  color: var(--evia-on-surface);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .App {
@@ -458,78 +470,370 @@ div[id*="_viewer_"] {
 }
 
 .app {
+  min-height: 100vh;
+  background: var(--evia-background);
+}
+
+.app-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  width: var(--evia-shell-width);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  background: var(--evia-surface-container);
+  border-right: 1px solid var(--evia-outline-variant);
+  padding: 22px 0;
 }
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  height: 48px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e9ecef;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.app-sidebar-brand {
+  padding: 0 20px 28px;
 }
 
-.app-logo {
+.app-logo-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #007bff;
+  text-decoration: none;
+  min-width: 0;
 }
 
 .app-logo-image {
-  height: 32px;
+  height: 42px;
+  max-width: 112px;
   width: auto;
   object-fit: contain;
-  transition: transform 0.3s ease;
+  border-radius: 6px;
 }
 
-.app-logo-image:hover {
-  transform: scale(1.05);
+.app-brand-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
 }
 
-.app-logo-text {
-  font-size: 1.4rem;
+.app-brand-copy strong,
+.app-mobile-brand span {
+  color: var(--evia-primary);
+  font-family: var(--font-family-display);
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #007bff;
-  text-decoration: none;
 }
 
-.app-nav {
+.app-brand-copy span {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.app-sidebar-nav {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.nav-link {
-  color: #495057;
+.app-sidebar-nav.account {
+  border-top: 1px solid var(--evia-outline-variant);
+  padding-top: 12px;
+}
+
+.app-sidebar-footer {
+  margin-top: auto;
+  display: grid;
+  gap: 16px;
+}
+
+.app-shell-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  color: var(--evia-on-surface-variant);
   text-decoration: none;
-  padding: 6px 10px;
+  padding: 0 18px 0 20px;
+  font-size: 0.88rem;
+  font-weight: 650;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.app-shell-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: transparent;
+}
+
+.app-shell-link:hover {
+  color: var(--evia-primary);
+  background: var(--evia-shell-hover-surface);
+  text-decoration: none;
+}
+
+.app-shell-link.active {
+  color: var(--evia-primary);
+  background: var(--evia-active-surface);
+}
+
+.app-shell-link.active::before {
+  background: var(--evia-primary);
+}
+
+.app-shell-icon {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--evia-shell-card-surface);
+  color: currentColor;
+  flex: 0 0 30px;
+}
+
+.app-shell-icon svg {
+  display: block;
+}
+
+.app-user-card {
+  margin: 0 16px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 8px;
+  background: var(--evia-shell-card-surface);
+}
+
+.app-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--evia-primary);
+  color: var(--evia-on-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.app-user-card strong,
+.app-user-card small {
+  display: block;
+  line-height: 1.25;
+}
+
+.app-user-card strong {
+  color: var(--evia-on-surface);
+  font-size: 0.82rem;
+}
+
+.app-user-card small {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.72rem;
+}
+
+.app-topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--evia-shell-width);
+  z-index: 40;
+  height: var(--evia-topbar-height);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 24px;
+  background: var(--evia-topbar-surface);
+  border-bottom: 1px solid var(--evia-outline-variant);
+  backdrop-filter: blur(10px);
+}
+
+.app-mobile-brand {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  color: var(--evia-primary);
+  text-decoration: none;
+}
+
+.app-mobile-logo {
+  height: 38px;
+  width: auto;
+  max-width: 94px;
+  object-fit: contain;
+}
+
+.app-search {
+  position: relative;
+  flex: 1;
+  max-width: 460px;
+}
+
+.app-search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--evia-on-surface-variant);
+  pointer-events: none;
+}
+
+.app-search input {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 999px;
+  background: var(--evia-surface-container-lowest);
+  color: var(--evia-on-surface);
+  padding: 8px 16px 8px 40px;
+  font-size: 0.9rem;
+}
+
+.app-search input:focus {
+  outline: none;
+  border-color: var(--evia-primary);
+  box-shadow: var(--evia-focus-ring);
+}
+
+.app-topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-icon-button {
+  width: 36px;
+  height: 36px;
   border-radius: 4px;
-  font-weight: 500;
-  transition: color 0.3s, background-color 0.3s;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--evia-on-surface-variant);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
-.nav-link:hover {
-  color: #007bff;
-  background-color: #f1f8ff;
-  text-decoration: none;
+.app-icon-button:hover {
+  background: var(--evia-surface-container-low);
+  color: var(--evia-primary);
 }
 
-.active-nav-link {
-  color: #007bff;
-  text-decoration: none;
-  padding: 6px 10px;
+.app-icon-button:focus-visible,
+.app-primary-action:focus-visible {
+  outline: none;
+  box-shadow: var(--evia-focus-ring);
+}
+
+.app-primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
   border-radius: 4px;
-  font-weight: 700;
-  background-color: #f1f8ff;
+  background: var(--evia-primary);
+  color: var(--evia-on-primary);
+  text-decoration: none;
+  padding: 0 16px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.app-primary-action:hover {
+  background: var(--evia-primary-container);
+  color: var(--evia-on-primary);
+  text-decoration: none;
 }
 
 .app-main {
-  flex: 1;
-} 
+  min-height: 100vh;
+  margin-left: var(--evia-shell-width);
+  padding-top: var(--evia-topbar-height);
+  background: var(--evia-background);
+}
+
+.app-mobile-nav {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-topbar {
+    left: 0;
+    padding: 0 16px;
+  }
+
+  .app-mobile-brand {
+    display: flex;
+  }
+
+  .app-search {
+    display: none;
+  }
+
+  .app-primary-action {
+    display: none;
+  }
+
+  .app-main {
+    margin-left: 0;
+    padding-bottom: 76px;
+  }
+
+  .app-mobile-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 55;
+    min-height: 66px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: var(--evia-bottom-nav-surface);
+    border-top: 1px solid var(--evia-outline-variant);
+    backdrop-filter: blur(10px);
+  }
+
+  .app-mobile-link {
+    display: grid;
+    place-items: center;
+    gap: 2px;
+    color: var(--evia-on-surface-variant);
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 8px 4px;
+  }
+
+  .app-mobile-link.active {
+    color: var(--evia-primary);
+  }
+
+  .app-mobile-link .app-shell-icon {
+    width: 30px;
+    height: 26px;
+    background: transparent;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-mobile-brand span,
+  .app-icon-button[aria-label="Help"] {
+    display: none;
+  }
+}

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { extractMergeFieldsFromSfdtContent, mergeSfdtContent } from '../../utils/sfdtContent';
 
 /**
  * Template Merge Engine - Handles template field merging independently
@@ -39,32 +40,19 @@ class TemplateMergeEngine {
         mergeFields: Object.keys(mergeData)
       });
       
-      // Replace merge fields with actual data
-      Object.entries(mergeData).forEach(([key, value]) => {
-        const pattern = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-        const replacement = value !== null && value !== undefined ? String(value) : '';
-        const before = content;
-        content = content.replace(pattern, replacement);
-        
-        // Log successful replacements
-        if (before !== content) {
-          console.log(`Replaced merge field {{${key}}} with "${replacement}"`);
-        }
-      });
+      content = mergeSfdtContent(content, mergeData);
 
-      // Ensure content is in proper format for DocumentEditor
+      // Ensure content is in proper format for DocumentEditor.
       console.log('TemplateMergeEngine: Checking content format after merge...');
-      
-      // Check if content is already in SFDT format
-      if (content.includes('"sfdt"') || content.includes('"sections"')) {
-        console.log('TemplateMergeEngine: Content is already in SFDT format');
-        return content;
-      }
-      
-      // If content looks like plain text that starts with {"sfdt":"...
-      if (content.startsWith('{"sfdt":"') && content.endsWith('"}')) {
-        console.log('TemplateMergeEngine: Content is wrapped SFDT string');
-        return content;
+
+      try {
+        const parsed = JSON.parse(content);
+        if (parsed && typeof parsed === 'object' && (parsed.sfdt || parsed.sections || parsed.sec || parsed.optimizeSfdt)) {
+          console.log('TemplateMergeEngine: Content is already in SFDT format');
+          return content;
+        }
+      } catch {
+        // Plain text is handled below.
       }
       
       // If content is plain text, wrap it in SFDT format
@@ -99,19 +87,7 @@ class TemplateMergeEngine {
         return [];
       }
       
-      // Find all merge fields in the format {{fieldName}}
-      const fieldPattern = /{{\\s*([^}\\s]+)\\s*}}/g;
-      const fields = [];
-      let match;
-      
-      while ((match = fieldPattern.exec(content)) !== null) {
-        const fieldName = match[1].trim();
-        if (!fields.includes(fieldName)) {
-          fields.push(fieldName);
-        }
-      }
-      
-      return fields;
+      return extractMergeFieldsFromSfdtContent(content);
     } catch (error) {
       console.error('Error extracting merge fields:', error);
       return [];
@@ -131,9 +107,21 @@ class TemplateMergeEngine {
     requiredFields.forEach(field => {
       const fieldName = typeof field === 'string' ? field : field.name;
       const isRequired = typeof field === 'object' ? field.required : true;
+      const label = typeof field === 'object' ? field.label || fieldName : fieldName;
+      const value = mergeData[fieldName];
       
-      if (isRequired && (!mergeData[fieldName] || String(mergeData[fieldName]).trim() === '')) {
-        errors[fieldName] = `${fieldName} is required`;
+      if (isRequired && (!value || String(value).trim() === '')) {
+        errors[fieldName] = `${label} is required`;
+      }
+
+      if (value && typeof field === 'object') {
+        if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          errors[fieldName] = `${label} must be a valid email address`;
+        }
+
+        if (field.type === 'number' && Number.isNaN(Number(value))) {
+          errors[fieldName] = `${label} must be a number`;
+        }
       }
     });
     
@@ -155,7 +143,7 @@ class TemplateMergeEngine {
       let content = this.mergeTemplate(templateContent, mergeData);
       
       // Highlight remaining unfilled merge fields
-      content = content.replace(/{{\\s*([^}\\s]+)\\s*}}/g, '<span class="unfilled-merge-field">[Unfilled: $1]</span>');
+      content = content.replace(/{{\s*([^}\s]+)\s*}}/g, '<span class="unfilled-merge-field">[Unfilled: $1]</span>');
       
       return content;
     } catch (error) {

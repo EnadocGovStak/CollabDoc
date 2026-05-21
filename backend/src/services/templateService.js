@@ -1,5 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const {
+  extractMergeFieldsFromSfdtContent,
+  mergeSfdtContent,
+  normalizeSfdtContent
+} = require('./sfdtContent');
+const fieldLibraryService = require('./fieldLibraryService');
 
 // Path to templates directory
 const templatesDir = path.join(__dirname, '../../templates');
@@ -9,6 +15,38 @@ if (!fs.existsSync(templatesDir)) {
   fs.mkdirSync(templatesDir, { recursive: true });
 }
 
+const DEFAULT_TEMPLATE_RECORDS_MANAGEMENT = {
+  classification: 'Internal',
+  retentionPeriod: '7 Years',
+  accessControl: 'Internal',
+  documentType: 'Standard Document',
+  department: 'General',
+  reviewCycle: '1 Year'
+};
+
+const normalizePolicyPeriod = (value) => {
+  if (!value || typeof value !== 'string') return value || '';
+
+  return value.replace(/\b(year|years|month|months|day|days)\b/gi, (match) => (
+    match.charAt(0).toUpperCase() + match.slice(1).toLowerCase()
+  ));
+};
+
+const normalizeTemplateRecordsManagement = (recordsManagement = {}, templateData = {}) => {
+  const source = recordsManagement && typeof recordsManagement === 'object' ? recordsManagement : {};
+  const documentType = source.documentType || templateData.documentType || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.documentType;
+
+  return {
+    ...source,
+    classification: source.classification || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.classification,
+    retentionPeriod: normalizePolicyPeriod(source.retentionPeriod || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.retentionPeriod),
+    accessControl: source.accessControl || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.accessControl,
+    documentType,
+    department: source.department || templateData.category || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.department,
+    reviewCycle: normalizePolicyPeriod(source.reviewCycle || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.reviewCycle)
+  };
+};
+
 /**
  * Get all templates (metadata only, no content)
  * @returns {Array} Array of template metadata objects
@@ -17,7 +55,7 @@ const getAllTemplates = () => {
   try {
     const files = fs.readdirSync(templatesDir).filter(file => file.endsWith('.json'));
     
-    const templates = files.map(filename => {
+    return files.map(filename => {
       try {
         const filePath = path.join(templatesDir, filename);
         const templateData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -30,8 +68,6 @@ const getAllTemplates = () => {
         return null;
       }
     }).filter(template => template !== null);
-    
-    return templates;
   } catch (error) {
     console.error('Error in getAllTemplates:', error);
     return [];
@@ -48,8 +84,7 @@ const getTemplateById = (templateId) => {
     const templateFilePath = path.join(templatesDir, `${templateId}.json`);
     
     if (fs.existsSync(templateFilePath)) {
-      const templateData = JSON.parse(fs.readFileSync(templateFilePath, 'utf8'));
-      return templateData;
+      return JSON.parse(fs.readFileSync(templateFilePath, 'utf8'));
     }
     
     return null;
@@ -57,6 +92,53 @@ const getTemplateById = (templateId) => {
     console.error(`Error in getTemplateById for ID ${templateId}:`, error);
     return null;
   }
+};
+
+const getTemplateFieldAnalysis = (templateId) => {
+  const template = getTemplateById(templateId);
+
+  if (!template) return null;
+
+  const extractedFields = extractMergeFields(template.content);
+  return fieldLibraryService.analyzeTemplateFields({
+    id: templateId,
+    ...template
+  }, extractedFields);
+};
+
+const getTemplateWithManagedFields = (templateId) => {
+  const template = getTemplateById(templateId);
+
+  if (!template) return null;
+
+  const analysis = getTemplateFieldAnalysis(templateId);
+
+  return {
+    id: templateId,
+    ...template,
+    recordsManagement: normalizeTemplateRecordsManagement(template.recordsManagement, template),
+    mergeFields: analysis?.mergeFields || template.mergeFields || [],
+    fieldAnalysis: analysis ? {
+      extractedFields: analysis.extractedFields,
+      managedFieldCount: analysis.managedFieldCount,
+      unmanagedFieldCount: analysis.unmanagedFieldCount,
+      unknownFields: analysis.unknownFields,
+      migrationRequired: analysis.migrationRequired
+    } : undefined
+  };
+};
+
+const enrichTemplateForSave = (templateData) => {
+  const extractedFields = extractMergeFields(templateData.content);
+  const analysis = fieldLibraryService.analyzeTemplateFields(templateData, extractedFields);
+  const recordsManagement = normalizeTemplateRecordsManagement(templateData.recordsManagement, templateData);
+
+  return {
+    ...templateData,
+    documentType: recordsManagement.documentType || templateData.documentType || DEFAULT_TEMPLATE_RECORDS_MANAGEMENT.documentType,
+    recordsManagement,
+    mergeFields: analysis.mergeFields
+  };
 };
 
 /**
@@ -70,20 +152,8 @@ const extractMergeFields = (content) => {
     if (!content || typeof content !== 'string') {
       return [];
     }
-    
-    // Pattern to match {{FieldName}} with any characters except }}
-    const fieldPattern = /\{\{([^}]+)\}\}/g;
-    const fields = [];
-    let match;
-    
-    while ((match = fieldPattern.exec(content)) !== null) {
-      const fieldName = match[1].trim();
-      if (fieldName && !fields.includes(fieldName)) {
-        fields.push(fieldName);
-      }
-    }
-    
-    return fields;
+
+    return extractMergeFieldsFromSfdtContent(content);
   } catch (error) {
     console.error('Error extracting merge fields:', error);
     return [];
@@ -163,22 +233,8 @@ const mergeTemplateData = (content, mergeData) => {
       return content;
     }
     
-    let result = content;
-    
-    if (mergeData && typeof mergeData === 'object') {
-      // Replace all merge fields in format {{FieldName}} with corresponding values
-      Object.entries(mergeData).forEach(([key, value]) => {
-        // Escape special regex characters in the key
-        const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const pattern = new RegExp(`\\{\\{${escapedKey}\\}\\}`, 'g');
-        
-        // Convert value to string and handle null/undefined
-        const replacement = value != null ? value.toString() : '';
-        result = result.replace(pattern, replacement);
-      });
-    }
-    
-    return result;
+
+    return mergeSfdtContent(content, mergeData || {});
   } catch (error) {
     console.error('Error merging template data:', error);
     return content;
@@ -193,7 +249,7 @@ const mergeTemplateData = (content, mergeData) => {
  */
 const generateDocument = (templateId, mergeData) => {
   try {
-    const template = getTemplateById(templateId);
+    const template = getTemplateWithManagedFields(templateId);
     
     if (!template) {
       return {
@@ -213,16 +269,20 @@ const generateDocument = (templateId, mergeData) => {
     }
     
     // Merge the data
-    const processedContent = mergeTemplateData(template.content, mergeData || {});
+    const processedContent = normalizeSfdtContent(
+      mergeTemplateData(template.content, mergeData || {}),
+      { title: template.name }
+    );
     
     return {
       success: true,
-      content: processedContent,
+      content: processedContent || mergeTemplateData(template.content, mergeData || {}),
       template: {
         id: template.id,
         name: template.name,
         category: template.category || 'General',
-        documentType: template.documentType || 'Document'
+        documentType: template.documentType || 'Document',
+        recordsManagement: normalizeTemplateRecordsManagement(template.recordsManagement, template)
       },
       mergeData: mergeData || {},
       extractedFields: extractMergeFields(template.content)
@@ -253,11 +313,11 @@ const saveTemplate = (templateData) => {
     const templateFilePath = path.join(templatesDir, `${templateData.id}.json`);
     
     // Add timestamps
-    const templateWithTimestamps = {
+    const templateWithTimestamps = enrichTemplateForSave({
       ...templateData,
       createdAt: templateData.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    };
+    });
     
     fs.writeFileSync(templateFilePath, JSON.stringify(templateWithTimestamps, null, 2));
     
@@ -283,7 +343,7 @@ const saveTemplate = (templateData) => {
 const previewTemplate = (templateId, mergeData = {}) => {
   try {
     // Get the template
-    const template = getTemplateById(templateId);
+    const template = getTemplateWithManagedFields(templateId);
     if (!template) {
       return {
         success: false,
@@ -301,19 +361,8 @@ const previewTemplate = (templateId, mergeData = {}) => {
       };
     }
 
-    // Process merge fields in content
-    let processedContent = template.content;
-    
-    // Handle SFDT format
-    if (typeof processedContent === 'object' && processedContent.sfdt) {
-      processedContent = processedContent.sfdt;
-    }
-    
-    // Replace merge fields with actual data
-    Object.entries(mergeData).forEach(([fieldName, value]) => {
-      const pattern = new RegExp(`{{${fieldName}}}`, 'g');
-      processedContent = processedContent.replace(pattern, value || '');
-    });
+    const mergedContent = mergeTemplateData(template.content, mergeData || {});
+    const processedContent = normalizeSfdtContent(mergedContent, { title: template.name }) || mergedContent;
 
     return {
       success: true,
@@ -322,7 +371,8 @@ const previewTemplate = (templateId, mergeData = {}) => {
         id: template.id,
         name: template.name,
         category: template.category,
-        documentType: template.documentType
+        documentType: template.documentType,
+        recordsManagement: normalizeTemplateRecordsManagement(template.recordsManagement, template)
       }
     };
   } catch (error) {
@@ -337,6 +387,10 @@ const previewTemplate = (templateId, mergeData = {}) => {
 module.exports = {
   getAllTemplates,
   getTemplateById,
+  getTemplateWithManagedFields,
+  getTemplateFieldAnalysis,
+  normalizeTemplateRecordsManagement,
+  enrichTemplateForSave,
   extractMergeFields,
   validateMergeData,
   mergeTemplateData,

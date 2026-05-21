@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, FilePlus2, Library, PlusCircle, ShieldCheck, Sparkles } from 'lucide-react';
 import TemplateService from '../services/TemplateService';
 import CategoryFilter from '../components/TemplateSelector/CategoryFilter';
 import SearchBar from '../components/TemplateSelector/SearchBar';
@@ -128,11 +129,59 @@ const TemplatesListPage = () => {
   return (
     <div className="templates-list-page">
       <div className="templates-list-header">
-        <h1>Document Templates</h1>
-        <Link to="/templates/new" className="new-template-button">
-          Create New Template
-        </Link>
+        <div>
+          <p className="templates-eyebrow">Template Library</p>
+          <h1>Document Templates</h1>
+          <p className="templates-page-subtitle">
+            Standardize governed document workflows with reusable templates, managed fields, and lifecycle policy.
+          </p>
+        </div>
+        <div className="templates-header-actions">
+          <Link to="/field-library" className="field-library-button">
+            Field Library
+          </Link>
+          <Link to="/templates/new" className="new-template-button">
+            Create New Template
+          </Link>
+        </div>
       </div>
+
+      <section className="templates-guided-creation" aria-labelledby="templates-guided-title">
+        <div className="templates-guided-copy">
+          <p className="templates-guided-eyebrow">
+            <Sparkles size={15} aria-hidden="true" />
+            Guided creation
+          </p>
+          <h2 id="templates-guided-title">Create governed templates with the right fields from the start.</h2>
+          <p>
+            Build a reusable template, attach lifecycle policy, and keep merge fields aligned with the Field Library before documents are generated.
+          </p>
+          <div className="templates-guided-actions">
+            <Link to="/templates/new" className="templates-guided-primary">
+              <FilePlus2 size={17} aria-hidden="true" />
+              Start guided creation
+            </Link>
+            <Link to="/field-library" className="templates-guided-secondary">
+              <Library size={17} aria-hidden="true" />
+              Review fields
+            </Link>
+          </div>
+        </div>
+        <div className="templates-guided-steps" aria-label="Guided creation steps">
+          <div className="templates-guided-step">
+            <FilePlus2 size={18} aria-hidden="true" />
+            <span>Draft template</span>
+          </div>
+          <div className="templates-guided-step">
+            <Library size={18} aria-hidden="true" />
+            <span>Add managed fields</span>
+          </div>
+          <div className="templates-guided-step">
+            <ShieldCheck size={18} aria-hidden="true" />
+            <span>Attach lifecycle policy</span>
+          </div>
+        </div>
+      </section>
 
       {loading ? (
         <div className="loading-message">Loading templates...</div>
@@ -148,6 +197,9 @@ const TemplatesListPage = () => {
       ) : (
         <>
           <div className="templates-filters">
+            <div className="templates-result-summary">
+              <span>{filteredTemplates.length} of {templates.length} templates</span>
+            </div>
             <SearchBar onSearch={handleSearch} />
             {categories.length > 0 && (
               <CategoryFilter 
@@ -173,55 +225,41 @@ const TemplatesListPage = () => {
             </div>
           ) : (
             <div className="templates-grid">
+              <Link to="/templates/new" className="template-card template-card-create" aria-label="Start guided creation for a new template">
+                <div className="template-create-icon">
+                  <PlusCircle size={30} aria-hidden="true" />
+                </div>
+                <p className="template-create-eyebrow">Guided creation</p>
+                <h3>Start from blank</h3>
+                <p>Create a custom template with managed fields and lifecycle policy.</p>
+                <span className="template-create-action">
+                  Start creating
+                  <ArrowRight size={15} aria-hidden="true" />
+                </span>
+              </Link>
               {filteredTemplates.map((template) => {
-                // Determine category color and styling similar to document classification
-                let bgColor = '#ffffff';
-                let borderColor = '#e9ecef';
                 const category = template.category?.toLowerCase() || 'other';
-                
-                switch (category) {
-                  case 'legal':
-                    bgColor = 'rgba(255,200,200,0.6)';
-                    borderColor = '#dc3545';
-                    break;
-                  case 'finance':
-                    bgColor = 'rgba(255,240,180,0.6)';
-                    borderColor = '#ffc107';
-                    break;
-                  case 'hr':
-                    bgColor = 'rgba(200,230,255,0.6)';
-                    borderColor = '#0dcaf0';
-                    break;
-                  case 'business':
-                    bgColor = 'rgba(200,255,200,0.6)';
-                    borderColor = '#28a745';
-                    break;
-                  default:
-                    bgColor = '#ffffff';
-                    borderColor = '#e9ecef';
-                }
+                const recordsPolicy = template.recordsManagement || {};
+                const categoryInitials = (template.category || 'Template').slice(0, 2).toUpperCase();
                 
                 return (
                   <div 
                     key={template.id} 
-                    className="template-card"
-                    style={{ 
-                      borderLeft: `6px solid ${borderColor}`,
-                      backgroundColor: bgColor
-                    }}
+                    className={`template-card category-${category}`}
                   >
-                    <div className="template-icon">
-                      {template.category === 'Legal' ? '⚖️' :
-                       template.category === 'Finance' ? '💰' :
-                       template.category === 'HR' ? '👥' :
-                       template.category === 'Business' ? '💼' : '📄'}
+                    <div className="template-card-preview" aria-hidden="true">
+                      <span>{categoryInitials}</span>
+                      <div className="template-preview-sheet">
+                        <i />
+                        <i />
+                        <i />
+                      </div>
                     </div>
                     <div className="template-info">
                       <h3>{template.name}</h3>
                       
                       <div className="template-meta">
                         <div className="template-status">
-                          <span className="status-icon">📋</span>
                           <span className="status-text">Template</span>
                         </div>
                         
@@ -246,44 +284,61 @@ const TemplatesListPage = () => {
                               : new Date(template.createdAt).toLocaleDateString()}
                           </p>
                         </div>
+
+                        {(recordsPolicy.classification || recordsPolicy.retentionPeriod) && (
+                          <div className="template-lifecycle-policy">
+                            {recordsPolicy.classification && <span>{recordsPolicy.classification}</span>}
+                            {recordsPolicy.retentionPeriod && <span>{recordsPolicy.retentionPeriod}</span>}
+                          </div>
+                        )}
                         
                         <div className="template-footer">
                           <span className="template-id">
                             ID: {template.id.substring(0, 8)}...
                           </span>
+                          <span className="template-fields-count">
+                            {template.managedFieldCount ?? template.mergeFieldCount ?? template.mergeFields?.length ?? 0} managed
+                          </span>
                         </div>
+                        {template.migrationRequired && (
+                          <div className="template-migration-alert">
+                            {template.unmanagedFieldCount || 0} unmanaged fields
+                          </div>
+                        )}
                       </div>
                     </div>
-                    
+
                     <div className="template-actions">
-                      <Link 
+                      <Link
                         to={`/templates/${template.id}/generate`}
                         className="template-action-btn template-generate-btn"
                         title="Generate Document"
                       >
                         Generate
                       </Link>
-                      <Link 
-                        to={`/templates/${template.id}`}
-                        className="template-action-btn template-edit-btn"
-                        title="Edit Template"
-                      >
-                        Edit
-                      </Link>
-                      <button 
-                        className="template-action-btn template-preview-btn"
-                        onClick={(e) => handlePreviewTemplate(template.id, e)}
-                        title="Preview Template"
-                      >
-                        Preview
-                      </button>
-                      <button 
-                        className="template-action-btn template-delete-btn" 
-                        onClick={(e) => handleDeleteTemplate(template.id, e)}
-                        title="Delete Template"
-                      >
-                        Delete
-                      </button>
+                      <div className="template-secondary-actions">
+                        <Link
+                          to={`/templates/${template.id}`}
+                          className="template-action-btn template-edit-btn"
+                          title="Edit Template"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          className="template-action-btn template-preview-btn"
+                          onClick={(e) => handlePreviewTemplate(template.id, e)}
+                          title="Preview Template"
+                        >
+                          Preview
+                        </button>
+                        <button
+                          className="template-action-btn template-delete-btn"
+                          onClick={(e) => handleDeleteTemplate(template.id, e)}
+                          title="Delete Template"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

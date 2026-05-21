@@ -1,5 +1,7 @@
 # Development Plan Gap Analysis
 
+> Current reality note, May 19, 2026: this analysis is still useful, but it understates several live workflow failures now captured in `CURRENT-STATE.md`. The active implementation path is the sprint sequence under `DOCS/sprint 01- stabilization` through `DOCS/sprint 05- production hardening`.
+
 ## 📊 Implementation Status Overview
 
 Based on the comprehensive review of the TEMPLATE_IMPLEMENTATION_PLAN.md against the current codebase, here's the detailed gap analysis:

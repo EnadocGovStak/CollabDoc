@@ -4,8 +4,10 @@
 
 .category-filter h3 {
   margin-bottom: 12px;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 0.85rem;
+  color: var(--evia-on-surface-variant);
+  font-weight: 650;
+  text-transform: uppercase;
 }
 
 .category-buttons {
@@ -17,23 +19,25 @@
 .category-button {
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 20px;
+  padding: 7px 11px;
+  background-color: var(--evia-surface-container-lowest);
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 999px;
   font-size: 0.9rem;
+  color: var(--evia-on-surface-variant);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .category-button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--evia-surface-container-low);
+  border-color: var(--evia-primary);
 }
 
 .category-button.active {
-  background-color: #2196f3;
-  color: white;
-  border-color: #1976d2;
+  background-color: var(--evia-primary);
+  color: var(--evia-on-primary);
+  border-color: var(--evia-primary);
 }
 
 @media (max-width: 768px) {

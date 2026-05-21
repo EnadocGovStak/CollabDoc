@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import TemplateMergeEngine from './TemplateMergeEngine';
 import './TemplateMergeForm.css';
+
+const humanizeFieldName = (fieldName) => String(fieldName || '')
+  .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+  .replace(/[_-]+/g, ' ')
+  .trim();
 
 /**
  * Template Merge Form Component
@@ -14,12 +19,43 @@ const TemplateMergeForm = ({
   onSubmit,
   submitLabel = 'Generate Document',
   showValidation = true,
-  enableAutoSave = true
+  enableAutoSave = true,
+  isSubmitDisabled = false,
+  disabledReason = ''
 }) => {
   const [formData, setFormData] = useState(mergeData);
   const [validationErrors, setValidationErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formDataRef = useRef(formData);
+  const onDataChangeRef = useRef(onDataChange);
+
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
+
+  useEffect(() => {
+    onDataChangeRef.current = onDataChange;
+  }, [onDataChange]);
+
+  const effectiveMergeFields = useMemo(() => {
+    const configuredFields = Array.isArray(template?.mergeFields) ? template.mergeFields : [];
+    const fieldsByName = new Map(configuredFields.map(field => [field.name, field]));
+    const extractedFieldNames = TemplateMergeEngine.extractMergeFields(template?.content)
+      .filter(fieldName => fieldName !== 'signature_field');
+    const missingExtractedFields = extractedFieldNames
+      .filter(fieldName => !fieldsByName.has(fieldName))
+      .map(fieldName => ({
+        name: fieldName,
+        label: humanizeFieldName(fieldName) || fieldName,
+        type: 'text',
+        required: false,
+        category: 'Template Fields',
+        managed: false
+      }));
+
+    return [...configuredFields, ...missingExtractedFields];
+  }, [template?.content, template?.mergeFields]);
 
   // Update form data when external mergeData changes
   useEffect(() => {
@@ -52,10 +88,10 @@ const TemplateMergeForm = ({
         if (saved) {
           const { data } = JSON.parse(saved);
           // Only load if form is empty to avoid overwriting external changes
-          if (Object.keys(formData).length === 0) {
+          if (Object.keys(formDataRef.current).length === 0) {
             setFormData(data);
-            if (onDataChange) {
-              onDataChange(data);
+            if (onDataChangeRef.current) {
+              onDataChangeRef.current(data);
             }
           }
         }
@@ -63,15 +99,15 @@ const TemplateMergeForm = ({
         console.warn('Failed to load saved form data:', error);
       }
     }
-  }, [template?.id, enableAutoSave]); // Removed formData and onDataChange dependencies
+  }, [template?.id, enableAutoSave]);
 
   // Validate form when data changes
   useEffect(() => {
-    if (showValidation && template?.mergeFields) {
-      const validation = TemplateMergeEngine.validateMergeData(formData, template.mergeFields);
+    if (showValidation && effectiveMergeFields.length > 0) {
+      const validation = TemplateMergeEngine.validateMergeData(formData, effectiveMergeFields);
       setValidationErrors(validation.errors);
     }
-  }, [formData, template?.mergeFields, showValidation]);
+  }, [formData, effectiveMergeFields, showValidation]);
 
   const handleFieldChange = (fieldName, value) => {
     const newData = { ...formData, [fieldName]: value };
@@ -93,7 +129,7 @@ const TemplateMergeForm = ({
     if (!onSubmit) return;
 
     // Mark all fields as touched for validation display
-    const allFields = (template?.mergeFields || []).reduce((acc, field) => {
+    const allFields = effectiveMergeFields.reduce((acc, field) => {
       acc[field.name] = true;
       return acc;
     }, {});
@@ -120,9 +156,11 @@ const TemplateMergeForm = ({
   };
 
   const renderField = (field) => {
-    const { name, type = 'text', required = false, description, options } = field;
-    const value = formData[name] || '';
+    const { name, label, type = 'text', required = false, description, options, exampleValue, managed = false } = field;
+    const value = formData[name] ?? field.defaultValue ?? '';
     const hasError = showValidation && touchedFields[name] && validationErrors[name];
+    const displayLabel = label || name;
+    const placeholder = exampleValue ? `Example: ${exampleValue}` : `Enter ${displayLabel}`;
 
     const commonProps = {
       id: `field-${name}`,
@@ -140,16 +178,17 @@ const TemplateMergeForm = ({
         inputElement = (
           <textarea
             {...commonProps}
-            placeholder={`Enter ${name}`}
+            placeholder={placeholder}
             rows={3}
           />
         );
         break;
       
+      case 'dropdown':
       case 'select':
         inputElement = (
           <select {...commonProps}>
-            <option value="">Select {name}</option>
+            <option value="">Select {displayLabel}</option>
             {(options || []).map(option => (
               <option key={option.value || option} value={option.value || option}>
                 {option.label || option}
@@ -164,7 +203,7 @@ const TemplateMergeForm = ({
           <input
             {...commonProps}
             type="number"
-            placeholder={`Enter ${name}`}
+            placeholder={placeholder}
           />
         );
         break;
@@ -183,7 +222,7 @@ const TemplateMergeForm = ({
           <input
             {...commonProps}
             type="email"
-            placeholder={`Enter ${name}`}
+            placeholder={placeholder}
           />
         );
         break;
@@ -193,7 +232,7 @@ const TemplateMergeForm = ({
           <input
             {...commonProps}
             type="text"
-            placeholder={`Enter ${name}`}
+            placeholder={placeholder}
           />
         );
     }
@@ -201,8 +240,11 @@ const TemplateMergeForm = ({
     return (
       <div key={name} className="merge-field-group">
         <label htmlFor={`field-${name}`} className="merge-field-label">
-          {name}
+          {displayLabel}
           {required && <span className="required-indicator">*</span>}
+          <span className={`field-source-badge ${managed ? 'managed' : 'unmanaged'}`}>
+            {managed ? 'Managed' : 'Unmanaged'}
+          </span>
         </label>
         
         {description && (
@@ -218,7 +260,7 @@ const TemplateMergeForm = ({
     );
   };
 
-  if (!template?.mergeFields || template.mergeFields.length === 0) {
+  if (effectiveMergeFields.length === 0) {
     return (
       <div className="template-merge-form">
         <div className="no-fields">
@@ -229,7 +271,7 @@ const TemplateMergeForm = ({
   }
 
   // Group fields by category
-  const fieldGroups = template.mergeFields.reduce((groups, field) => {
+  const fieldGroups = effectiveMergeFields.reduce((groups, field) => {
     const category = field.category || 'General';
     if (!groups[category]) {
       groups[category] = [];
@@ -239,6 +281,7 @@ const TemplateMergeForm = ({
   }, {});
 
   const isFormValid = Object.keys(validationErrors).length === 0;
+  const isSubmitBlocked = !isFormValid || isSubmitting || isSubmitDisabled;
 
   return (
     <div className="template-merge-form">
@@ -258,12 +301,17 @@ const TemplateMergeForm = ({
               <p className="error-text">Please fill in all required fields.</p>
             </div>
           )}
+          {isSubmitDisabled && disabledReason && (
+            <div className="validation-summary warning">
+              <p className="error-text">{disabledReason}</p>
+            </div>
+          )}
           
           {onSubmit && (
             <button 
               type="submit" 
-              className={`submit-btn ${!isFormValid || isSubmitting ? 'disabled' : ''}`}
-              disabled={!isFormValid || isSubmitting}
+              className={`submit-btn ${isSubmitBlocked ? 'disabled' : ''}`}
+              disabled={isSubmitBlocked}
             >
               {isSubmitting ? 'Generating...' : submitLabel}
             </button>

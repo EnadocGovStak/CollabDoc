@@ -6,6 +6,8 @@
    # Or specify a different port in .env
    PORT=5001
    ```
+> Current reality note, May 19, 2026: this quick-start mentions MongoDB and connected database messages, but the current backend routes inspected for documents/templates use local file storage under `backend/templates` and `backend/uploads`. Update this guide during production storage hardening.
+
 ## Quick Start Guide
 
 This guide provides instructions for setting up and running the backend API server for the Collaborative Document Platform.
@@ -54,7 +56,7 @@ This guide provides instructions for setting up and running the backend API serv
 3. **Testing the API**:
    - The API will be available at http://localhost:5000
    - You can test endpoints with tools like Postman or curl
-   - Sample requests are available in the docs/api-spec.md file
+   - Sample requests are available in `api-spec.md`
 
 ### Troubleshooting Common Issues
 

@@ -292,7 +292,25 @@ async function fileExists(filePath) {
     }
 }
 
-// Get document by ID
+// Add a new endpoint to get available templates
+router.get('/templates', async (req, res) => {
+  try {
+    // For a real implementation, this would retrieve templates from a database
+    // Here we'll return mock data
+    const templates = [
+      { id: 'template1', name: 'Approval Template', description: 'Template for approval workflow documents' },
+      { id: 'template2', name: 'Contract Template', description: 'Template for legal contracts' },
+      { id: 'template3', name: 'Report Template', description: 'Template for formal reports' }
+    ];
+
+    res.json(templates);
+  } catch (error) {
+    console.error('Error getting templates:', error);
+    res.status(500).json({ error: 'Failed to retrieve templates' });
+  }
+});
+
+// Get document by ID. Keep this after static routes such as /list and /templates.
 router.get('/:id', async (req, res) => {
     try {
         const documentId = req.params.id;
@@ -540,24 +558,6 @@ router.post('/:id/sign', async (req, res) => {
   } catch (error) {
     console.error('Error sending document for signing:', error);
     res.status(500).json({ error: 'Failed to send document for signing' });
-  }
-});
-
-// Add a new endpoint to get available templates
-router.get('/templates', async (req, res) => {
-  try {
-    // For a real implementation, this would retrieve templates from a database
-    // Here we'll return mock data
-    const templates = [
-      { id: 'template1', name: 'Approval Template', description: 'Template for approval workflow documents' },
-      { id: 'template2', name: 'Contract Template', description: 'Template for legal contracts' },
-      { id: 'template3', name: 'Report Template', description: 'Template for formal reports' }
-    ];
-    
-    res.json(templates);
-  } catch (error) {
-    console.error('Error getting templates:', error);
-    res.status(500).json({ error: 'Failed to retrieve templates' });
   }
 });
 

@@ -1,5 +1,7 @@
 # Document Editor Component Validation
 
+> Current reality note, May 19, 2026: these validation results are historical. The attached browser screenshot shows a current runtime error reading `isSelectionCompleted` on `/editor-test`, so this document no longer represents the verified current state.
+
 ## Latest Updates - Race Condition and Initialization Fixes (January 30, 2025)
 
 ### Fixed Critical "Editor not ready for initialization - destroyed" Error

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import TemplatePreviewEditor from './TemplatePreviewEditor';
 import TemplateMergeEngine from './TemplateMergeEngine';
+import { extractTextFromSfdtContent } from '../../utils/sfdtContent';
 import './TemplateMergePreview.css';
 
 /**
@@ -24,18 +25,11 @@ const TemplateMergePreview = ({
   useEffect(() => {
     if (template?.content) {
       try {
-        console.log('Generating merged content for template:', template.name);
-        console.log('Template content type:', typeof template.content);
-        console.log('Merge data keys:', Object.keys(mergeData));
-        
         const merged = TemplateMergeEngine.mergeTemplate(template.content, mergeData);
-        console.log('Merged content length:', merged?.length);
         setMergedContent(merged);
         
         const preview = TemplateMergeEngine.previewTemplate(template.content, mergeData);
         setPreviewContent(preview);
-        
-        console.log('Template merge completed successfully');
       } catch (error) {
         console.error('Error generating template preview:', error);
         setMergedContent('');
@@ -49,19 +43,48 @@ const TemplateMergePreview = ({
   }, [template, mergeData]);
 
   const handleEditorCreated = () => {
-    console.log('Template preview editor created');
     setIsLoading(false);
   };
 
+  const renderHighlightedLine = (line, lineIndex) => {
+    const fieldPattern = /{{\s*([^}\s]+)\s*}}/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = fieldPattern.exec(line)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(line.slice(lastIndex, match.index));
+      }
+
+      parts.push(
+        <span className="unfilled-merge-field" key={`${lineIndex}-${match.index}`}>
+          {`[Unfilled: ${match[1]}]`}
+        </span>
+      );
+      lastIndex = fieldPattern.lastIndex;
+    }
+
+    if (lastIndex < line.length) {
+      parts.push(line.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : '\u00a0';
+  };
+
   const renderTextPreview = () => {
-    if (!previewContent) return <div className="no-preview">No preview available</div>;
+    const readablePreview = extractTextFromSfdtContent(mergedContent || previewContent);
+    if (!readablePreview) return <div className="no-preview">No preview available</div>;
     
     return (
       <div className="text-preview">
-        <div 
-          className="preview-content"
-          dangerouslySetInnerHTML={{ __html: previewContent }}
-        />
+        <div className="preview-content">
+          {readablePreview.split('\n').map((line, index) => (
+            <div key={`${index}-${line.slice(0, 12)}`} className="preview-line">
+              {renderHighlightedLine(line, index)}
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
@@ -70,9 +93,6 @@ const TemplateMergePreview = ({
     if (!template || !mergedContent) {
       return <div className="no-preview">No template content available</div>;
     }
-
-    // Log the merged content for debugging
-    console.log('Rendering editor preview with merged content:', typeof mergedContent, mergedContent);
 
     return (
       <div className="editor-preview" style={{ height }}>
@@ -120,14 +140,14 @@ const TemplateMergePreview = ({
               onClick={() => setViewMode('editor')}
               title="Rich editor preview"
             >
-              📄 Editor
+              Editor
             </button>
             <button 
               className={`mode-btn ${viewMode === 'text' ? 'active' : ''}`}
               onClick={() => setViewMode('text')}
               title="Text preview with highlighted fields"
             >
-              📝 Text
+              Text
             </button>
             {showRawContent && (
               <button 
@@ -135,7 +155,7 @@ const TemplateMergePreview = ({
                 onClick={() => setViewMode('raw')}
                 title="Raw content view"
               >
-                🔧 Raw
+                Raw
               </button>
             )}
           </div>

@@ -1,3 +1,5 @@
+> Current reality note, May 19, 2026: this validation guide is historical setup guidance. It does not prove the current editor routes are stable. Use `CURRENT-STATE.md` and Sprint 01 validation work for current acceptance.
+
 ## Chunk 1: Project Setup & Dependencies (Detailed)
 
 **Objective:** Scaffold a new web project, install Syncfusion’s Document Editor, and verify that all dependencies and assets load correctly.

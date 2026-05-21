@@ -1,122 +1,130 @@
-import DocumentService from '../../services/DocumentService';
+import axios from 'axios';
 
-// Mock fetch
-global.fetch = jest.fn();
+const { documentService } = require('../../services/DocumentService.js');
 
-describe('DocumentService', () => {
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn()
+  }
+}));
+
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+describe('documentService', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
-  
-  const mockToken = 'mock-access-token';
-  const mockDocument = {
-    id: 'doc-123',
-    name: 'Test Document',
-    createdAt: '2023-07-15T10:30:00Z',
-    updatedAt: '2023-07-15T10:30:00Z',
-    createdBy: 'user-123',
-    status: 'draft'
-  };
-  
-  test('getDocuments should fetch and return documents', async () => {
-    // Mock successful response
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => [mockDocument]
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test('getDocuments fetches the document list and normalizes records metadata', async () => {
+    mockedAxios.get.mockResolvedValueOnce({
+      data: [{
+        name: 'doc-123',
+        title: 'Policy Manual',
+        version: 2,
+        recordsManagement: {
+          classification: 'Internal'
+        }
+      }]
     });
-    
-    const result = await DocumentService.getDocuments(mockToken);
-    
-    // Verify fetch was called correctly
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/documents'),
+
+    const result = await documentService.getDocuments();
+
+    expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/api/documents/list'));
+    expect(result).toEqual([{
+      name: 'doc-123',
+      title: 'Policy Manual',
+      version: 2,
+      recordsManagement: {
+        classification: 'Internal',
+        retentionPeriod: '3 Years'
+      }
+    }]);
+  });
+
+  test('saveDocument posts multipart content and returns the requested title', async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        id: 'doc-123',
+        version: 1
+      }
+    });
+
+    const result = await documentService.saveDocument({
+      title: 'Generated Invoice',
+      content: { optimizeSfdt: true, sec: [] },
+      recordsManagement: {
+        classification: 'Internal'
+      }
+    });
+
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      expect.stringContaining('/api/documents/save'),
+      expect.any(FormData),
       expect.objectContaining({
         headers: {
-          'Authorization': `Bearer ${mockToken}`
+          'Content-Type': 'multipart/form-data'
         }
       })
     );
-    
-    // Verify result
-    expect(result).toEqual([mockDocument]);
-  });
-  
-  test('getDocuments should return empty array on error', async () => {
-    // Mock error response
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
-    
-    const result = await DocumentService.getDocuments(mockToken);
-    
-    // Verify result is empty array
-    expect(result).toEqual([]);
-  });
-  
-  test('createDocument should create and return document ID', async () => {
-    const newDoc = {
-      name: 'New Document',
-      content: '{"sfdt":"content"}'
-    };
-    
-    const expectedResponse = {
-      documentId: 'new-doc-123',
-      name: newDoc.name,
-      createdAt: '2023-07-15T10:30:00Z'
-    };
-    
-    // Mock successful response
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => expectedResponse
+    expect(result).toEqual({
+      id: 'doc-123',
+      version: 1,
+      title: 'Generated Invoice'
     });
-    
-    const result = await DocumentService.createDocument(newDoc, mockToken);
-    
-    // Verify fetch was called correctly
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('/api/documents'),
-      expect.objectContaining({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${mockToken}`
-        },
-        body: JSON.stringify(newDoc)
-      })
-    );
-    
-    // Verify result
-    expect(result).toEqual(expectedResponse);
   });
-  
-  test('updateDocument should update a document', async () => {
-    const docId = 'doc-123';
-    const updateData = {
-      name: 'Updated Document',
-      content: '{"sfdt":"updated-content"}'
-    };
-    
-    // Mock successful response
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true
+
+  test('getDocument fetches a document and preserves the requested ID', async () => {
+    mockedAxios.get.mockResolvedValueOnce({
+      data: {
+        title: 'Loaded Document',
+        content: { optimizeSfdt: true, sec: [] },
+        recordsManagement: {
+          classification: 'Public'
+        }
+      }
     });
-    
-    const result = await DocumentService.updateDocument(docId, updateData, mockToken);
-    
-    // Verify fetch was called correctly
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining(`/api/documents/${docId}`),
-      expect.objectContaining({
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${mockToken}`
-        },
-        body: JSON.stringify(updateData)
-      })
-    );
-    
-    // Verify result
-    expect(result).toBe(true);
+
+    const result = await documentService.getDocument('doc-456');
+
+    expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/api/documents/doc-456'));
+    expect(result).toEqual({
+      id: 'doc-456',
+      title: 'Loaded Document',
+      content: { optimizeSfdt: true, sec: [] },
+      recordsManagement: {
+        classification: 'Public',
+        retentionPeriod: '1 Year'
+      }
+    });
   });
-}); 
+
+  test('getDocumentVersions fetches version metadata for a document', async () => {
+    mockedAxios.get.mockResolvedValueOnce({
+      data: {
+        id: 'doc-789',
+        currentVersion: 2,
+        versions: [{ version: 1 }, { version: 2 }]
+      }
+    });
+
+    const result = await documentService.getDocumentVersions('doc-789');
+
+    expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/api/documents/doc-789/versions'));
+    expect(result).toEqual({
+      id: 'doc-789',
+      currentVersion: 2,
+      versions: [{ version: 1 }, { version: 2 }]
+    });
+  });
+});

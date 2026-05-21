@@ -1,36 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-import { 
-  DocumentEditorContainerComponent, 
-  DocumentEditorContainer,
-  Toolbar, 
-  Editor, 
-  Selection, 
-  ContextMenu,
-  SfdtExport,
-  EditorHistory,
-  Print,
-  WordExport,
-  TextExport,
-  Search,
-  ImageResizer,
-  OptionsPane,
-  HyperlinkDialog,
-  TableDialog,
-  BookmarkDialog,
-  TableOfContentsDialog,
-  PageSetupDialog,
-  StyleDialog,
-  ListDialog,
-  ParagraphDialog,
-  BulletsAndNumberingDialog,
-  FontDialog,
-  TablePropertiesDialog,
-  BordersAndShadingDialog,
-  TableOptionsDialog,
-  CellOptionsDialog,
-  StylesDialog
-} from '@syncfusion/ej2-react-documenteditor';
+import { DocumentEditorContainerComponent } from '@syncfusion/ej2-react-documenteditor';
 import { MenuComponent } from '@syncfusion/ej2-react-navigations';
 
 // Note: Modules are now injected globally in utils/syncfusionModules.js

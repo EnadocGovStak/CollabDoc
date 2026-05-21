@@ -1,5 +1,7 @@
 # Collaborative Document Platform - Developer Instructions
 
+> Current reality note, May 19, 2026: this document contains historical stabilization notes and target architecture. It should not be read as proof that the current app is production-stable. The current source of truth is `CURRENT-STATE.md` and the sprint folders. Screenshots and live checks show remaining issues in template loading, preview rendering, editor test stability, route ordering, and records enforcement.
+
 ## ✅ Document Editor Stabilization Plan (COMPLETED)
 
 ### 5-Step Stabilization Approach
@@ -305,7 +307,7 @@ collabdoc/
 │   │   ├── versions/            # Version history
 │   │   └── temp/                # Temporary files
 │   └── .env                     # Environment variables
-├── docs/                        # Documentation
+├── DOCS/                        # Documentation
 │   ├── api-spec.md
 │   └── testing.md
 └── templates/                   # Shared templates
@@ -587,7 +589,7 @@ Response: Document content for specific version
    }
    ```
 
-4. **Document API:** Update `docs/api-spec.md` with new endpoint
+4. **Document API:** Update `DOCS/api-spec.md` with new endpoint
 
 ### Frontend Service Integration
 
@@ -2264,9 +2266,9 @@ Add any other context or screenshots about the feature request
 ### Getting Help
 
 #### Documentation
-- Read through this INSTRUCTIONS.md file
-- Check the API documentation in `docs/api-spec.md`
-- Review testing documentation in `docs/testing.md`
+- Read through `DOCS/INSTRUCTIONS.md` for historical implementation context
+- Check the API documentation in `DOCS/api-spec.md`
+- Review testing documentation in `DOCS/testing.md`
 
 #### Communication Channels
 - **Slack:** `#doc-platform-dev` for general questions

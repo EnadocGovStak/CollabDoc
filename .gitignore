@@ -19,6 +19,8 @@ node_modules/
 /frontend/coverage
 /backend/coverage
 /.nyc_output
+/playwright-report/
+/test-results/
 /tests/e2e/videos/
 /tests/e2e/screenshots/
 

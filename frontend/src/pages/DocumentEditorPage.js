@@ -80,33 +80,19 @@ const DocumentEditorPage = () => {
 
       if (id) {
         console.log(`Loading document: ${id}`);
-        // Determine the current/target version to load
-        const versionsResponse = await documentService.getDocumentVersions(id);
-        console.log('versionsResponse:', versionsResponse);
-        // Ensure versionsResponse and versionsResponse.versions are checked before accessing currentVersion
-        const currentVersion = (versionsResponse?.versions?.length > 0 && versionsResponse.currentVersion) 
-          ? versionsResponse.currentVersion 
-          : 1;
-        console.log(`Target version is ${currentVersion}`);
-
-        // Fetch the specific version content
-        const versionData = await documentService.getDocumentVersion(id, currentVersion);
-        console.log('versionData:', versionData);
-        if (!versionData || versionData.content === undefined) {
-          console.error(`Failed to load content for version ${currentVersion} of document ${id}`);
-          throw new Error(`Document content for version ${currentVersion} could not be loaded.`);
-        }
-
-        // Fetch document metadata (like title, recordsManagement, etc.)
-        // This might come from a general getDocument endpoint or be part of versionData
         const docMetadata = await documentService.getDocument(id);
+
+        if (!docMetadata || docMetadata.content === undefined) {
+          console.error(`Failed to load content for document ${id}`);
+          throw new Error('Document content could not be loaded.');
+        }
 
         newDocumentData = {
           id: id,
-          title: docMetadata?.title || versionData?.title || 'Untitled',
-          content: versionData.content, // This is the critical content from the specific version
+          title: docMetadata?.title || 'Untitled',
+          content: docMetadata.content,
           createdAt: docMetadata?.createdAt || new Date().toISOString(),
-          lastModified: versionData?.timestamp || docMetadata?.modifiedAt || new Date().toISOString(),
+          lastModified: docMetadata?.modifiedAt || docMetadata?.timestamp || new Date().toISOString(),
           createdBy: docMetadata?.createdBy || 'Anonymous',
           recordsManagement: docMetadata?.recordsManagement || {
             classification: '',
@@ -116,7 +102,7 @@ const DocumentEditorPage = () => {
             notes: '',
             isFinal: false
           },
-          version: versionData?.version || currentVersion || 1
+          version: docMetadata?.version || docMetadata?.currentVersion || 1
         };
         console.log("Document state to be set after loading:", newDocumentData);
 
@@ -177,7 +163,7 @@ const DocumentEditorPage = () => {
   // Load document data when ID changes
   useEffect(() => {
     loadDocument();
-  }, [id]); // React to changes in 'id' directly
+  }, [loadDocument]);
 
   // Check if document is final
   const isDocumentFinal = useCallback(() => {
@@ -298,11 +284,8 @@ const DocumentEditorPage = () => {
   const handleToggleFinal = useCallback((e) => {
     const isFinal = e.target.checked;
     
-    if (isFinal) {
-      // Show confirmation before finalizing
-      if (!window.confirm('Are you sure you want to mark this document as final? This cannot be undone and the document will become read-only.')) {
-        return;
-      }
+    if (isFinal && !window.confirm('Are you sure you want to mark this document as final? This cannot be undone and the document will become read-only.')) {
+      return;
     }
     
     setDocument(prev => ({

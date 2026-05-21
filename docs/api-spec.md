@@ -1,5 +1,7 @@
 # Collaborative Document Platform API Specification
 
+> Current reality note, May 19, 2026: this API spec describes the intended contract, not the fully verified current backend. Authentication is documented as required, but the current development server has authentication disabled for API routes. Some static routes are currently shadowed by dynamic `/:id` routes and must be fixed in Sprint 01.
+
 ## Authentication
 
 All API endpoints require authentication via Azure AD. Include the access token in the Authorization header:

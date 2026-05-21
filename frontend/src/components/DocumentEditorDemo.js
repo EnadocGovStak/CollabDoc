@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState, useCallback } from 'react';
 import { registerLicense } from '@syncfusion/ej2-base';
 import {
   DocumentEditorContainerComponent,
@@ -33,6 +33,7 @@ import {
 import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
 import './DocumentEditor.css';
 import config from '../config';
+import { normalizeSfdtContent } from '../utils/sfdtContent';
 
 // Register Syncfusion license immediately at module load time
 try {
@@ -79,25 +80,123 @@ DocumentEditorContainerComponent.Inject(
 
 const DocumentEditorDemo = forwardRef((props, ref) => {
   const container = useRef(null);
-  
+  const [editorReady, setEditorReady] = useState(false);
+  const loadContentTimeoutRef = useRef(null);
+
   // Add missing refs
   const originalTemplateRef = useRef(null);
   const isPreviewModeRef = useRef(false);
-  const { 
-    document, 
-    initialContent, 
-    isReadOnly = false, 
-    onDocumentChange, 
+  const {
+    document: documentData,
+    initialContent,
+    isReadOnly = false,
+    onDocumentChange,
     onSave,
     serviceUrl,
     mergeData,
     onContentChange,
-    enableToolbar = true,
     isPreview = false
   } = props;
+  const documentContent = documentData?.content;
+  const documentName = documentData?.name;
+  const onContentChangeRef = useRef(onContentChange);
+  const documentNameRef = useRef(documentName);
 
   // Add state for better user feedback
-  const [mergeStatus, setMergeStatus] = useState('');
+  const [, setMergeStatus] = useState('');
+
+  useEffect(() => {
+    onContentChangeRef.current = onContentChange;
+  }, [onContentChange]);
+
+  useEffect(() => {
+    documentNameRef.current = documentName;
+  }, [documentName]);
+
+  // Simple temp SFDT generation for preview (like the Generate button)
+  const createTempMergedSfdt = useCallback((templateContent, fieldsData) => {
+    try {
+      if (!templateContent || !fieldsData) return templateContent;
+
+      let mergedContent = templateContent;
+
+      Object.entries(fieldsData).forEach(([key, value]) => {
+        const placeholder = `{{${key}}}`;
+        const regex = new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g');
+        mergedContent = mergedContent.replace(regex, String(value || ''));
+      });
+
+      return mergedContent;
+    } catch (error) {
+      console.error('Error creating temp merged SFDT:', error);
+      return templateContent;
+    }
+  }, []);
+
+  const handlePreviewWithMergeFields = useCallback((templateContent, fieldsData) => {
+    if (!container.current || !container.current.documentEditor) return;
+
+    const editor = container.current.documentEditor;
+
+    try {
+      const contentToUse = templateContent || originalTemplateRef.current;
+
+      if (!contentToUse) {
+        console.warn('No template content available for preview');
+        return;
+      }
+
+      if (!fieldsData || Object.keys(fieldsData).length === 0) {
+        console.log('No merge data provided for preview - loading original template');
+        editor.open(contentToUse);
+        isPreviewModeRef.current = false;
+        return;
+      }
+
+      console.log('Creating non-destructive preview with merge data:', fieldsData);
+      setMergeStatus('Preparing preview...');
+      editor.open(contentToUse);
+
+      setTimeout(() => {
+        try {
+          isPreviewModeRef.current = true;
+          const tempMergedSfdt = createTempMergedSfdt(contentToUse, fieldsData);
+
+          if (tempMergedSfdt && tempMergedSfdt !== contentToUse) {
+            console.log('Loading temp merged SFDT for preview');
+            setMergeStatus('Applying merge fields...');
+            editor.open(tempMergedSfdt);
+          } else {
+            console.log('No merge changes made in preview');
+          }
+
+          if (isPreview) {
+            editor.isReadOnly = true;
+          }
+
+          setMergeStatus('Preview ready');
+
+          if (onContentChangeRef.current) {
+            setTimeout(onContentChangeRef.current, 100);
+          }
+
+          setTimeout(() => setMergeStatus(''), 2000);
+        } catch (mergeError) {
+          console.error('Error during preview merge execution:', mergeError);
+          if (originalTemplateRef.current) {
+            editor.open(originalTemplateRef.current);
+            isPreviewModeRef.current = false;
+          }
+        }
+      }, 300);
+    } catch (error) {
+      console.error('Error in preview merge:', error);
+      if (originalTemplateRef.current) {
+        editor.open(originalTemplateRef.current);
+        isPreviewModeRef.current = false;
+      }
+    }
+  }, [createTempMergedSfdt, isPreview]);
 
   // Expose methods via ref
   useImperativeHandle(ref, () => ({
@@ -109,8 +208,14 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
     },
     setContent: (content) => {
       if (container.current && container.current.documentEditor && content) {
-        container.current.documentEditor.open(content);
+        const normalizedContent = normalizeSfdtContent(content, { title: documentNameRef.current });
+        if (normalizedContent) {
+          container.current.documentEditor.open(normalizedContent);
+          originalTemplateRef.current = normalizedContent;
+          return true;
+        }
       }
+      return false;
     },
     saveDocument: () => {
       if (container.current && container.current.documentEditor) {
@@ -138,8 +243,38 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
         return true;
       }
       return false;
+    },
+    insertTextAtCursor: (text) => {
+      const editor = container.current?.documentEditor;
+
+      if (!editor || !text) {
+        return false;
+      }
+
+      try {
+        if (editor.focusIn) {
+          editor.focusIn();
+        }
+
+        const editorModule = editor.editorModule || editor.editor;
+
+        if (editorModule?.insertText) {
+          editorModule.insertText(text);
+        } else {
+          return false;
+        }
+
+        if (onContentChangeRef.current) {
+          setTimeout(onContentChangeRef.current, 100);
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error inserting text into document editor:', error);
+        return false;
+      }
     }
-  }), [onSave]);
+  }), [onSave, handlePreviewWithMergeFields]);
 
   // Handle content changes
   const handleContentChange = () => {
@@ -151,48 +286,35 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
 
   // Initialize editor with content - simplified approach
   useEffect(() => {
-    if (!container.current?.documentEditor) {
+    if (!editorReady || !container.current?.documentEditor) {
       return;
     }
 
     const editor = container.current.documentEditor;
+    if (loadContentTimeoutRef.current) {
+      clearTimeout(loadContentTimeoutRef.current);
+    }
     
     // Simple content loading
     const loadContent = () => {
       try {
         let contentToLoad = null;
         
-        if (document && document.content) {
-          contentToLoad = document.content;
+        if (documentContent) {
+          contentToLoad = documentContent;
         } else if (initialContent) {
           contentToLoad = initialContent;
         }
 
         if (contentToLoad) {
-          if (typeof contentToLoad === 'string') {
-            try {
-              const parsed = JSON.parse(contentToLoad);
-              if (parsed.sections || parsed.sec) {
-                editor.open(contentToLoad);
-                originalTemplateRef.current = contentToLoad;
-              } else {
-                editor.openBlank();
-                if (parsed.sfdt) {
-                  editor.editor.insertText(parsed.sfdt);
-                } else {
-                  editor.editor.insertText(contentToLoad);
-                }
-                originalTemplateRef.current = editor.serialize();
-              }
-            } catch {
-              editor.openBlank();
-              editor.editor.insertText(contentToLoad);
-              originalTemplateRef.current = editor.serialize();
-            }
+          const normalizedContent = normalizeSfdtContent(contentToLoad, { title: documentNameRef.current });
+
+          if (normalizedContent) {
+            editor.open(normalizedContent);
+            originalTemplateRef.current = normalizedContent;
           } else {
-            const jsonString = JSON.stringify(contentToLoad);
-            editor.open(jsonString);
-            originalTemplateRef.current = jsonString;
+            editor.openBlank();
+            originalTemplateRef.current = editor.serialize();
           }
         } else {
           editor.openBlank();
@@ -203,8 +325,8 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
           editor.isReadOnly = true;
         }
 
-        if (onContentChange) {
-          setTimeout(onContentChange, 100);
+        if (onContentChangeRef.current) {
+          setTimeout(onContentChangeRef.current, 100);
         }
       } catch (error) {
         console.error('Error loading content:', error);
@@ -214,8 +336,15 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
     };
 
     // Load content after a short delay
-    setTimeout(loadContent, 300);
-  }, [document?.content, initialContent, isReadOnly, onContentChange]);
+    loadContentTimeoutRef.current = setTimeout(loadContent, 100);
+
+    return () => {
+      if (loadContentTimeoutRef.current) {
+        clearTimeout(loadContentTimeoutRef.current);
+        loadContentTimeoutRef.current = null;
+      }
+    };
+  }, [editorReady, documentContent, initialContent, isReadOnly]);
 
   // Separate effect for handling merge data without interfering with content loading
   useEffect(() => {
@@ -250,8 +379,8 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
           }
           
           // Call onContentChange callback if provided
-          if (onContentChange) {
-            setTimeout(onContentChange, 100);
+          if (onContentChangeRef.current) {
+            setTimeout(onContentChangeRef.current, 100);
           }
         }, 500); // Delay to ensure document is loaded
         
@@ -263,12 +392,12 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
         };
       } catch (error) {
         console.error('Error performing auto mail merge:', error);
-        if (onContentChange) {
-          onContentChange();
+        if (onContentChangeRef.current) {
+          onContentChangeRef.current();
         }
       }
     }
-  }, [mergeData, isPreview]); // Remove onContentChange from dependencies to prevent loops
+  }, [mergeData, isPreview, createTempMergedSfdt]);
 
   // Fix context menu positioning after editor loads
   useEffect(() => {
@@ -340,105 +469,6 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
     };
   }, []); // Empty dependency array - this only needs to run once
 
-  // Simple temp SFDT generation for preview (like the Generate button)
-  const createTempMergedSfdt = (templateContent, mergeData) => {
-    try {
-      if (!templateContent || !mergeData) return templateContent;
-      
-      // Simple string replacement in the SFDT content - same as Generate button
-      let mergedContent = templateContent;
-      
-      Object.entries(mergeData).forEach(([key, value]) => {
-        const placeholder = `{{${key}}}`;
-        const regex = new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g');
-        mergedContent = mergedContent.replace(regex, String(value || ''));
-      });
-      
-      return mergedContent;
-    } catch (error) {
-      console.error('Error creating temp merged SFDT:', error);
-      return templateContent;
-    }
-  };
-  const handlePreviewWithMergeFields = (templateContent, fieldsData) => {
-    if (!container.current || !container.current.documentEditor) return;
-    
-    const editor = container.current.documentEditor;
-    
-    try {
-      // Use the original template content or current content as fallback
-      const contentToUse = templateContent || originalTemplateRef.current;
-      
-      if (!contentToUse) {
-        console.warn('No template content available for preview');
-        return;
-      }
-      
-      // Only proceed if we have merge data
-      if (!fieldsData || Object.keys(fieldsData).length === 0) {
-        console.log('No merge data provided for preview - loading original template');
-        editor.open(contentToUse);
-        isPreviewModeRef.current = false;
-        return;
-      }
-      
-      console.log('Creating non-destructive preview with merge data:', fieldsData);
-      setMergeStatus('Preparing preview...');
-      
-      // First, load the original template
-      editor.open(contentToUse);
-      
-      // Wait a moment for document to be fully loaded before merging
-      setTimeout(() => {
-        try {
-          isPreviewModeRef.current = true;
-          
-          // Create temp merged SFDT and load it (like Generate button)
-          const tempMergedSfdt = createTempMergedSfdt(contentToUse, fieldsData);
-          
-          if (tempMergedSfdt && tempMergedSfdt !== contentToUse) {
-            console.log('Loading temp merged SFDT for preview');
-            setMergeStatus('Applying merge fields...');
-            editor.open(tempMergedSfdt);
-          } else {
-            console.log('No merge changes made in preview');
-          }
-          
-          // Ensure editor is in read-only mode for preview
-          if (isPreview) {
-            editor.isReadOnly = true;
-          }
-          
-          setMergeStatus('Preview ready');
-          
-          // Signal that preview is ready
-          if (onContentChange) {
-            setTimeout(onContentChange, 100);
-          }
-          
-          // Clear status after a moment
-          setTimeout(() => setMergeStatus(''), 2000);
-          
-        } catch (mergeError) {
-          console.error('Error during preview merge execution:', mergeError);
-          // Reset to original template on error
-          if (originalTemplateRef.current) {
-            editor.open(originalTemplateRef.current);
-            isPreviewModeRef.current = false;
-          }
-        }
-      }, 300); // Give document time to load
-      
-    } catch (error) {
-      console.error('Error in preview merge:', error);
-      // Reset to original template on error
-      if (originalTemplateRef.current) {
-        editor.open(originalTemplateRef.current);
-        isPreviewModeRef.current = false;
-      }
-    }
-  };
-
   return (
     <DocumentEditorErrorBoundary>
       <div className="document-editor-demo-container" style={{ height: '100%', width: '100%', flex: '1.5', minWidth: '60%' }}>
@@ -458,27 +488,15 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
             console.log('DocumentEditorComponent created');
             console.log('Container ref:', container.current);
             console.log('DocumentEditor:', container.current?.documentEditor);
+            setEditorReady(true);
             
             // Signal that content is loaded if requested
-            if (onContentChange) {
+            if (onContentChangeRef.current) {
               setTimeout(() => {
                 console.log('Calling onContentChange after editor created');
-                onContentChange();
+                onContentChangeRef.current();
               }, 300);
             }
-            
-            // Try to load a simple document to test if editor is working
-            setTimeout(() => {
-              if (container.current && container.current.documentEditor) {
-                console.log('Testing editor with blank document');
-                try {
-                  container.current.documentEditor.openBlank();
-                  console.log('Blank document loaded successfully');
-                } catch (error) {
-                  console.error('Error loading blank document:', error);
-                }
-              }
-            }, 500);
 
             // Disable context menu if it exists
             try {
@@ -551,8 +569,7 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
                 
                 // Disable any context menu events
                 const editorElement = editor.element;
-                if (editorElement) {
-                  if (isPreview) {
+                if (editorElement && isPreview) {
                     // For preview mode, block all context menus at the root level
                     editorElement.addEventListener('contextmenu', (e) => {
                       e.preventDefault();
@@ -587,7 +604,6 @@ const DocumentEditorDemo = forwardRef((props, ref) => {
                         });
                       }
                     }, 100);
-                  }
                 }
               }
             } catch (error) {

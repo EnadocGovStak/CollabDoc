@@ -5,7 +5,7 @@ const SearchBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
+    const { value } = e.target;
     setSearchTerm(value);
     onSearch(value);
   };
@@ -18,7 +18,6 @@ const SearchBar = ({ onSearch }) => {
   return (
     <div className="search-bar">
       <div className="search-input-container">
-        <span className="search-icon">🔍</span>
         <input
           type="text"
           className="search-input"
@@ -28,7 +27,7 @@ const SearchBar = ({ onSearch }) => {
         />
         {searchTerm && (
           <button className="clear-button" onClick={handleClear}>
-            ✕
+            Clear
           </button>
         )}
       </div>

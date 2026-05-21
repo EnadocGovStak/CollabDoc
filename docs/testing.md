@@ -1,5 +1,7 @@
 # Testing Documentation
 
+> Current reality note, May 19, 2026: this testing strategy is still aspirational in parts. Sprint 01 added an executable browser smoke suite for the critical template/document happy path, but some older backend test scripts described here are not yet wired into package metadata.
+
 This document describes the testing strategy and implementation for the Collaborative Document Platform.
 
 ## Testing Philosophy
@@ -58,6 +60,16 @@ E2E tests verify complete user workflows from frontend to backend.
 - Tests: Complete user workflows across the entire system
 - Example: Testing template creation, document generation, and submission workflow
 
+### Browser Smoke Tests
+
+Browser smoke tests verify the most important user-facing path in a real browser.
+
+- Located in: `tests/smoke/`
+- Uses: Playwright
+- Requires: local Docker stack running with frontend on `http://localhost:3000` and backend on `http://localhost:5000`
+- Current coverage: Documents page, Create Document modal, template selection route, legacy invoice Generate form, generated-document editor load, existing-template editor load, backend metadata/content verification, and smoke artifact cleanup
+- Environment overrides: `SMOKE_BASE_URL`, `SMOKE_API_URL`, and `SMOKE_TEMPLATE_ID`
+
 ## Running Tests
 
 ### Frontend Tests
@@ -93,6 +105,19 @@ npm run test:e2e
 
 # Run all tests with coverage report
 npm run test:coverage
+```
+
+### Browser Smoke Tests
+
+```bash
+# Start the local stack first
+npm run docker:local
+
+# In a second terminal, run the browser smoke suite
+npm run smoke:browser
+
+# First-time setup on a new machine may also need:
+npx playwright install chromium
 ```
 
 ## Test Configuration

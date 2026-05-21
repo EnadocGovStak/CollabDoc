@@ -1,5 +1,7 @@
 # Current DocumentEditor Setup - Isolation Strategy
 
+> Current reality note, May 19, 2026: this file documents the intended editor isolation strategy, but the current app still exposes editor instability in `/editor-test` and inconsistent template editor/preview rendering. Treat this as historical implementation context until Sprint 01 validates the active editor paths.
+
 ## Overview
 We now have a **selective isolation approach** where different pages use different DocumentEditor implementations based on their specific needs.
 

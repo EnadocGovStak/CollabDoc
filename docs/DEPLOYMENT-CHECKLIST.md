@@ -117,7 +117,7 @@
 
 ## Resources
 
-- 📖 [Deployment Guide](docs/deployment.md)
+- 📖 [Deployment Guide](deployment.md)
 - 🔧 [Setup Script](scripts/setup-deployment.ps1)
 - 📋 [GitHub Secrets Checklist](github-secrets-checklist.md)
 - 🧪 [Test Script](scripts/test-deployment.ps1)

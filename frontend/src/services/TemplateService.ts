@@ -7,6 +7,11 @@ export interface Template {
   category?: string;
   documentType?: string;
   thumbnailUrl?: string;
+  mergeFieldCount?: number;
+  managedFieldCount?: number;
+  unmanagedFieldCount?: number;
+  migrationRequired?: boolean;
+  recordsManagement?: TemplateRecordsManagement;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,26 +24,70 @@ export interface TemplateContent {
   category?: string;
   documentType?: string;
   mergeFields?: MergeField[];
+  fieldAnalysis?: TemplateFieldAnalysis;
+  recordsManagement?: TemplateRecordsManagement;
   createdAt: string;
   updatedAt: string;
 }
 
+export interface TemplateRecordsManagement {
+  classification?: string;
+  retentionPeriod?: string;
+  accessControl?: string;
+  documentType?: string;
+  department?: string;
+  reviewCycle?: string;
+  [key: string]: any;
+}
+
 export interface MergeField {
   name: string;
-  type?: 'text' | 'number' | 'email' | 'date';
+  label?: string;
+  type?: 'text' | 'textarea' | 'number' | 'email' | 'date' | 'select' | 'dropdown';
+  category?: string;
   required?: boolean;
   defaultValue?: string;
   description?: string;
+  options?: Array<string | { label: string; value: string }>;
+  validation?: Record<string, any>;
+  exampleValue?: string;
+  managed?: boolean;
+  libraryId?: string;
+  migrationStatus?: string;
+}
+
+export interface TemplateFieldAnalysis {
+  extractedFields: string[];
+  mergeFields?: MergeField[];
+  managedFields?: MergeField[];
+  unmanagedFields?: MergeField[];
+  managedFieldCount: number;
+  unmanagedFieldCount: number;
+  unknownFields: string[];
+  migrationRequired: boolean;
+}
+
+export interface FieldLibraryResult {
+  success: boolean;
+  fields: MergeField[];
+  summary: {
+    count: number;
+    categories: string[];
+    types: string[];
+  };
 }
 
 export interface GenerationResult {
   success: boolean;
+  documentId?: string;
+  documentName?: string;
   content?: string;
   template?: {
     id: string;
     name: string;
     category: string;
     documentType: string;
+    recordsManagement?: TemplateRecordsManagement;
   };
   mergeData?: Record<string, any>;
   extractedFields?: string[];
@@ -163,6 +212,95 @@ class TemplateService {
   }
 
   /**
+   * Get reusable managed merge fields.
+   */
+  async getFieldLibrary(filters: { q?: string; category?: string; type?: string } = {}, accessToken?: string): Promise<FieldLibraryResult> {
+    try {
+      const headers: Record<string, string> = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+
+      const response = await fetch(`${this.baseUrl}/field-library${params.toString() ? `?${params.toString()}` : ''}`, { headers });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch field library');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching field library:', error);
+      return { success: false, fields: [], summary: { count: 0, categories: [], types: [] } };
+    }
+  }
+
+  /**
+   * Create or update a reusable managed merge field.
+   */
+  async upsertFieldLibraryField(field: MergeField, accessToken?: string): Promise<{ success: boolean; field?: MergeField; error?: string }> {
+    try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(`${this.baseUrl}/field-library`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(field)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          error: result.error || 'Failed to save field'
+        };
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error saving field library field:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  /**
+   * Get field-library migration analysis for a template.
+   */
+  async getTemplateFieldAnalysis(templateId: string, accessToken?: string): Promise<TemplateFieldAnalysis | null> {
+    try {
+      const headers: Record<string, string> = {};
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
+      const response = await fetch(`${this.baseUrl}/${templateId}/field-analysis`, { headers });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch field analysis for template: ${templateId}`);
+      }
+
+      const result = await response.json();
+      return result.success ? result : null;
+    } catch (error) {
+      console.error(`Error fetching field analysis for template ${templateId}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * Generate a document from a template with merge data
    * @param templateId Template ID
    * @param mergeData Key-value pairs for merge fields
@@ -172,7 +310,8 @@ class TemplateService {
   async generateDocument(
     templateId: string, 
     mergeData: Record<string, any>, 
-    accessToken?: string
+    accessToken?: string,
+    documentName?: string
   ): Promise<GenerationResult> {
     try {
       const headers: Record<string, string> = {
@@ -185,7 +324,7 @@ class TemplateService {
       const response = await fetch(`${this.baseUrl}/${templateId}/generate`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ mergeData })
+        body: JSON.stringify({ mergeData, documentName })
       });
       
       const result = await response.json();
@@ -421,4 +560,6 @@ class TemplateService {
   }
 }
 
-export default new TemplateService();
+const templateService = new TemplateService();
+
+export default templateService;

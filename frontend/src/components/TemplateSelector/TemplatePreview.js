@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import TemplatePreviewEditor from '../TemplateMerge/TemplatePreviewEditor';
 import TemplateService from '../../services/TemplateService';
 import './TemplatePreview.css';
@@ -17,92 +17,6 @@ const TemplatePreview = ({ templateId, template, isModal = false, onClose }) => 
   const [error, setError] = useState(null);
   const [editorLoaded, setEditorLoaded] = useState(false);
   const editorRef = useRef(null);
-  
-  // Create sample data for merge field preview
-  const sampleMergeData = useMemo(() => {
-    const defaultData = {
-      'CustomerName': 'John Smith',
-      'CompanyName': 'Acme Corporation',
-      'ServiceType': 'Web Development',
-      'ProjectName': 'Corporate Website Redesign',
-      'Budget': '25,000',
-      'Timeline': '3 months',
-      'ContactPerson': 'Jane Doe',
-      'ResponseTime': '3',
-      'SenderName': 'David Johnson',
-      'SenderTitle': 'Project Manager',
-      'CompanyAddress': '123 Business Ave, Suite 100, New York, NY 10001',
-      'CompanyPhone': '(555) 123-4567',
-      'CompanyEmail': 'info@acmecorp.com'
-    };
-    
-    // If the template has merge fields, populate with sample data
-    if (templateData?.mergeFields) {
-      const mergeData = {};
-      templateData.mergeFields.forEach(field => {
-        // Try to use a default value that makes sense for the field name
-        if (defaultData[field.name]) {
-          mergeData[field.name] = defaultData[field.name];
-        } else {
-          // Generate a sample value based on field name
-          const name = field.name.toLowerCase();
-          if (name.includes('name')) {
-            mergeData[field.name] = 'Sample Name';
-          } else if (name.includes('email')) {
-            mergeData[field.name] = 'sample@example.com';
-          } else if (name.includes('phone')) {
-            mergeData[field.name] = '(555) 123-4567';
-          } else if (name.includes('date')) {
-            mergeData[field.name] = '01/01/2025';
-          } else if (name.includes('amount') || name.includes('price') || name.includes('cost')) {
-            mergeData[field.name] = '$1,000.00';
-          } else {
-            mergeData[field.name] = `Sample ${field.name}`;
-          }
-        }
-      });
-      return mergeData;
-    }
-    
-    // If no merge fields are defined, try to extract them from content
-    if (templateData?.content) {
-      const pattern = /\{\{([^}]+)\}\}/g;
-      const extractedFields = [];
-      let match;
-      let content = templateData.content;
-      
-      // Handle if content is an object with sfdt property
-      if (typeof content === 'object' && content.sfdt) {
-        content = content.sfdt;
-      }
-      
-      // Convert to string if it's an object
-      if (typeof content === 'object') {
-        content = JSON.stringify(content);
-      }
-      
-      // Extract fields
-      const mergeData = {};
-      try {
-        while ((match = pattern.exec(content)) !== null) {
-          const fieldName = match[1].trim();
-          if (!extractedFields.includes(fieldName)) {
-            extractedFields.push(fieldName);
-            mergeData[fieldName] = defaultData[fieldName] || `Sample ${fieldName}`;
-          }
-        }
-        
-        if (Object.keys(mergeData).length > 0) {
-          return mergeData;
-        }
-      } catch (err) {
-        console.error('Error extracting merge fields from content:', err);
-      }
-    }
-    
-    return defaultData;
-  }, [templateData]);
-
   // Handle editor loaded event
   const handleEditorLoaded = () => {
     console.log('Template preview editor loaded successfully');

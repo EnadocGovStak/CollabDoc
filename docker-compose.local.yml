@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: collabdoc-backend:local
+    container_name: collabdoc-backend
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:5000/health', res => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks:
+      - collabdoc-local
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_BASE_URL: http://localhost:5000
+    image: collabdoc-frontend:local
+    container_name: collabdoc-frontend
+    environment:
+      REACT_APP_API_BASE_URL: http://localhost:5000
+      HOST: 0.0.0.0
+      PORT: 3000
+      BROWSER: none
+      WDS_SOCKET_PORT: 3000
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - collabdoc-local
+
+networks:
+  collabdoc-local:
+    name: collabdoc-local
+    driver: bridge

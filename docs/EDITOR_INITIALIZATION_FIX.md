@@ -71,5 +71,5 @@ If issues persist:
 4. Check for any race conditions in parent components
 
 ## Related Documentation
-- [CURSOR_RESET_FIX.md](../docs/CURSOR_RESET_FIX.md) - General cursor reset fixes
+- [CURSOR_RESET_FIX.md](CURSOR_RESET_FIX.md) - General cursor reset fixes
 - [Syncfusion DocumentEditor API](https://ej2.syncfusion.com/react/documentation/document-editor/getting-started)

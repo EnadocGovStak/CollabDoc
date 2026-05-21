@@ -3,9 +3,13 @@ import App from './App';
 import DocumentListPage from './pages/DocumentListPage';
 import DocumentEditorPage from './pages/DocumentEditorPage';
 import DocumentTestPage from './pages/DocumentTestPage';
+import LandingPage from './pages/LandingPage';
 import TemplatesListPage from './pages/TemplatesListPage';
 import TemplateEditorPage from './pages/TemplateEditorPage';
 import DocumentFromTemplatePage from './pages/DocumentFromTemplatePage';
+import FieldLibraryPage from './pages/FieldLibraryPage';
+import ProfilePage from './pages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
 import EditorTest from './EditorTest';
 
 const router = createBrowserRouter([
@@ -15,7 +19,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/',
-                element: <DocumentListPage />,
+                element: <LandingPage />,
             },
             {
                 path: '/documents',
@@ -34,6 +38,18 @@ const router = createBrowserRouter([
                 element: <TemplatesListPage />,
             },
             {
+                path: '/field-library',
+                element: <FieldLibraryPage />,
+            },
+            {
+                path: '/profile',
+                element: <ProfilePage />,
+            },
+            {
+                path: '/settings',
+                element: <SettingsPage />,
+            },
+            {
                 path: '/templates/new',
                 element: <TemplateEditorPage />,
             },
@@ -43,6 +59,10 @@ const router = createBrowserRouter([
             },
             {
                 path: '/templates/:templateId/generate',
+                element: <DocumentFromTemplatePage />,
+            },
+            {
+                path: '/generate/:templateId',
                 element: <DocumentFromTemplatePage />,
             },
             {

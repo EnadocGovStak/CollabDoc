@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 import {
   DocumentEditorComponent,
   Print,
@@ -28,6 +28,7 @@ import {
   CellOptionsDialog,
   StylesDialog
 } from '@syncfusion/ej2-react-documenteditor';
+import { createStyledSfdtFromText, normalizeSfdtContent } from '../../utils/sfdtContent';
 
 // Use DocumentEditorComponent (NOT DocumentEditorContainerComponent) for template preview
 // This avoids conflicts with the main document editor
@@ -61,114 +62,6 @@ DocumentEditorComponent.Inject(
 );
 
 /**
- * Creates a proper SFDT document structure from plain text content
- * @param {string} textContent - The plain text content to convert
- * @returns {string} - Stringified SFDT document
- */
-const createProperSfdtFromText = (textContent) => {
-  console.log('Creating proper SFDT document from text:', textContent?.substring(0, 100));
-  
-  // Split text into lines and create proper paragraph blocks
-  const lines = textContent.split('\n');
-  const blocks = [];
-  
-  lines.forEach((line) => {
-    const paragraph = {
-      "paragraphFormat": {
-        "styleName": "Normal",
-        "listFormat": {},
-        "lineSpacing": 1.15,
-        "lineSpacingType": "Multiple"
-      },
-      "characterFormat": {
-        "fontSize": 11,
-        "fontFamily": "Calibri"
-      },
-      "inlines": []
-    };
-    
-    if (line.trim() === '') {
-      // Empty line - just add a line break
-      paragraph.inlines.push({
-        "characterFormat": {
-          "fontSize": 11,
-          "fontFamily": "Calibri"
-        },
-        "text": ""
-      });
-    } else {
-      // Line with content
-      paragraph.inlines.push({
-        "characterFormat": {
-          "fontSize": 11,
-          "fontFamily": "Calibri"
-        },
-        "text": line
-      });
-    }
-    
-    blocks.push(paragraph);
-  });
-
-  // Create a proper SFDT document structure that matches DocumentEditor expectations
-  const sfdtDocument = {
-    "sections": [{
-      "sectionFormat": {
-        "pageWidth": 612,
-        "pageHeight": 792,
-        "leftMargin": 72,
-        "rightMargin": 72,
-        "topMargin": 72,
-        "bottomMargin": 72,
-        "differentFirstPage": false,
-        "differentOddAndEvenPages": false,
-        "headerDistance": 36,
-        "footerDistance": 36,
-        "bidi": false
-      },
-      "blocks": blocks,
-      "headersFooters": {}
-    }],
-    "characterFormat": {
-      "fontSize": 11,
-      "fontFamily": "Calibri"
-    },
-    "paragraphFormat": {
-      "lineSpacing": 1.15,
-      "lineSpacingType": "Multiple"
-    },
-    "defaultTabWidth": 36,
-    "trackChanges": false,
-    "enforcement": false,
-    "hashValue": "",
-    "saltValue": "",
-    "formatting": false,
-    "protectionType": "NoProtection",
-    "dontUseHTMLParagraphAutoSpacing": false,
-    "formFieldShading": true,
-    "styles": [{
-      "name": "Normal",
-      "type": "Paragraph",
-      "paragraphFormat": {
-        "lineSpacing": 1.15,
-        "lineSpacingType": "Multiple",
-        "listFormat": {}
-      },
-      "characterFormat": {
-        "fontSize": 11,
-        "fontFamily": "Calibri",
-        "fontSizeBidi": 11,
-        "fontFamilyBidi": "Calibri"
-      },
-      "next": "Normal"
-    }]
-  };
-  
-  console.log('Created SFDT document with', blocks.length, 'paragraphs');
-  return JSON.stringify(sfdtDocument);
-};
-
-/**
  * Validates and sanitizes content for Syncfusion DocumentEditor
  * @param {string|object} content - The content to validate
  * @returns {string|null} - Valid SFDT content or null if invalid
@@ -182,42 +75,7 @@ const validateAndSanitizeContent = (content) => {
   }
   
   try {
-    // If content is a string, try to parse it as JSON
-    if (typeof content === 'string') {
-      // Check if it's already JSON
-      if (content.trim().startsWith('{')) {
-        const parsed = JSON.parse(content); // Validate JSON
-        console.log('Parsed JSON content:', parsed);
-        
-        // Check if it has an sfdt property with plain text (not base64 SFDT)
-        if (parsed.sfdt && typeof parsed.sfdt === 'string' && !parsed.sfdt.startsWith('UEs')) {
-          console.log('Found plain text SFDT, converting to proper document format');
-          // This is template content with plain text, create a proper SFDT document
-          return createProperSfdtFromText(parsed.sfdt);
-        }
-        
-        return content;
-      }
-      
-      // If it's plain text, create a proper SFDT document from the text
-      return createProperSfdtFromText(content);
-    }
-    
-    // If content is already an object, stringify it
-    if (typeof content === 'object') {
-      console.log('Content is object, checking format...');
-      
-      // Check if it has an sfdt property with plain text (not base64 SFDT)
-      if (content.sfdt && typeof content.sfdt === 'string' && !content.sfdt.startsWith('UEs')) {
-        console.log('Found plain text SFDT in object, converting to proper document format');
-        // This is template content with plain text, create a proper SFDT document
-        return createProperSfdtFromText(content.sfdt);
-      }
-      
-      return JSON.stringify(content);
-    }
-    
-    return null;
+    return normalizeSfdtContent(content);
   } catch (error) {
     console.error('Content validation failed:', error);
     return null;
@@ -239,8 +97,43 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
   } = props;
 
   const editorRef = useRef(null);
+  const editorIdRef = useRef(`template-preview-editor-${Math.random().toString(36).substr(2, 9)}`);
+  const initTimeoutRef = useRef(null);
+  const onCreatedRef = useRef(onCreated);
+  const onContentChangeRef = useRef(onContentChange);
+  const initialContentRef = useRef(initialContent);
+  const isReadOnlyRef = useRef(isReadOnly);
+  const isEditorReadyRef = useRef(false);
   const [isEditorReady, setIsEditorReady] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    onCreatedRef.current = onCreated;
+    onContentChangeRef.current = onContentChange;
+    initialContentRef.current = initialContent;
+    isReadOnlyRef.current = isReadOnly;
+  }, [onCreated, onContentChange, initialContent, isReadOnly]);
+
+  useEffect(() => {
+    isEditorReadyRef.current = isEditorReady;
+  }, [isEditorReady]);
+
+  useEffect(() => () => {
+    if (initTimeoutRef.current) {
+      clearTimeout(initTimeoutRef.current);
+    }
+  }, []);
+
+  const fitPreviewToContainer = useCallback(() => {
+    if (!editorRef.current) return;
+
+    try {
+      editorRef.current.resize?.();
+      editorRef.current.fitPage?.('FitPageWidth');
+    } catch (error) {
+      console.warn('Unable to fit template preview to container:', error);
+    }
+  }, []);
 
   useImperativeHandle(ref, () => ({
     getContent: () => {
@@ -288,45 +181,49 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
   }));
 
   // Load initial content when editor is created
-  const handleCreated = () => {
+  const handleCreated = useCallback(() => {
     console.log('Template preview editor created');
-    console.log('Initial content provided:', initialContent);
-    console.log('Initial content type:', typeof initialContent);
+    console.log('Initial content provided:', initialContentRef.current);
+    console.log('Initial content type:', typeof initialContentRef.current);
     setHasError(false);
     
     try {
       if (editorRef.current) {
         // Wait a moment for the editor to fully initialize
-        setTimeout(() => {
+        initTimeoutRef.current = setTimeout(() => {
           try {
             // Configure the editor for preview mode
-            editorRef.current.isReadOnly = isReadOnly;
+            editorRef.current.isReadOnly = isReadOnlyRef.current;
             
             // Load initial content if provided
-            if (initialContent) {
+            if (initialContentRef.current) {
               console.log('Processing initial content for template preview...');
-              const validContent = validateAndSanitizeContent(initialContent);
+              const validContent = validateAndSanitizeContent(initialContentRef.current);
               console.log('Validated content:', validContent ? 'Valid' : 'Invalid');
               if (validContent) {
                 console.log('Opening content in template preview editor...');
                 editorRef.current.open(validContent);
+                fitPreviewToContainer();
                 console.log('Content loaded successfully in template preview');
               } else {
                 console.warn('Invalid initial content provided to template preview, creating document from text');
                 // Create a proper document with the template content as text
-                const textContent = typeof initialContent === 'string' ? initialContent : JSON.stringify(initialContent);
-                const properDoc = createProperSfdtFromText(textContent);
+                const textContent = typeof initialContentRef.current === 'string' ? initialContentRef.current : JSON.stringify(initialContentRef.current);
+                const properDoc = createStyledSfdtFromText(textContent);
                 editorRef.current.open(properDoc);
+                fitPreviewToContainer();
               }
             } else {
               console.log('No initial content provided, loading blank document');
               editorRef.current.openBlank();
+              fitPreviewToContainer();
             }
             
+            isEditorReadyRef.current = true;
             setIsEditorReady(true);
             
-            if (onCreated) {
-              onCreated();
+            if (onCreatedRef.current) {
+              onCreatedRef.current();
             }
           } catch (error) {
             console.error('Error during template preview editor initialization:', error);
@@ -338,21 +235,21 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
       console.error('Error in template preview editor creation:', error);
       setHasError(true);
     }
-  };
+  }, [fitPreviewToContainer]);
 
   // Handle content changes
-  const handleContentChange = () => {
-    if (!isEditorReady || !editorRef.current) return;
+  const handleContentChange = useCallback(() => {
+    if (!isEditorReadyRef.current || !editorRef.current) return;
     
-    if (onContentChange) {
+    if (onContentChangeRef.current) {
       try {
         const content = editorRef.current.serialize();
-        onContentChange(content);
+        onContentChangeRef.current(content);
       } catch (error) {
         console.error('Failed to get content in template preview:', error);
       }
     }
-  };
+  }, []);
 
   // Update content when initialContent prop changes
   useEffect(() => {
@@ -361,6 +258,7 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
       if (validContent) {
         try {
           editorRef.current.open(validContent);
+          fitPreviewToContainer();
         } catch (error) {
           console.error('Failed to update content in template preview:', error);
           setHasError(true);
@@ -369,7 +267,7 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
         console.warn('Invalid content update in template preview');
       }
     }
-  }, [initialContent, isEditorReady]);
+  }, [initialContent, isEditorReady, fitPreviewToContainer]);
 
   if (hasError) {
     return (
@@ -400,7 +298,7 @@ const TemplatePreviewEditor = forwardRef((props, ref) => {
       )}
       <DocumentEditorComponent
         ref={editorRef}
-        id={`template-preview-editor-${Math.random().toString(36).substr(2, 9)}`}
+        id={editorIdRef.current}
         style={{ 
           display: isEditorReady ? 'block' : 'none', 
           height: height,

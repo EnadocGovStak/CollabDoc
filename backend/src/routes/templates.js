@@ -5,6 +5,7 @@ const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const templatesController = require('../controllers/templates');
+const templateService = require('../services/templateService');
 const { requireRole } = require('../middleware/auth');
 
 // Set up multer for file uploads
@@ -56,13 +57,23 @@ router.get('/', async (req, res) => {
         
         // Get template ID from filename
         const templateId = filename.replace('.json', '');
+        const fieldAnalysis = templateService.getTemplateFieldAnalysis(templateId);
+        const recordsManagement = templateService.normalizeTemplateRecordsManagement(template.recordsManagement, template);
         
         return {
           id: templateId,
           name: template.name || 'Untitled Template',
           description: template.description || '',
+          category: template.category || 'General',
+          documentType: template.documentType || 'Document',
+          mergeFieldCount: fieldAnalysis?.mergeFields?.length || (Array.isArray(template.mergeFields) ? template.mergeFields.length : 0),
+          managedFieldCount: fieldAnalysis?.managedFieldCount || 0,
+          unmanagedFieldCount: fieldAnalysis?.unmanagedFieldCount || 0,
+          migrationRequired: fieldAnalysis?.migrationRequired || false,
+          recordsManagement,
           createdAt: template.createdAt || stats.birthtime,
-          modifiedAt: template.modifiedAt || stats.mtime
+          updatedAt: template.updatedAt || template.modifiedAt || stats.mtime,
+          modifiedAt: template.modifiedAt || template.updatedAt || stats.mtime
         };
       } catch (error) {
         console.error(`Error processing template file ${filename}:`, error);
@@ -79,34 +90,6 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /api/templates/:id
- * Get a specific template by ID
- */
-router.get('/:id', async (req, res) => {
-  try {
-    const templateId = req.params.id;
-    const templatePath = path.join(TEMPLATES_DIR, `${templateId}.json`);
-    
-    // Check if template exists
-    if (!await fileExists(templatePath)) {
-      return res.status(404).json({ error: 'Template not found' });
-    }
-    
-    // Read template data
-    const data = await fs.readFile(templatePath, 'utf8');
-    const template = JSON.parse(data);
-    
-    res.json({
-      id: templateId,
-      ...template
-    });
-  } catch (error) {
-    console.error(`Error reading template ${req.params.id}:`, error);
-    res.status(500).json({ error: 'Failed to read template' });
-  }
-});
-
-/**
  * POST /api/templates
  * Create a new template
  */
@@ -117,7 +100,7 @@ router.post('/', async (req, res) => {
     const templateId = uuidv4();
     const timestamp = new Date().toISOString();
     
-    const templateData = {
+    const templateData = templateService.enrichTemplateForSave({
       id: templateId,
       name: req.body.name || 'Untitled Template',
       description: req.body.description || '',
@@ -125,9 +108,10 @@ router.post('/', async (req, res) => {
       documentType: req.body.documentType || 'Standard Document',
       content: req.body.content || '',
       mergeFields: req.body.mergeFields || [],
+      recordsManagement: req.body.recordsManagement,
       createdAt: timestamp,
       updatedAt: timestamp
-    };
+    });
     
     // Save template to file
     const templatePath = path.join(TEMPLATES_DIR, `${templateId}.json`);
@@ -159,7 +143,7 @@ router.put('/:id', async (req, res) => {
     const existingData = JSON.parse(await fs.readFile(templatePath, 'utf8'));
     
     // Update template data
-    const updatedData = {
+    const updatedData = templateService.enrichTemplateForSave({
       ...existingData,
       name: req.body.name || existingData.name,
       description: req.body.description !== undefined ? req.body.description : existingData.description,
@@ -167,8 +151,9 @@ router.put('/:id', async (req, res) => {
       documentType: req.body.documentType || existingData.documentType,
       content: req.body.content !== undefined ? req.body.content : existingData.content,
       mergeFields: req.body.mergeFields || existingData.mergeFields,
+      recordsManagement: req.body.recordsManagement !== undefined ? req.body.recordsManagement : existingData.recordsManagement,
       updatedAt: new Date().toISOString()
-    };
+    });
     
     // Save updated template
     await fs.writeFile(templatePath, JSON.stringify(updatedData, null, 2));
@@ -268,6 +253,26 @@ router.get('/categories', async (req, res) => {
 });
 
 /**
+ * GET /api/templates/field-library
+ * Get managed reusable merge fields.
+ */
+router.get('/field-library', templatesController.getFieldLibrary);
+router.get('/fields/library', templatesController.getFieldLibrary);
+
+/**
+ * POST /api/templates/field-library
+ * Create or update a managed reusable merge field.
+ */
+router.post('/field-library', templatesController.upsertFieldLibraryField);
+router.post('/fields/library', templatesController.upsertFieldLibraryField);
+
+/**
+ * GET /api/templates/:id/field-analysis
+ * Compare extracted placeholders with the managed field library.
+ */
+router.get('/:id/field-analysis', templatesController.getTemplateFieldAnalysis);
+
+/**
  * GET /api/templates/:id/fields
  * Get merge fields from a template
  */
@@ -315,7 +320,11 @@ router.get('/search', async (req, res) => {
       try {
         const filePath = path.join(TEMPLATES_DIR, filename);
         const fileContent = await fs.readFile(filePath, 'utf8');
-        return JSON.parse(fileContent);
+        const template = JSON.parse(fileContent);
+        return {
+          id: template.id || filename.replace('.json', ''),
+          ...template
+        };
       } catch (error) {
         console.error(`Error reading template file ${filename}:`, error);
         return null;
@@ -350,16 +359,24 @@ router.get('/search', async (req, res) => {
       query: q,
       category: category,
       count: templates.length,
-      templates: templates.map(template => ({
-        id: template.id,
-        name: template.name,
-        description: template.description,
-        category: template.category,
-        documentType: template.documentType,
-        createdAt: template.createdAt,
-        modifiedAt: template.modifiedAt,
-        mergeFieldCount: template.mergeFields ? template.mergeFields.length : 0
-      }))
+      templates: templates.map(template => {
+        const fieldAnalysis = templateService.getTemplateFieldAnalysis(template.id);
+
+        return {
+          id: template.id,
+          name: template.name,
+          description: template.description,
+          category: template.category,
+          documentType: template.documentType,
+          recordsManagement: templateService.normalizeTemplateRecordsManagement(template.recordsManagement, template),
+          createdAt: template.createdAt,
+          modifiedAt: template.modifiedAt,
+          mergeFieldCount: fieldAnalysis?.mergeFields?.length || (template.mergeFields ? template.mergeFields.length : 0),
+          managedFieldCount: fieldAnalysis?.managedFieldCount || 0,
+          unmanagedFieldCount: fieldAnalysis?.unmanagedFieldCount || 0,
+          migrationRequired: fieldAnalysis?.migrationRequired || false
+        };
+      })
     });
   } catch (error) {
     console.error('Error searching templates:', error);
@@ -367,6 +384,38 @@ router.get('/search', async (req, res) => {
       success: false,
       error: 'Failed to search templates'
     });
+  }
+});
+
+/**
+ * GET /api/templates/:id
+ * Get a specific template by ID
+ *
+ * Keep this route after static routes such as /categories and /search.
+ */
+router.get('/:id', async (req, res) => {
+  try {
+    const templateId = req.params.id;
+    const templatePath = path.join(TEMPLATES_DIR, `${templateId}.json`);
+
+    // Check if template exists
+    if (!await fileExists(templatePath)) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+
+    const template = templateService.getTemplateWithManagedFields(templateId);
+
+    if (!template) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+
+    res.json({
+      id: templateId,
+      ...template
+    });
+  } catch (error) {
+    console.error(`Error reading template ${req.params.id}:`, error);
+    res.status(500).json({ error: 'Failed to read template' });
   }
 });
 

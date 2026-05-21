@@ -32,17 +32,17 @@
 
 ### Essential Deployment Files
 - `.github/workflows/` - GitHub Actions deployment workflows
-- `github-secrets-checklist.md` - GitHub secrets setup guide
-- `DEPLOYMENT-CHECKLIST.md` - Deployment steps checklist
-- `docs/` - Documentation including manual setup guides
+- `DOCS/github-secrets-checklist.md` - GitHub secrets setup guide
+- `DOCS/DEPLOYMENT-CHECKLIST.md` - Deployment steps checklist
+- `DOCS/` - Documentation including manual setup guides
 
 ### Core Project Files
 - `backend/` - Backend source code
 - `frontend/` - Frontend source code
 - `templates/` - Document templates
 - `package.json` - Project dependencies
-- `README.md` - Project documentation
-- `INSTRUCTIONS.md` - Usage instructions
+- `DOCS/README.md` - Project documentation index
+- `DOCS/INSTRUCTIONS.md` - Historical usage instructions
 
 ## 🚀 Current Project State
 

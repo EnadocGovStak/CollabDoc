@@ -2,6 +2,47 @@ import axios from 'axios';
 import config from '../config';
 
 const API_URL = config.api.baseUrl;
+const pendingDocumentRequests = new Map();
+
+const getDefaultClassification = (doc) => {
+  const title = doc?.title?.toLowerCase() || '';
+
+  if (title.includes('policy') || title.includes('manual')) {
+    return 'Internal';
+  }
+  if (title.includes('fee') || title.includes('feee')) {
+    return 'Confidential';
+  }
+  if (title.includes('pass') || title.includes('gate')) {
+    return 'Restricted';
+  }
+  return 'Public';
+};
+
+const getDefaultRetentionPeriod = (classification) => {
+  switch ((classification || '').toLowerCase()) {
+    case 'confidential':
+      return '7 Years';
+    case 'restricted':
+      return '5 Years';
+    case 'internal':
+      return '3 Years';
+    case 'public':
+    default:
+      return '1 Year';
+  }
+};
+
+const normalizeRecordsManagement = (doc) => {
+  const recordsManagement = doc?.recordsManagement || doc?.metadata?.recordsManagement || doc?.metaFile?.recordsManagement || {};
+  const classification = recordsManagement.classification || doc?.classification || getDefaultClassification(doc);
+
+  return {
+    ...recordsManagement,
+    classification,
+    retentionPeriod: recordsManagement.retentionPeriod || getDefaultRetentionPeriod(classification)
+  };
+};
 
 /**
  * Service for handling document operations
@@ -88,102 +129,11 @@ export const documentService = {
   async getDocuments() {
     try {
       const response = await axios.get(`${API_URL}/api/documents/list`);
-      // Reduce logging frequency - only log summary
-      
-      // Normalize documents to ensure consistent structure
-      const normalizedDocs = response.data.map(doc => {
-        // Only log for debugging if needed
-        // console.log("Processing document:", doc.title, doc);
-        
-        // If recordsManagement doesn't exist in the root, check if it's in metadata
-        if (!doc.recordsManagement && doc.metadata && doc.metadata.recordsManagement) {
-          doc.recordsManagement = doc.metadata.recordsManagement;
-          // console.log(`Moved recordsManagement from metadata for ${doc.title}`);
-        }
-        
-        // Look for properties in .meta.json files and extract data
-        if (doc.metaFile) {
-          try {
-            // For testing and debugging - attempt to extract data from any available properties
-            // console.log(`Detected metaFile for ${doc.title}`, doc.metaFile);
-            
-            // See if we can extract classification from metaFile 
-            if (doc.metaFile.recordsManagement && doc.metaFile.recordsManagement.classification) {
-              if (!doc.recordsManagement) {
-                doc.recordsManagement = {};
-              }
-              doc.recordsManagement.classification = doc.metaFile.recordsManagement.classification;
-              // console.log(`Extracted classification from metaFile for ${doc.title}: ${doc.recordsManagement.classification}`);
-            }
-          } catch (e) {
-            console.error("Error processing metaFile:", e);
-          }
-        }
-        
-        // Extract document record data based on patterns in filename or document content
-        // This is a heuristic approach to assign classifications based on document names
-        if (!doc.recordsManagement || !doc.recordsManagement.classification) {
-          const title = doc.title?.toLowerCase() || '';
-          
-          if (!doc.recordsManagement) {
-            doc.recordsManagement = {};
-          }
-          
-          // Assign classifications based on document name patterns
-          if (title.includes('policy') || title.includes('manual')) {
-            doc.recordsManagement.classification = 'Internal';
-            // console.log(`Assigned Internal classification to ${doc.title} based on name pattern`);
-          } else if (title.includes('fee') || title.includes('feee')) {
-            doc.recordsManagement.classification = 'Confidential';
-            // console.log(`Assigned Confidential classification to ${doc.title} based on name pattern`);
-          } else if (title.includes('pass') || title.includes('gate')) {
-            doc.recordsManagement.classification = 'Restricted';
-            // console.log(`Assigned Restricted classification to ${doc.title} based on name pattern`);
-          } else {
-            doc.recordsManagement.classification = 'Public';
-            // console.log(`Assigned Public classification to ${doc.title} as default`);
-          }
-        }
-        
-        // Ensure recordsManagement is complete
-        if (!doc.recordsManagement) {
-          doc.recordsManagement = {
-            classification: 'Public',
-            documentType: '',
-            retentionPeriod: '',
-            recordNumber: '',
-            notes: '',
-            isFinal: false
-          };
-        }
-        
-        // Apply retention period if not set
-        if (!doc.recordsManagement.retentionPeriod) {
-          // Assign a default retention period based on classification
-          switch (doc.recordsManagement.classification.toLowerCase()) {
-            case 'confidential':
-              doc.recordsManagement.retentionPeriod = '7 Years';
-              break;
-            case 'restricted':
-              doc.recordsManagement.retentionPeriod = '5 Years';
-              break;
-            case 'internal':
-              doc.recordsManagement.retentionPeriod = '3 Years';
-              break;
-            case 'public':
-              doc.recordsManagement.retentionPeriod = '1 Year';
-              break;
-            default:
-              doc.recordsManagement.retentionPeriod = '1 Year';
-          }
-          console.log(`Assigned retention period for ${doc.title}: ${doc.recordsManagement.retentionPeriod}`);
-        }
-        
-        return doc;
-      });
-      
-      console.log("Normalized documents:", normalizedDocs);
-      return normalizedDocs;
+
+      return response.data.map(doc => ({
+        ...doc,
+        recordsManagement: normalizeRecordsManagement(doc)
+      }));
     } catch (error) {
       console.error('Error getting documents:', error);
       throw error;
@@ -196,23 +146,24 @@ export const documentService = {
    * @returns {Promise<Object>} Document data
    */
   async getDocument(documentId) {
-    try {
-      console.log(`DocumentService: Getting document with ID: ${documentId}`);
-      const response = await axios.get(`${API_URL}/api/documents/${documentId}`);
-      console.log('DocumentService: API response data:', response.data);
-      
-      // Check specifically for recordsManagement
-      if (response.data.recordsManagement) {
-        console.log('DocumentService: Records management data found in response:', 
-          response.data.recordsManagement);
-      } else {
-        console.warn('DocumentService: No records management data in API response');
-      }
-      
-      return {
+    if (pendingDocumentRequests.has(documentId)) {
+      return pendingDocumentRequests.get(documentId);
+    }
+
+    const request = axios.get(`${API_URL}/api/documents/${documentId}`)
+      .then(response => ({
         ...response.data,
-        id: documentId // Ensure ID is included
-      };
+        id: documentId,
+        recordsManagement: normalizeRecordsManagement(response.data)
+      }))
+      .finally(() => {
+        pendingDocumentRequests.delete(documentId);
+      });
+
+    pendingDocumentRequests.set(documentId, request);
+
+    try {
+      return await request;
     } catch (error) {
       console.error('Error getting document:', error);
       throw error;
@@ -289,24 +240,18 @@ export const documentService = {
    * @returns {Promise<Array>} - Array of document types
    */
   async getDocumentTypes() {
-    try {
-      // For now, return static list - can be made dynamic later
-      return [
-        'Policy',
-        'Contract', 
-        'Report',
-        'Manual',
-        'Procedure',
-        'Standard',
-        'Form',
-        'Template',
-        'Correspondence',
-        'Legal Document'
-      ];
-    } catch (error) {
-      console.error('Error getting document types:', error);
-      return [];
-    }
+    return [
+      'Policy',
+      'Contract',
+      'Report',
+      'Manual',
+      'Procedure',
+      'Standard',
+      'Form',
+      'Template',
+      'Correspondence',
+      'Legal Document'
+    ];
   },
 
   /**
@@ -314,20 +259,14 @@ export const documentService = {
    * @returns {Promise<Array>} - Array of classifications
    */
   async getClassifications() {
-    try {
-      // For now, return static list - can be made dynamic later
-      return [
-        'Public',
-        'Internal',
-        'Confidential',
-        'Restricted',
-        'Secret',
-        'Top Secret'
-      ];
-    } catch (error) {
-      console.error('Error getting classifications:', error);
-      return [];
-    }
+    return [
+      'Public',
+      'Internal',
+      'Confidential',
+      'Restricted',
+      'Secret',
+      'Top Secret'
+    ];
   },
 
   /**
@@ -335,23 +274,17 @@ export const documentService = {
    * @returns {Promise<Array>} - Array of retention periods
    */
   async getRetentionPeriods() {
-    try {
-      // For now, return static list - can be made dynamic later
-      return [
-        '1 Year',
-        '2 Years',
-        '3 Years',
-        '5 Years',
-        '7 Years',
-        '10 Years',
-        '15 Years',
-        '25 Years',
-        'Permanent',
-        'Until Superseded'
-      ];
-    } catch (error) {
-      console.error('Error getting retention periods:', error);
-      return [];
-    }
+    return [
+      '1 Year',
+      '2 Years',
+      '3 Years',
+      '5 Years',
+      '7 Years',
+      '10 Years',
+      '15 Years',
+      '25 Years',
+      'Permanent',
+      'Until Superseded'
+    ];
   }
 }; 

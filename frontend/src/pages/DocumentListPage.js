@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { documentService } from '../services/DocumentService';
 import NewDocumentModal from '../components/NewDocumentModal';
 import './DocumentListPage.css';
@@ -9,6 +9,8 @@ const DocumentListPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showNewDocumentModal, setShowNewDocumentModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +21,6 @@ const DocumentListPage = () => {
         try {
             setLoading(true);
             const docs = await documentService.getDocuments();
-            console.log("Documents loaded:", docs);
             setDocuments(docs);
             setError(null);
         } catch (error) {
@@ -38,6 +39,36 @@ const DocumentListPage = () => {
         if (!dateString) return 'Unknown';
         const date = new Date(dateString);
         return date.toLocaleString();
+    };
+
+    const getRawDocumentTitle = (doc) => {
+        return doc?.title?.trim() || doc?.metadata?.title?.trim() || '';
+    };
+
+    const isPlaceholderTitle = (title) => {
+        return !title || /^untitled( document)?$/i.test(title.trim());
+    };
+
+    const getDocumentTitle = (doc) => {
+        const title = getRawDocumentTitle(doc);
+        return isPlaceholderTitle(title) ? 'Untitled document' : title;
+    };
+
+    const getDocumentInitials = (title) => {
+        const words = title
+            .split(/\s+/)
+            .map((word) => word.replace(/[^a-zA-Z0-9]/g, ''))
+            .filter(Boolean);
+
+        if (words.length === 0) {
+            return 'DO';
+        }
+
+        return words.slice(0, 2).map((word) => word[0]).join('').toUpperCase();
+    };
+
+    const getDocumentModifiedDate = (doc) => {
+        return doc?.modifiedDate || doc?.modifiedAt || doc?.lastModified || doc?.createdAt || '';
     };
 
     // Get the document status based on metadata or defaults
@@ -60,30 +91,34 @@ const DocumentListPage = () => {
     const getStatusInfo = (status) => {
         switch (status.toLowerCase()) {
             case 'draft':
-                return { icon: '🔵', className: 'status-draft' };
+                return { className: 'status-draft' };
             case 'in progress':
-                return { icon: '🟠', className: 'status-in-progress' };
+                return { className: 'status-in-progress' };
             case 'final':
-                return { icon: '🟢', className: 'status-final' };
+                return { className: 'status-final' };
             case 'archived':
-                return { icon: '⚪', className: 'status-archived' };
+                return { className: 'status-archived' };
             default:
-                return { icon: '⚫', className: 'status-unknown' };
+                return { className: 'status-unknown' };
         }
+    };
+
+    const getDocumentClassification = (doc) => {
+        if (doc?.recordsManagement?.classification) {
+            return doc.recordsManagement.classification;
+        }
+        if (doc?.metadata?.recordsManagement?.classification) {
+            return doc.metadata.recordsManagement.classification;
+        }
+        if (doc?.classification) {
+            return doc.classification;
+        }
+        return null;
     };
 
     // Get the record classification badge
     const getClassificationBadge = (doc) => {
-        // Check if classification exists in different possible paths
-        let classification = null;
-        
-        if (doc?.recordsManagement?.classification) {
-            classification = doc.recordsManagement.classification;
-        } else if (doc?.metadata?.recordsManagement?.classification) {
-            classification = doc.metadata.recordsManagement.classification;
-        } else if (doc?.classification) {
-            classification = doc.classification;
-        }
+        const classification = getDocumentClassification(doc);
         
         if (!classification) {
             return null;
@@ -113,49 +148,6 @@ const DocumentListPage = () => {
                 {classification}
             </div>
         );
-    };
-
-    // Get background color class based on document classification
-    const getCardBackgroundClass = (doc) => {
-        console.log("Document structure:", doc);
-        
-        // Full detailed structure logging
-        console.log("Document recordsManagement:", doc.recordsManagement);
-        if (doc.metadata) console.log("Document metadata:", doc.metadata);
-        
-        // Check if classification exists in different possible paths
-        let classification = null;
-        
-        if (doc?.recordsManagement?.classification) {
-            classification = doc.recordsManagement.classification.toLowerCase();
-            console.log(`Found classification in recordsManagement: ${classification}`);
-        } else if (doc?.metadata?.recordsManagement?.classification) {
-            classification = doc.metadata.recordsManagement.classification.toLowerCase();
-            console.log(`Found classification in metadata.recordsManagement: ${classification}`);
-        } else if (doc?.classification) {
-            classification = doc.classification.toLowerCase();
-            console.log(`Found classification directly on doc: ${classification}`);
-        }
-        
-        if (!classification) {
-            console.log("No classification found for document:", doc.title);
-            return 'card-background-default';
-        }
-        
-        console.log(`Classification found: ${classification} for ${doc.title}`);
-        
-        switch (classification) {
-            case 'confidential':
-                return 'card-background-confidential';
-            case 'restricted':
-                return 'card-background-restricted';
-            case 'internal':
-                return 'card-background-internal';
-            case 'public':
-                return 'card-background-public';
-            default:
-                return 'card-background-default';
-        }
     };
 
     // Check if document is final
@@ -231,27 +223,6 @@ const DocumentListPage = () => {
         return expiryDate < now;
     };
 
-    // Get border color based on document classification
-    const getBorderColor = (doc) => {
-        if (!doc || !doc.recordsManagement || !doc.recordsManagement.classification) {
-            return '#e9ecef'; // Default light gray
-        }
-
-        const classification = doc.recordsManagement.classification.toLowerCase();
-        switch (classification) {
-            case 'confidential':
-                return '#dc3545'; // Red
-            case 'restricted':
-                return '#ffc107'; // Yellow/amber
-            case 'internal':
-                return '#0dcaf0'; // Blue
-            case 'public':
-                return '#28a745'; // Green
-            default:
-                return '#e9ecef'; // Light gray
-        }
-    };
-
     // Handle new document modal
     const openNewDocumentModal = () => {
         setShowNewDocumentModal(true);
@@ -261,10 +232,55 @@ const DocumentListPage = () => {
         setShowNewDocumentModal(false);
     };
 
+    const filteredDocuments = documents
+        .filter((doc) => {
+            const status = getDocumentStatus(doc).toLowerCase();
+            if (statusFilter !== 'all' && status !== statusFilter) {
+                return false;
+            }
+
+            if (!searchTerm.trim()) {
+                return true;
+            }
+
+            const searchText = [
+                getDocumentTitle(doc),
+                doc?.name,
+                doc?.id,
+                getDocumentClassification(doc),
+                doc?.recordsManagement?.documentType,
+                doc?.metadata?.recordsManagement?.documentType,
+                doc?.documentType
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+
+            return searchText.includes(searchTerm.trim().toLowerCase());
+        })
+        .sort((firstDoc, secondDoc) => {
+            const firstHasPlaceholderTitle = isPlaceholderTitle(getRawDocumentTitle(firstDoc));
+            const secondHasPlaceholderTitle = isPlaceholderTitle(getRawDocumentTitle(secondDoc));
+
+            if (firstHasPlaceholderTitle !== secondHasPlaceholderTitle) {
+                return firstHasPlaceholderTitle ? 1 : -1;
+            }
+
+            const firstTime = new Date(getDocumentModifiedDate(firstDoc)).getTime() || 0;
+            const secondTime = new Date(getDocumentModifiedDate(secondDoc)).getTime() || 0;
+            return secondTime - firstTime;
+        });
+
     return (
         <div className="document-list-page">
             <div className="document-list-header">
-                <h1>My Documents</h1>
+                <div>
+                    <p className="documents-eyebrow">Document Workspace</p>
+                    <h1>My Documents</h1>
+                    <p className="documents-page-subtitle">
+                        Track drafts, finalized records, retention status, and document ownership from one governed workspace.
+                    </p>
+                </div>
                 <button 
                     className="new-document-button" 
                     onClick={openNewDocumentModal}
@@ -282,74 +298,84 @@ const DocumentListPage = () => {
                     No documents yet. Click "Create Document" to create one.
                 </div>
             ) : (
+                <>
+                <div className="documents-toolbar">
+                    <input
+                        className="documents-search-input"
+                        type="text"
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
+                        placeholder="Search documents..."
+                    />
+                    <select
+                        className="documents-status-filter"
+                        value={statusFilter}
+                        onChange={(event) => setStatusFilter(event.target.value)}
+                        aria-label="Filter documents by status"
+                    >
+                        <option value="all">All statuses</option>
+                        <option value="draft">Draft</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="final">Final</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                    <span className="documents-result-count">
+                        {filteredDocuments.length} of {documents.length} documents
+                    </span>
+                    {(searchTerm || statusFilter !== 'all') && (
+                        <button
+                            type="button"
+                            className="documents-clear-filters"
+                            onClick={() => {
+                                setSearchTerm('');
+                                setStatusFilter('all');
+                            }}
+                        >
+                            Clear
+                        </button>
+                    )}
+                </div>
+
+                {filteredDocuments.length === 0 ? (
+                    <div className="empty-message">
+                        No documents match the current filters.
+                    </div>
+                ) : (
                 <div className="documents-grid">
-                    {documents.map((doc) => {
+                    {filteredDocuments.map((doc) => {
                         const status = getDocumentStatus(doc);
                         const statusInfo = getStatusInfo(status);
                         const classificationBadge = getClassificationBadge(doc);
-                        const backgroundClass = getCardBackgroundClass(doc);
                         const expiryDate = getExpiryDate(doc);
                         const formattedExpiry = formatExpiryDate(expiryDate);
                         const isExpired = isDocumentExpired(doc);
                         const isFinal = isDocumentFinal(doc);
-                        
-                        // Get classification directly for styling
-                        let classification = null;
-                        
-                        if (doc?.recordsManagement?.classification) {
-                            classification = doc.recordsManagement.classification.toLowerCase();
-                        } else if (doc?.metadata?.recordsManagement?.classification) {
-                            classification = doc.metadata.recordsManagement.classification.toLowerCase();
-                        } else if (doc?.classification) {
-                            classification = doc.classification.toLowerCase();
-                        }
-                        
-                        // Determine background color based on classification
-                        let bgColor = '#ffffff';
-                        let borderColor = '#e9ecef';
-                        
-                        if (classification) {
-                            switch (classification) {
-                                case 'confidential':
-                                    bgColor = 'rgba(255,200,200,0.6)';
-                                    borderColor = '#dc3545';
-                                    break;
-                                case 'restricted':
-                                    bgColor = 'rgba(255,240,180,0.6)';
-                                    borderColor = '#ffc107';
-                                    break;
-                                case 'internal':
-                                    bgColor = 'rgba(200,230,255,0.6)';
-                                    borderColor = '#0dcaf0';
-                                    break;
-                                case 'public':
-                                    bgColor = 'rgba(200,255,200,0.6)';
-                                    borderColor = '#28a745';
-                                    break;
-                                default:
-                                    bgColor = '#ffffff';
-                                    borderColor = '#e9ecef';
-                            }
-                        }
-                        
+                        const classification = getDocumentClassification(doc)?.toLowerCase().replace(/\s+/g, '-') || 'default';
+                        const documentId = doc.name || doc.id;
+                        const documentTitle = getDocumentTitle(doc);
+                        const modifiedDate = getDocumentModifiedDate(doc);
+                        const documentInitials = getDocumentInitials(documentTitle);
+
                         return (
-                            <div 
-                                key={doc.name || doc.id} 
-                                className={`document-card ${isExpired ? 'document-expired' : ''} ${isFinal ? 'document-final' : ''}`} 
-                                onClick={() => handleOpenDocument(doc.name || doc.id)}
-                                style={{ 
-                                    borderLeft: `6px solid ${borderColor}`,
-                                    backgroundColor: bgColor
-                                }}
+                            <div
+                                key={documentId}
+                                className={`document-card classification-${classification} ${isExpired ? 'document-expired' : ''} ${isFinal ? 'document-final' : ''}`}
+                                onClick={() => handleOpenDocument(documentId)}
                             >
                                 {isFinal && <div className="final-document-overlay">FINAL</div>}
-                                <div className="document-icon">📄</div>
+                                <div className="document-card-preview" aria-hidden="true">
+                                    <span>{documentInitials}</span>
+                                    <div className="document-preview-sheet">
+                                        <i />
+                                        <i />
+                                        <i />
+                                    </div>
+                                </div>
                                 <div className="document-info">
-                                    <h3>{doc.title || 'Untitled'}</h3>
+                                    <h3>{documentTitle}</h3>
                                     
                                     <div className="document-meta">
                                         <div className={`document-status ${statusInfo.className}`}>
-                                            <span className="status-icon">{statusInfo.icon}</span>
                                             <span className="status-text">{status}</span>
                                         </div>
                                         
@@ -372,7 +398,7 @@ const DocumentListPage = () => {
                                         
                                         <div className="document-dates">
                                             <p className="document-date">
-                                                Modified: {formatDate(doc.modifiedDate || doc.modifiedAt || doc.lastModified).split(',')[0]}
+                                                Modified: {formatDate(modifiedDate).split(',')[0]}
                                             </p>
                                             
                                             {formattedExpiry && (
@@ -384,7 +410,7 @@ const DocumentListPage = () => {
                                         
                                         <div className="document-footer">
                                             <span className="document-id">
-                                                ID: {(doc.name || doc.id).substring(0, 8)}...
+                                                ID: {documentId.substring(0, 8)}...
                                             </span>
                                             
                                             {(doc.recordsManagement?.retentionPeriod || doc.metadata?.recordsManagement?.retentionPeriod || doc.retentionPeriod) && (
@@ -395,16 +421,28 @@ const DocumentListPage = () => {
                                             
                                             {isFinal && (
                                                 <div className="document-final-badge">
-                                                    <span className="final-icon">🔒</span> Finalized
+                                                    Finalized
                                                 </div>
                                             )}
                                         </div>
+                                        <button
+                                            type="button"
+                                            className="document-open-button"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                handleOpenDocument(documentId);
+                                            }}
+                                        >
+                                            Open
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         );
                     })}
                 </div>
+                )}
+                </>
             )}
 
             {/* New Document Modal */}

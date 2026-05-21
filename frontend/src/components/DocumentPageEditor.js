@@ -1,6 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState, useCallback } from 'react';
 import {
-  DocumentEditorContainerComponent,
   DocumentEditorContainer,
   Toolbar,
   SfdtExport,
@@ -32,7 +31,6 @@ import {
 import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
 import './DocumentEditor.css';
 
-// Inject all required modules into the base class (NOT the React component)
 DocumentEditorContainer.Inject(
   Toolbar,
   SfdtExport,
@@ -64,8 +62,10 @@ DocumentEditorContainer.Inject(
 
 const DocumentPageEditor = forwardRef((props, ref) => {
   const containerRef = useRef(null);
+  const editorHostRef = useRef(null);
   const [isReady, setIsReady] = useState(false);
   const contentChangeTimeout = useRef(null);
+  const initTimeout = useRef(null);
   // State for user notifications
   const [notification, setNotification] = useState(null);
   
@@ -77,16 +77,31 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     enableToolbar = true,
     sidebarHasFocus = false
   } = props;
+  const onContentChangeRef = useRef(onContentChange);
+  const initialContentRef = useRef(initialContent);
+  const isReadOnlyRef = useRef(isReadOnly);
+
+  useEffect(() => {
+    onContentChangeRef.current = onContentChange;
+  }, [onContentChange]);
+
+  useEffect(() => {
+    initialContentRef.current = initialContent;
+  }, [initialContent]);
+
+  useEffect(() => {
+    isReadOnlyRef.current = isReadOnly;
+  }, [isReadOnly]);
 
   // Show notification to user
-  const showNotification = (message, type = 'info') => {
+  const showNotification = useCallback((message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 5000); // Auto-hide after 5 seconds
-  };
+  }, []);
 
   // Debounced content change handler to prevent excessive updates
-  const handleContentChange = () => {
-    if (!onContentChange || !containerRef.current?.documentEditor) return;
+  const handleContentChange = useCallback(() => {
+    if (!onContentChangeRef.current || !containerRef.current?.documentEditor) return;
     
     // Clear any existing timeout
     if (contentChangeTimeout.current) {
@@ -95,17 +110,19 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     
     // Set a new timeout to debounce the content change
     contentChangeTimeout.current = setTimeout(() => {
+      if (!containerRef.current?.documentEditor) return;
+
       try {
         const content = containerRef.current.documentEditor.serialize();
-        onContentChange(content);
+        onContentChangeRef.current(content);
       } catch (error) {
         console.warn('Error getting document content:', error);
       }
     }, 500); // 500ms debounce
-  };
+  }, []);
 
   // Validate if content looks like valid SFDT
-  const isValidSfdt = (content) => {
+  const isValidSfdt = useCallback((content) => {
     try {
       if (typeof content !== 'string') return false;
       
@@ -123,10 +140,10 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     } catch {
       return false;
     }
-  };
+  }, []);
 
   // Safe wrapper for documentEditor.open() with error recovery
-  const safeOpenDocument = (content) => {
+  const safeOpenDocument = useCallback((content) => {
     try {
       containerRef.current.documentEditor.open(content);
       console.log('Successfully loaded document content');
@@ -164,10 +181,10 @@ const DocumentPageEditor = forwardRef((props, ref) => {
       }
       return false;
     }
-  };
+  }, [showNotification]);
 
   // Clean and safe method to load content into the editor
-  const loadContent = (content) => {
+  const loadContent = useCallback((content) => {
     if (!containerRef.current?.documentEditor) {
       console.warn('DocumentEditor not ready for content loading');
       return;
@@ -245,7 +262,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         console.error('Critical error: Cannot even open blank document:', blankError);
       }
     }
-  };
+  }, [isValidSfdt, safeOpenDocument]);
 
   // Simple and effective focus protection
   useEffect(() => {
@@ -331,14 +348,14 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     },
 
     isReady: () => isReady
-  }), [isReady, sidebarHasFocus]);
+  }), [isReady, sidebarHasFocus, loadContent]);
 
   // Handle component creation and setup
-  const handleCreated = () => {
+  const handleCreated = useCallback(() => {
     console.log('DocumentPageEditor created and initializing...');
     
     // Use setTimeout to ensure the component is fully initialized
-    setTimeout(() => {
+    initTimeout.current = setTimeout(() => {
       if (!containerRef.current?.documentEditor) {
         console.error('DocumentEditor not available after creation');
         return;
@@ -346,13 +363,11 @@ const DocumentPageEditor = forwardRef((props, ref) => {
 
       try {
         // Set read-only mode
-        containerRef.current.documentEditor.isReadOnly = isReadOnly;
+        containerRef.current.documentEditor.isReadOnly = isReadOnlyRef.current;
+        containerRef.current.contentChange = handleContentChange;
         
         // Override context menu methods to prevent them from being called
         if (containerRef.current.documentEditor.contextMenu) {
-          const originalOpen = containerRef.current.documentEditor.contextMenu.open;
-          const originalBeforeOpen = containerRef.current.documentEditor.contextMenu.beforeOpen;
-          
           containerRef.current.documentEditor.contextMenu.open = function(...args) {
             console.log('DocumentPageEditor: Blocked context menu open');
             return false;
@@ -373,7 +388,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         }
         
         // Load initial content
-        loadContent(initialContent);
+        loadContent(initialContentRef.current);
         
         // Mark as ready
         setIsReady(true);
@@ -383,7 +398,24 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         console.error('Error during DocumentEditor initialization:', error);
       }
     }, 100); // Small delay to ensure everything is ready
-  };
+  }, [handleContentChange, loadContent]);
+
+  const handleContainerContextMenu = useCallback((e) => {
+    console.log('DocumentPageEditor: Blocking onContextMenu event');
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }, []);
+
+  const handleContainerMouseDown = useCallback((e) => {
+    if (e.button === 2) {
+      console.log('DocumentPageEditor: Blocking right mouse button');
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+    return undefined;
+  }, []);
 
   // Handle save keyboard shortcut
   const handleKeyDown = (event) => {
@@ -395,14 +427,69 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     }
   };
 
-  // Handle component cleanup
+  // Create and clean up the Syncfusion editor outside React's prop reconciler.
   useEffect(() => {
+    if (!editorHostRef.current || containerRef.current) {
+      return undefined;
+    }
+
+    let editorContainer = null;
+    let createTimer = null;
+
+    createTimer = setTimeout(() => {
+      if (!editorHostRef.current || containerRef.current) {
+        return;
+      }
+
+      try {
+        editorContainer = new DocumentEditorContainer({
+          height: '100%',
+          width: '100%',
+          enableToolbar,
+          showPropertiesPane: false,
+          enableContextMenu: false,
+          enableMiniToolbar: false,
+          enableSelection: true,
+          isReadOnly: isReadOnlyRef.current,
+          enableAutoFocus: false,
+          enableLocalPaste: false,
+          enableTooltip: true,
+          serviceUrl: 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/',
+          created: handleCreated
+        });
+
+        containerRef.current = editorContainer;
+        editorContainer.appendTo(editorHostRef.current);
+      } catch (error) {
+        console.error('Error creating DocumentPageEditor container:', error);
+        showNotification('Error loading document editor.', 'error');
+      }
+    }, 0);
+
     return () => {
+      if (createTimer) {
+        clearTimeout(createTimer);
+      }
       if (contentChangeTimeout.current) {
         clearTimeout(contentChangeTimeout.current);
       }
+      if (initTimeout.current) {
+        clearTimeout(initTimeout.current);
+      }
+
+      const currentContainer = containerRef.current || editorContainer;
+
+      try {
+        if (currentContainer && !currentContainer.isDestroyed && typeof currentContainer.destroy === 'function') {
+          currentContainer.destroy();
+        }
+      } catch (error) {
+        console.warn('Error destroying DocumentPageEditor container:', error);
+      }
+
+      containerRef.current = null;
     };
-  }, []);
+  }, [enableToolbar, handleCreated, showNotification]);
 
   // Update read-only mode when prop changes
   useEffect(() => {
@@ -423,38 +510,10 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           position: 'relative'
         }}
         onKeyDown={handleKeyDown}
+        onContextMenu={handleContainerContextMenu}
+        onMouseDown={handleContainerMouseDown}
       >
-        <DocumentEditorContainerComponent
-          ref={containerRef}
-          height="100%"
-          width="100%"
-          enableToolbar={enableToolbar}
-          showPropertiesPane={true}
-          enableContextMenu={false}
-          enableMiniToolbar={false}
-          enableSelection={true}
-          isReadOnly={isReadOnly}
-          enableAutoFocus={false}
-          enableLocalPaste={false}
-          enableTooltip={true}
-          contentChange={handleContentChange}
-          created={handleCreated}
-          serviceUrl="https://ej2services.syncfusion.com/production/web-services/api/documenteditor/"
-          onContextMenu={(e) => {
-            console.log('DocumentPageEditor: Blocking onContextMenu event');
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-          }}
-          onMouseDown={(e) => {
-            if (e.button === 2) { // Right mouse button
-              console.log('DocumentPageEditor: Blocking right mouse button');
-              e.preventDefault();
-              e.stopPropagation();
-              return false;
-            }
-          }}
-        />
+        <div ref={editorHostRef} style={{ height: '100%', width: '100%' }} />
         
         {!isReady && (
           <div style={{

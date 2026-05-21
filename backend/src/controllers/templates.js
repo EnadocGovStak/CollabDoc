@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const templateService = require('../services/templateService');
+const fieldLibraryService = require('../services/fieldLibraryService');
 
 // Path constants
 const templatesDir = path.join(__dirname, '../../templates');
@@ -164,25 +165,88 @@ const getTemplateCategories = (req, res) => {
 };
 
 /**
+ * Get managed reusable merge fields.
+ */
+const getFieldLibrary = (req, res) => {
+  try {
+    const fields = fieldLibraryService.getAllFields(req.query || {});
+
+    res.status(200).json({
+      success: true,
+      fields,
+      summary: fieldLibraryService.getLibrarySummary()
+    });
+  } catch (error) {
+    console.error('Error fetching field library:', error);
+    res.status(500).json({ error: 'Failed to fetch field library' });
+  }
+};
+
+/**
+ * Create or update a managed reusable merge field.
+ */
+const upsertFieldLibraryField = (req, res) => {
+  try {
+    const result = fieldLibraryService.upsertField(req.body || {});
+
+    if (!result.success) {
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.status(200).json({
+      success: true,
+      field: result.field
+    });
+  } catch (error) {
+    console.error('Error saving field library field:', error);
+    res.status(500).json({ error: 'Failed to save field library field' });
+  }
+};
+
+/**
+ * Analyze a template against the managed field library.
+ */
+const getTemplateFieldAnalysis = (req, res) => {
+  try {
+    const { id } = req.params;
+    const analysis = templateService.getTemplateFieldAnalysis(id);
+
+    if (!analysis) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      ...analysis
+    });
+  } catch (error) {
+    console.error(`Error analyzing template fields for ${req.params.id}:`, error);
+    res.status(500).json({ error: 'Failed to analyze template fields' });
+  }
+};
+
+/**
  * Get merge fields from a template
  */
 const getTemplateMergeFields = (req, res) => {
   try {
     const { id } = req.params;
-    const template = templateService.getTemplateById(id);
-    
-    if (!template) {
+    const template = templateService.getTemplateWithManagedFields(id);
+    const analysis = templateService.getTemplateFieldAnalysis(id);
+
+    if (!template || !analysis) {
       return res.status(404).json({ error: 'Template not found' });
     }
-    
-    // Extract fields from content
-    const extractedFields = templateService.extractMergeFields(template.content);
-    
+
     res.status(200).json({
       templateId: id,
       templateName: template.name,
-      fields: extractedFields,
-      mergeFieldDefinitions: template.mergeFields || []
+      fields: analysis.extractedFields,
+      mergeFieldDefinitions: analysis.mergeFields,
+      managedFields: analysis.managedFields,
+      unmanagedFields: analysis.unmanagedFields,
+      unknownFields: analysis.unknownFields,
+      migrationRequired: analysis.migrationRequired
     });
   } catch (error) {
     console.error(`Error extracting merge fields for template ${req.params.id}:`, error);
@@ -265,24 +329,37 @@ const generateDocument = (req, res) => {
       console.log('Content type:', typeof result.content);
       console.log('Content sample:', result.content?.substring ? result.content.substring(0, 100) : result.content);
       
-      // Get the merged text content
-      let textContent = '';
       if (typeof result.content === 'string') {
         try {
-          // Try to parse if it's JSON
           const parsed = JSON.parse(result.content);
-          textContent = parsed.sfdt || result.content;
+          if (parsed && typeof parsed === 'object' && (parsed.sfdt || parsed.sections || parsed.sec || parsed.optimizeSfdt)) {
+            contentToSave = result.content;
+            console.log('Generated content is valid SFDT JSON; saving directly');
+          }
         } catch {
-          // It's plain text
-          textContent = result.content;
+          // Plain text is converted below.
         }
-      } else {
-        textContent = JSON.stringify(result.content);
+      } else if (
+        result.content &&
+        typeof result.content === 'object' &&
+        (result.content.sfdt || result.content.sections || result.content.sec || result.content.optimizeSfdt)
+      ) {
+        contentToSave = JSON.stringify(result.content);
+        console.log('Generated content is valid SFDT object; saving directly');
       }
+
+      if (contentToSave) {
+        console.log('=== EXISTING SFDT DOCUMENT PRESERVED ===');
+        console.log('Content sample:', contentToSave.substring(0, 200));
+      } else {
+        // Get the merged text content for plain-text templates.
+        const textContent = typeof result.content === 'string'
+          ? result.content
+          : JSON.stringify(result.content || '');
       
-      // Split text into lines and create proper paragraph blocks
-      const lines = textContent.split('\n');
-      const blocks = [];
+        // Split text into lines and create proper paragraph blocks
+        const lines = textContent.split('\n');
+        const blocks = [];
       
       lines.forEach((line) => {
         const paragraph = {
@@ -376,12 +453,13 @@ const generateDocument = (req, res) => {
         }]
       };
       
-      contentToSave = JSON.stringify(sfdtDocument);
-      console.log('=== NEW SFDT DOCUMENT GENERATED ===');
-      console.log('Generated proper SFDT document structure for main DocumentEditor');
-      console.log('Document structure has sections:', !!sfdtDocument.sections);
-      console.log('Document sections count:', sfdtDocument.sections?.length || 0);
-      console.log('Content sample:', contentToSave.substring(0, 200));
+        contentToSave = JSON.stringify(sfdtDocument);
+        console.log('=== NEW SFDT DOCUMENT GENERATED ===');
+        console.log('Generated proper SFDT document structure for main DocumentEditor');
+        console.log('Document structure has sections:', !!sfdtDocument.sections);
+        console.log('Document sections count:', sfdtDocument.sections?.length || 0);
+        console.log('Content sample:', contentToSave.substring(0, 200));
+      }
       
     } catch (error) {
       console.error('=== ERROR IN SFDT GENERATION ===');
@@ -399,17 +477,27 @@ const generateDocument = (req, res) => {
     console.log('First 200 chars of saved content:', contentToSave.substring(0, 200));
     
     // Save document metadata
+    const generatedDocumentName = documentName || `${result.template.name} - Generated`;
+    const createdAt = new Date().toISOString();
     const documentMetadata = {
       id: documentId,
-      name: documentName || `${result.template.name} - Generated`,
+      name: generatedDocumentName,
+      title: generatedDocumentName,
       templateId: id,
       templateName: result.template.name,
       category: result.template.category,
       documentType: result.template.documentType,
       mergeData: result.mergeData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      recordsManagement: result.template.recordsManagement || {},
+      createdAt,
+      updatedAt: createdAt,
+      modifiedAt: createdAt,
       currentVersion: 1,
+      versions: [{
+        version: 1,
+        timestamp: createdAt,
+        comment: 'Generated from template'
+      }],
       status: 'draft'
     };
     
@@ -670,6 +758,9 @@ module.exports = {
   createTemplate,
   createTemplateWithFields,
   getTemplateCategories,
+  getFieldLibrary,
+  upsertFieldLibraryField,
+  getTemplateFieldAnalysis,
   getTemplateMergeFields,
   updateTemplateMergeFields,
   generateDocument,

@@ -6,26 +6,15 @@ const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }) => {
     onCategoryChange(selectedCategory === category ? null : category);
   };
 
-  // Predefined category icons
-  const categoryIcons = {
-    'Legal': '⚖️',
-    'Finance': '💰',
-    'HR': '👥',
-    'Business': '💼',
-    'Marketing': '📊',
-    'Operations': '⚙️',
-    'Personal': '👤',
-  };
-
   return (
     <div className="category-filter">
       <h3>Categories</h3>
       <div className="category-buttons">
         <button
-          className={`category-button ${!selectedCategory ? 'active' : ''}`}
+          className={`category-button ${selectedCategory ? '' : 'active'}`}
           onClick={() => onCategoryChange(null)}
         >
-          🔍 All
+          All
         </button>
         
         {categories.map(category => (
@@ -34,7 +23,7 @@ const CategoryFilter = ({ categories, selectedCategory, onCategoryChange }) => {
             className={`category-button ${selectedCategory === category ? 'active' : ''}`}
             onClick={() => handleCategoryClick(category)}
           >
-            {categoryIcons[category] || '📄'} {category}
+            {category}
           </button>
         ))}
       </div>

@@ -1,37 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  DocumentEditorContainerComponent,
-  DocumentEditorContainer,
-  Toolbar,
-  Editor,
-  Selection,
-  EditorHistory,
-  SfdtExport,
-  Print,
-  WordExport,
-  TextExport,
-  TableOfContentsDialog,
-  HyperlinkDialog,
-  TableDialog,
-  BookmarkDialog,
-  TablePropertiesDialog,
-  BordersAndShadingDialog,
-  TableOptionsDialog,
-  CellOptionsDialog,
-  StyleDialog,
-  ListDialog,
-  ParagraphDialog,
-  BulletsAndNumberingDialog,
-  FontDialog,
-  PageSetupDialog,
-  StylesDialog,
-  ImageResizer,
-  ContextMenu,
-  Search,
-  OptionsPane,
-  SpellChecker,
-  RestrictEditing
-} from '@syncfusion/ej2-react-documenteditor';
+import { DocumentEditorContainerComponent } from '@syncfusion/ej2-react-documenteditor';
 
 // Note: Modules are now injected globally in utils/syncfusionModules.js
 
@@ -149,6 +117,8 @@ const DocEditorContainer = () => {
 
   // Effect for cleanup
   useEffect(() => {
+    const editorContainer = editorRef.current;
+
     return () => {
       // Clear all timers
       timersRef.current.forEach(timer => clearTimeout(timer));
@@ -161,10 +131,10 @@ const DocEditorContainer = () => {
       }
       
       // Cleanup on unmount
-      if (editorRef.current && editorRef.current.documentEditor) {
+      if (editorContainer?.documentEditor) {
         try {
           console.log('Destroying DocumentEditorContainerComponent');
-          const editor = editorRef.current.documentEditor;
+          const editor = editorContainer.documentEditor;
           if (editor.selection) editor.selection.destroy();
           if (editor.editor) editor.editor.destroy();
           if (!editor.isDestroyed) editor.destroy();

@@ -76,7 +76,7 @@
 .option-card {
   flex: 1;
   min-width: 240px;
-  border: 2px solid #e9ecef;
+  border: 1px solid #d7dde5;
   border-radius: 8px;
   padding: 15px;
   display: flex;
@@ -91,23 +91,13 @@
 }
 
 .option-card.selected {
-  border-color: #007bff;
-  background-color: #f0f7ff;
+  border-color: #1769aa;
+  background-color: #f4f9fd;
 }
 
 .option-card input[type="radio"] {
   position: absolute;
   opacity: 0;
-}
-
-.option-icon {
-  font-size: 2rem;
-  margin-right: 15px;
-  color: #6c757d;
-}
-
-.option-card.selected .option-icon {
-  color: #007bff;
 }
 
 .option-text {
@@ -158,6 +148,12 @@
   font-style: italic;
   color: #6c757d;
   margin: 10px 0;
+}
+
+.template-route-message {
+  color: #495057;
+  font-size: 0.9rem;
+  margin: 8px 0 0;
 }
 
 .merge-fields-section {

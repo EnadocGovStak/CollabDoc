@@ -1,0 +1,326 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-20T22:21:59.840Z",
+  "fields": [
+    {
+      "name": "CompanyName",
+      "label": "Company name",
+      "type": "text",
+      "category": "Organization",
+      "required": true,
+      "description": "Legal or trading name of the issuing organization.",
+      "exampleValue": "Acme Corporation"
+    },
+    {
+      "name": "CompanyAddress",
+      "label": "Company address",
+      "type": "textarea",
+      "category": "Organization",
+      "required": false,
+      "description": "Mailing address of the issuing organization.",
+      "exampleValue": "100 Main Street, Suite 200"
+    },
+    {
+      "name": "CompanyPhone",
+      "label": "Company phone",
+      "type": "text",
+      "category": "Organization",
+      "required": false,
+      "description": "Primary business phone number.",
+      "exampleValue": "+1 555 0100"
+    },
+    {
+      "name": "CompanyEmail",
+      "label": "Company email",
+      "type": "email",
+      "category": "Organization",
+      "required": false,
+      "description": "Primary business email address.",
+      "exampleValue": "billing@example.com"
+    },
+    {
+      "name": "ClientName",
+      "label": "Client name",
+      "type": "text",
+      "category": "Client",
+      "required": true,
+      "description": "Name of the customer, client, or receiving party.",
+      "exampleValue": "Contoso Services"
+    },
+    {
+      "name": "CustomerName",
+      "label": "Customer name",
+      "type": "text",
+      "category": "Client",
+      "required": true,
+      "description": "Name of the customer or addressee.",
+      "exampleValue": "John Smith"
+    },
+    {
+      "name": "ClientAddress",
+      "label": "Client address",
+      "type": "textarea",
+      "category": "Client",
+      "required": false,
+      "description": "Mailing address of the client or receiving party.",
+      "exampleValue": "200 Market Street"
+    },
+    {
+      "name": "ClientEmail",
+      "label": "Client email",
+      "type": "email",
+      "category": "Client",
+      "required": false,
+      "description": "Email address for the client or receiving party.",
+      "exampleValue": "client@example.com"
+    },
+    {
+      "name": "InvoiceNumber",
+      "label": "Invoice number",
+      "type": "text",
+      "category": "Invoice",
+      "required": true,
+      "description": "Unique invoice identifier.",
+      "exampleValue": "INV-2026-001"
+    },
+    {
+      "name": "InvoiceDate",
+      "label": "Invoice date",
+      "type": "date",
+      "category": "Invoice",
+      "required": true,
+      "description": "Date the invoice is issued.",
+      "exampleValue": "2026-05-19"
+    },
+    {
+      "name": "DueDate",
+      "label": "Due date",
+      "type": "date",
+      "category": "Invoice",
+      "required": true,
+      "description": "Date payment is due.",
+      "exampleValue": "2026-06-18"
+    },
+    {
+      "name": "PaymentTerms",
+      "label": "Payment terms",
+      "type": "select",
+      "category": "Invoice",
+      "required": false,
+      "description": "Commercial payment terms for the invoice.",
+      "options": [
+        "Due on receipt",
+        "Net 15",
+        "Net 30",
+        "Net 45",
+        "Net 60"
+      ],
+      "exampleValue": "Net 30"
+    },
+    {
+      "name": "ServiceDescription",
+      "label": "Service description",
+      "type": "textarea",
+      "category": "Invoice",
+      "required": true,
+      "description": "Summary of goods or services being billed.",
+      "exampleValue": "Records management consulting"
+    },
+    {
+      "name": "Amount",
+      "label": "Amount",
+      "type": "number",
+      "category": "Invoice",
+      "required": true,
+      "description": "Base amount before tax or adjustments.",
+      "exampleValue": "1250.00"
+    },
+    {
+      "name": "TaxRate",
+      "label": "Tax rate",
+      "type": "number",
+      "category": "Invoice",
+      "required": false,
+      "description": "Tax rate percentage.",
+      "exampleValue": "8"
+    },
+    {
+      "name": "TaxAmount",
+      "label": "Tax amount",
+      "type": "number",
+      "category": "Invoice",
+      "required": false,
+      "description": "Calculated or entered tax amount.",
+      "exampleValue": "100.00"
+    },
+    {
+      "name": "TotalAmount",
+      "label": "Total amount",
+      "type": "number",
+      "category": "Invoice",
+      "required": false,
+      "description": "Total amount due.",
+      "exampleValue": "1350.00"
+    },
+    {
+      "name": "AccountNumber",
+      "label": "Account number",
+      "type": "text",
+      "category": "Payment",
+      "required": false,
+      "description": "Payment account identifier.",
+      "exampleValue": "123456789"
+    },
+    {
+      "name": "RoutingNumber",
+      "label": "Routing number",
+      "type": "text",
+      "category": "Payment",
+      "required": false,
+      "description": "Bank routing or clearing number.",
+      "exampleValue": "021000021"
+    },
+    {
+      "name": "CandidateName",
+      "label": "Candidate name",
+      "type": "text",
+      "category": "HR",
+      "required": true,
+      "description": "Name of the job candidate.",
+      "exampleValue": "Jane Doe"
+    },
+    {
+      "name": "EmployeeName",
+      "label": "Employee name",
+      "type": "text",
+      "category": "HR",
+      "required": true,
+      "description": "Name of the employee.",
+      "exampleValue": "Jane Doe"
+    },
+    {
+      "name": "PositionTitle",
+      "label": "Position title",
+      "type": "text",
+      "category": "HR",
+      "required": true,
+      "description": "Role or job title.",
+      "exampleValue": "Records Analyst"
+    },
+    {
+      "name": "Department",
+      "label": "Department",
+      "type": "text",
+      "category": "HR",
+      "required": false,
+      "description": "Business unit or department.",
+      "exampleValue": "Operations"
+    },
+    {
+      "name": "StartDate",
+      "label": "Start date",
+      "type": "date",
+      "category": "HR",
+      "required": true,
+      "description": "Employment or engagement start date.",
+      "exampleValue": "2026-06-01"
+    },
+    {
+      "name": "Salary",
+      "label": "Salary",
+      "type": "number",
+      "category": "HR",
+      "required": false,
+      "description": "Compensation amount.",
+      "exampleValue": "85000"
+    },
+    {
+      "name": "ContractDate",
+      "label": "Contract date",
+      "type": "date",
+      "category": "Legal",
+      "required": true,
+      "description": "Date the agreement is entered into.",
+      "exampleValue": "2026-05-19"
+    },
+    {
+      "name": "DisclosingPartyName",
+      "label": "Disclosing party name",
+      "type": "text",
+      "category": "Legal",
+      "required": true,
+      "description": "Name of the party disclosing confidential information.",
+      "exampleValue": "Acme Corporation"
+    },
+    {
+      "name": "ReceivingPartyName",
+      "label": "Receiving party name",
+      "type": "text",
+      "category": "Legal",
+      "required": true,
+      "description": "Name of the party receiving confidential information.",
+      "exampleValue": "Contoso Services"
+    },
+    {
+      "name": "BusinessPurpose",
+      "label": "Business purpose",
+      "type": "textarea",
+      "category": "Legal",
+      "required": true,
+      "description": "Purpose of the contemplated business relationship.",
+      "exampleValue": "Evaluation of a document management partnership"
+    },
+    {
+      "name": "document_title",
+      "label": "Document title",
+      "type": "text",
+      "category": "System",
+      "required": false,
+      "description": "Generated document title or subject.",
+      "exampleValue": "Salary Advance Request"
+    },
+    {
+      "name": "document_id",
+      "label": "Document ID",
+      "type": "text",
+      "category": "System",
+      "required": false,
+      "description": "Document identifier assigned by the system.",
+      "exampleValue": "DOC-2026-001"
+    },
+    {
+      "name": "date",
+      "label": "Current date",
+      "type": "date",
+      "category": "System",
+      "required": false,
+      "description": "Date supplied during generation.",
+      "exampleValue": "2026-05-19"
+    },
+    {
+      "name": "signature_field",
+      "label": "Signature field",
+      "type": "text",
+      "category": "System",
+      "required": false,
+      "description": "Reserved placeholder for signature placement.",
+      "exampleValue": "Authorized signature"
+    },
+    {
+      "name": "Brunei IC",
+      "label": "Brunei Citizen ID Number",
+      "type": "number",
+      "category": "General",
+      "required": false,
+      "defaultValue": "",
+      "description": "",
+      "options": [],
+      "validation": {},
+      "exampleValue": "51340350",
+      "managed": true,
+      "libraryId": "Brunei IC",
+      "updatedAt": "2026-05-20T22:21:59.840Z",
+      "createdAt": "2026-05-20T22:21:59.840Z"
+    }
+  ]
+}

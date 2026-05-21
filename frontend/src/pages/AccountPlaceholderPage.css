@@ -1,0 +1,295 @@
+.account-placeholder-page {
+  min-height: calc(100vh - var(--evia-topbar-height));
+  background: var(--evia-background);
+  color: var(--evia-on-surface);
+  padding: 32px;
+}
+
+.account-placeholder-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.account-placeholder-header {
+  margin-bottom: 28px;
+}
+
+.account-placeholder-kicker {
+  color: var(--evia-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.account-placeholder-header h1 {
+  color: var(--evia-on-surface);
+  font-family: var(--font-family-display);
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0 0 8px;
+  letter-spacing: 0;
+}
+
+.account-placeholder-header p {
+  color: var(--evia-on-surface-variant);
+  font-size: 1rem;
+  line-height: 1.55;
+  max-width: 720px;
+}
+
+.account-placeholder-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(320px, 1.28fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.account-placeholder-panel {
+  background: var(--evia-surface-container-lowest);
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 8px;
+  box-shadow: var(--evia-card-shadow);
+  overflow: hidden;
+}
+
+.account-wide-panel {
+  grid-column: 1 / -1;
+}
+
+.account-placeholder-panel-header {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--evia-outline-variant);
+  background: var(--evia-surface-container-lowest);
+}
+
+.account-placeholder-panel-header h2 {
+  color: var(--evia-on-surface);
+  font-family: var(--font-family-display);
+  font-size: 1rem;
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.account-placeholder-status {
+  background: var(--evia-secondary-container);
+  color: var(--evia-on-secondary-container);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.account-placeholder-status.active {
+  background: var(--evia-primary);
+  color: var(--evia-on-primary);
+}
+
+.account-placeholder-panel-body {
+  padding: 16px;
+}
+
+.account-avatar-placeholder {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--evia-surface-container-low);
+  border: 1px solid var(--evia-outline-variant);
+  color: var(--evia-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.account-placeholder-name {
+  color: var(--evia-on-surface);
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.account-placeholder-muted {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.account-profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.account-profile-meta span {
+  color: var(--evia-primary);
+  border: 1px solid var(--evia-outline-variant);
+  background: var(--evia-surface-container-low);
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.account-placeholder-list {
+  display: grid;
+  gap: 10px;
+}
+
+.account-placeholder-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 6px;
+  background: var(--evia-surface-container-low);
+}
+
+.account-placeholder-row strong {
+  color: var(--evia-on-surface);
+  font-size: 0.88rem;
+}
+
+.account-placeholder-row span {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.92rem;
+}
+
+.account-placeholder-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--evia-outline-variant);
+}
+
+.account-placeholder-setting:last-child {
+  border-bottom: none;
+}
+
+.account-placeholder-setting.stacked {
+  display: grid;
+  align-items: stretch;
+}
+
+.account-placeholder-setting strong {
+  display: block;
+  color: var(--evia-on-surface);
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+
+.account-placeholder-setting span {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.account-placeholder-toggle {
+  width: 42px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1px solid var(--evia-outline-variant);
+  background: var(--evia-surface-container-highest);
+  position: relative;
+}
+
+.account-placeholder-toggle::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  background: var(--evia-surface-container-lowest);
+  box-shadow: var(--evia-card-shadow);
+}
+
+.account-placeholder-toggle.on {
+  background: var(--evia-secondary);
+  border-color: var(--evia-secondary);
+}
+
+.account-placeholder-toggle.on::after {
+  left: 20px;
+}
+
+.theme-mode-selector {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.theme-mode-selector.compact {
+  max-width: 260px;
+}
+
+.theme-mode-option {
+  min-height: 74px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  text-align: left;
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 8px;
+  background: var(--evia-surface-container-low);
+  color: var(--evia-on-surface);
+  padding: 12px;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.theme-mode-option:hover {
+  border-color: var(--evia-primary);
+}
+
+.theme-mode-option.active {
+  border-color: var(--evia-primary);
+  background: var(--evia-active-surface);
+  color: var(--evia-primary);
+}
+
+.theme-mode-option span {
+  color: currentColor;
+  font-weight: 850;
+  font-size: 0.95rem;
+}
+
+.theme-mode-option small {
+  color: var(--evia-on-surface-variant);
+  font-size: 0.78rem;
+}
+
+@media (max-width: 820px) {
+  .account-placeholder-page {
+    padding: 24px 16px 36px;
+  }
+
+  .account-placeholder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-placeholder-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .theme-mode-selector {
+    grid-template-columns: 1fr;
+  }
+}
