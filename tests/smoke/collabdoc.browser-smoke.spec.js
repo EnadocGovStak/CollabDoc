@@ -52,7 +52,7 @@ test('critical document/template browser workflow', async ({ page, request, base
   await page.evaluate(() => localStorage.clear());
   await expect(page.getByRole('heading', { name: 'My Documents' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Create Document' })).toBeVisible();
-  await expect(page.locator('nav')).not.toContainText('Editor Test');
+  await expect(page.locator('nav').filter({ hasText: 'Editor Test' })).toHaveCount(0);
   await expectNoCrashOrRawSfdt(page);
 
   await page.getByRole('button', { name: 'Create Document' }).click();
@@ -66,7 +66,7 @@ test('critical document/template browser workflow', async ({ page, request, base
   await modal.getByRole('button', { name: 'Create Document' }).click();
   await page.waitForURL(`**/templates/${templateId}/generate`);
 
-  await expect(page.getByRole('heading', { name: 'Generate Document from Template' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Capture document details' })).toBeVisible();
   await page.locator('#documentName').fill(documentName);
 
   const mergeData = {
@@ -101,7 +101,7 @@ test('critical document/template browser workflow', async ({ page, request, base
   await expectNoCrashOrRawSfdt(page);
 
   await page.getByRole('link', { name: 'Templates' }).click();
-  await expect(page.getByRole('heading', { name: 'Templates' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Document Templates' })).toBeVisible();
   await expectNoCrashOrRawSfdt(page);
 
   const documentResponse = await request.get(`${apiURL}/api/documents/${generatedDocumentId}`);
@@ -231,7 +231,7 @@ test('template API rejects incomplete governed saves and accepts explicit drafts
   }
 });
 
-test('field library lists and filters managed fields', async ({ page }) => {
+test('field library lists and filters managed fields', async ({ page, request }) => {
   const consoleErrors = [];
   const pageErrors = [];
 
@@ -248,7 +248,11 @@ test('field library lists and filters managed fields', async ({ page }) => {
 
   await page.goto('/field-library');
   await expect(page.getByRole('heading', { name: 'Field Library' })).toBeVisible();
-  await expect(page.locator('.field-library-summary')).toContainText('33 fields');
+  const fieldLibraryResponse = await request.get(`${apiURL}/api/templates/field-library`);
+  expect(fieldLibraryResponse.ok()).toBeTruthy();
+  const fieldLibrary = await fieldLibraryResponse.json();
+  await expect(page.locator('.field-library-summary')).toContainText('Managed fields');
+  await expect(page.locator('.field-library-summary strong').first()).toHaveText(String(fieldLibrary.summary.count));
   await expect(page.locator('.field-library-table')).toContainText('Company name');
   await expect(page.locator('.field-library-table')).toContainText('Payment terms');
 
