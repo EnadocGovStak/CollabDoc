@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TemplateStudio | Design Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#004398",
+                      "primary-fixed": "#d9e2ff",
+                      "tertiary-fixed-dim": "#cabeff",
+                      "tertiary-fixed": "#e6deff",
+                      "secondary-fixed-dim": "#00e29c",
+                      "on-secondary": "#003824",
+                      "on-secondary-fixed": "#002113",
+                      "primary-container": "#528dff",
+                      "on-surface-variant": "#c2c6d6",
+                      "background": "#131313",
+                      "surface-container-high": "#2a2a2a",
+                      "surface-container-highest": "#353534",
+                      "on-secondary-fixed-variant": "#005236",
+                      "error-container": "#93000a",
+                      "outline-variant": "#424753",
+                      "inverse-primary": "#0059c6",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "surface-tint": "#afc6ff",
+                      "secondary": "#00e29c",
+                      "on-primary": "#002d6c",
+                      "surface-container-low": "#1c1b1b",
+                      "secondary-fixed": "#48ffb6",
+                      "surface-dim": "#131313",
+                      "surface-container": "#201f1f",
+                      "on-tertiary-container": "#2a0088",
+                      "inverse-surface": "#e5e2e1",
+                      "on-primary-container": "#00275f",
+                      "tertiary": "#cabeff",
+                      "surface-bright": "#393939",
+                      "tertiary-container": "#937dff",
+                      "on-secondary-container": "#00311e",
+                      "surface": "#131313",
+                      "on-tertiary-fixed": "#1c0062",
+                      "outline": "#8c909f",
+                      "secondary-container": "#00a571",
+                      "primary": "#afc6ff",
+                      "on-tertiary-fixed-variant": "#4717ca",
+                      "on-primary-fixed": "#001a43",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-tertiary": "#31009a",
+                      "surface-variant": "#353534",
+                      "on-surface": "#e5e2e1",
+                      "error": "#ffb4ab",
+                      "on-background": "#e5e2e1",
+                      "primary-fixed-dim": "#afc6ff",
+                      "inverse-on-surface": "#313030"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-margin": "24px",
+                      "desktop-max-width": "1440px",
+                      "gutter": "16px",
+                      "unit": "8px"
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .prism-card {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .prism-card:hover {
+            border-color: #afc6ff;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #131313; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #353534; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-['Hanken_Grotesk'] overflow-x-hidden">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- Shared TopAppBar Placeholder Logic Applied -->
+<header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-outline-variant bg-background/80 backdrop-blur-md px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H42V17.3333V30.6667H24V44H6V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">TemplateStudio</h2>
+</div>
+<nav class="hidden md:flex items-center gap-9">
+<a class="text-on-surface text-sm font-medium hover:text-primary transition-colors" href="#">Explore</a>
+<a class="text-on-surface text-sm font-medium hover:text-primary transition-colors" href="#">Community</a>
+<a class="text-on-surface text-sm font-medium hover:text-primary transition-colors" href="#">Help</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden lg:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-outline flex bg-surface-container-high items-center justify-center pl-4 rounded-l-lg" data-icon="search">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 rounded-r-lg text-white focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-surface-container-high h-full placeholder:text-outline px-4 text-base font-normal" placeholder="Search templates..." value=""/>
+</div>
+</label>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-6 bg-primary text-on-primary text-sm font-bold tracking-wide hover:brightness-110 transition-all shadow-lg shadow-primary/20">
+<span>Upgrade</span>
+</button>
+<div class="aspect-square rounded-full size-10 border-2 border-outline-variant overflow-hidden cursor-pointer">
+<img alt="User Profile" data-alt="A high-quality professional headshot of a creative director in a high-tech studio environment. The lighting is moody and cinematic with soft blue rim lighting that matches the Evia Prism Dark aesthetic. The subject has a confident expression, emphasizing a modern corporate and technical persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPUkBQ8HRRR7ApZhGJ-IzhNaBy5r8m-3EophYzU6PBFltKersx7x13o5RgG7P--gzH14anViRqtXR0Du2YV_QN_JsMHrSVOeV0G5aZOWrt0oFmkDOb0WsEjXIUAprPzZODH7pQ_RSuvUsi78X0uNX86aZWsNuepbGhfGq-xY0zo0DnC2K64fR4NFhN_HlsTl8vz77zUUK9ehKlQkYxJA_0eytCybtJ1PSi8RfwpovN6z6hOkwAApMy7FEfPdRcJLMGGUTryISFSVM"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-outline-variant bg-surface-container-lowest p-6 flex flex-col gap-8 hidden xl:flex">
+<div>
+<h3 class="text-outline text-xs font-bold uppercase tracking-widest mb-4">Workspace</h3>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container/20 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<p class="text-sm font-semibold">All Templates</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors group">
+<span class="material-symbols-outlined group-hover:text-primary">folder_open</span>
+<p class="text-sm font-medium">My Projects</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors group">
+<span class="material-symbols-outlined group-hover:text-primary">group</span>
+<p class="text-sm font-medium">Shared with Me</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors group">
+<span class="material-symbols-outlined group-hover:text-primary">delete</span>
+<p class="text-sm font-medium">Trash</p>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-outline text-xs font-bold uppercase tracking-widest mb-4">Categories</h3>
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between px-3 py-2 text-sm text-on-surface-variant hover:text-white cursor-pointer">
+<span>Presentation</span>
+<span class="text-[10px] bg-surface-container px-2 py-0.5 rounded-full">124</span>
+</div>
+<div class="flex items-center justify-between px-3 py-2 text-sm text-on-surface-variant hover:text-white cursor-pointer">
+<span>Social Media</span>
+<span class="text-[10px] bg-surface-container px-2 py-0.5 rounded-full">86</span>
+</div>
+<div class="flex items-center justify-between px-3 py-2 text-sm text-on-surface-variant hover:text-white cursor-pointer">
+<span>Marketing</span>
+<span class="text-[10px] bg-surface-container px-2 py-0.5 rounded-full">42</span>
+</div>
+</div>
+</div>
+<div class="mt-auto">
+<button class="w-full flex items-center justify-center gap-2 rounded-lg py-3 border border-outline-variant hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-sm">create_new_folder</span>
+<span class="text-sm font-bold">New Folder</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto custom-scrollbar">
+<!-- Hero Header Section -->
+<section class="p-10 bg-gradient-to-br from-surface-container-low to-background">
+<div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-4">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/10 border border-secondary-container/30 text-secondary text-xs font-bold uppercase tracking-wider">
+<span class="size-2 rounded-full bg-secondary animate-pulse"></span>
+                            New Collection Live
+                        </div>
+<h1 class="text-5xl font-bold tracking-tight text-white">Templates</h1>
+<p class="text-on-surface-variant text-lg max-w-xl">
+                            Unlock your creative potential with our library of 1,000+ high-fidelity templates or start from a blank canvas.
+                        </p>
+</div>
+<button class="group flex h-14 items-center gap-3 rounded-xl bg-primary px-8 text-on-primary font-bold shadow-xl shadow-primary/10 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span>Create New Template</span>
+</button>
+</div>
+</section>
+<!-- Filters & Actions Bar -->
+<section class="sticky top-0 z-40 bg-background/95 backdrop-blur px-10 py-6 border-b border-outline-variant">
+<div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6 items-center justify-between">
+<div class="flex gap-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary text-sm font-bold">All</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface text-sm font-medium hover:bg-surface-container-highest transition-colors">Presentation</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface text-sm font-medium hover:bg-surface-container-highest transition-colors">Social Media</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface text-sm font-medium hover:bg-surface-container-highest transition-colors">Marketing</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface text-sm font-medium hover:bg-surface-container-highest transition-colors">Documents</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface text-sm font-medium hover:bg-surface-container-highest transition-colors">Video</button>
+</div>
+<div class="flex items-center gap-4 w-full lg:w-auto">
+<div class="relative flex-1 lg:w-64 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">filter_list</span>
+<select class="form-select w-full bg-surface-container-high border-none rounded-lg pl-10 pr-4 h-10 text-sm font-medium focus:ring-1 focus:ring-primary appearance-none">
+<option>Sort: Most Popular</option>
+<option>Sort: Newest First</option>
+<option>Sort: Trending</option>
+</select>
+</div>
+<div class="flex border border-outline-variant rounded-lg overflow-hidden shrink-0">
+<button class="p-2 bg-surface-container-highest text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="p-2 bg-surface-container text-outline hover:text-on-surface">
+<span class="material-symbols-outlined">format_list_bulleted</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Template Grid -->
+<section class="p-10">
+<div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Template Card 1 -->
+<div class="prism-card group rounded-xl overflow-hidden flex flex-col">
+<div class="aspect-[4/3] relative overflow-hidden bg-surface-container">
+<img alt="Tech Deck" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A clean, minimalist 3D presentation slide design showcasing floating glass orbs and soft abstract geometry. The color palette features deep navy blues and vibrant electric blue highlights with a high-definition, professional finish. The lighting is soft and volumetric, creating a sense of depth and technical precision in a dark mode studio environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmC_qAfOyNzYrnk90D6IG9xS195hE_l9yiKaf-YISQz9cDrM7BS1fCLEKt78ZqN4zTjZ4DE1WNj-xRyMx2jJpEjMYlhKtEUufPL8mFAVSNhRuc6xieAPTSwcnjSQaw9zg8PiY9xnr_l7mpF3t-WEe5r-jboamDTNuc1h226hY38CK9cRb_hYLL4R_pZX8vLIIg-xy5WjKjfsoJpZPWqxAE8NT_dseTNCG5AznlxHBlUf7oIh4JCvS--vfUPPiazeLNtL-PHT6MAAs"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm">Use Template</button>
+<button class="bg-white/10 backdrop-blur text-white p-2 rounded-lg border border-white/20"><span class="material-symbols-outlined text-base">visibility</span></button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-white font-bold text-lg">Next-Gen Presentation</h3>
+<span class="text-secondary text-[10px] font-bold uppercase bg-secondary/10 px-2 py-0.5 rounded-full border border-secondary/20">Pro</span>
+</div>
+<p class="text-on-surface-variant text-sm">Professional pitch deck for tech startups.</p>
+<div class="mt-4 flex items-center gap-4 text-outline text-xs">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">layers</span> 12 Slides</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.9</span>
+</div>
+</div>
+</div>
+<!-- Template Card 2 -->
+<div class="prism-card group rounded-xl overflow-hidden flex flex-col">
+<div class="aspect-[4/3] relative overflow-hidden bg-surface-container">
+<img alt="Social Branding" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Modern geometric social media post template with bold neon green typography against a dark charcoal background. The design is energetic and high-contrast, featuring dynamic lines and sleek glassmorphism panels. It uses the secondary green of the Evia Prism Dark system to create a high-impact, professional marketing visual for a contemporary audience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAShISGxGkQiy3PpSvcz5h-pZaJhVOxkWMG8AVfkz2TwPbUSZDPGV1-1B9MQUOoRmYcyjtDIhywZsyp0wk9OpkZPjxxZoOSuIceDSzv0YbReHBxKUrgw04fchGG-Bpp13PCIU5eeHOH9-2OETeiYvq5qSgZKULtHLTRii65iU7E1WB8tr86-0OjxqA4iLXqOdstUvy7bVJWqA_oxtxq-fzcgmHGcdhEsUV8MKIFMzxHyOqG3ftsa75qRW_WtjOZIvayMc9Exx6QrQU"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm">Use Template</button>
+<button class="bg-white/10 backdrop-blur text-white p-2 rounded-lg border border-white/20"><span class="material-symbols-outlined text-base">visibility</span></button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-white font-bold text-lg">Viral Marketing Kit</h3>
+<span class="text-on-surface-variant text-[10px] font-bold uppercase bg-surface-container px-2 py-0.5 rounded-full">Free</span>
+</div>
+<p class="text-on-surface-variant text-sm">Social media assets optimized for engagement.</p>
+<div class="mt-4 flex items-center gap-4 text-outline text-xs">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">image</span> 8 Assets</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.7</span>
+</div>
+</div>
+</div>
+<!-- Template Card 3 -->
+<div class="prism-card group rounded-xl overflow-hidden flex flex-col">
+<div class="aspect-[4/3] relative overflow-hidden bg-surface-container">
+<img alt="Report Design" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="An elegant, dark mode document template layout with soft purple and indigo gradients. The typography is crisp and professional, arranged in a clean editorial grid. The background features subtle grain textures and high-tech UI elements that glow faintly. The overall mood is sophisticated, designed for a high-performance business report or portfolio." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATQg7Xd7hPy4xT_7yzzIrB_at5IkqfLd7MuiucDRH2TjQoCuPjwmRdRq0aemzIo6EhQriI72ha316oj0-Naoy_YP0hvGRfFQ0FgySc8bJvzEs3Xx-OW8BnH-_Hz1ATWNsDqqtSCvqOrUeiY8VVnYhN0OhHnmvLmAf77v2dIgwKug7rLV9JQa1JCU-k1A5vcYOlVRILsvgPacs3d_Z8FVwhzZ77Dr_UX-dMgezDRhgWUgQ9QmHipA9VVBbFquoABVpWLN1daKNrfJM"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm">Use Template</button>
+<button class="bg-white/10 backdrop-blur text-white p-2 rounded-lg border border-white/20"><span class="material-symbols-outlined text-base">visibility</span></button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-white font-bold text-lg">Annual Report 2024</h3>
+<span class="text-tertiary text-[10px] font-bold uppercase bg-tertiary/10 px-2 py-0.5 rounded-full border border-tertiary/20">Business</span>
+</div>
+<p class="text-on-surface-variant text-sm">Elegant data-driven document layout.</p>
+<div class="mt-4 flex items-center gap-4 text-outline text-xs">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">description</span> 24 Pages</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 5.0</span>
+</div>
+</div>
+</div>
+<!-- Template Card 4 -->
+<div class="prism-card group rounded-xl overflow-hidden flex flex-col">
+<div class="aspect-[4/3] relative overflow-hidden bg-surface-container">
+<img alt="SaaS Landing" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Retro-futuristic website header template with glowing cyan and magenta wireframes. The design incorporates vintage computer elements with a modern glassmorphism twist. Deep shadows and sharp highlight lines define the interface components, creating a technical precision aesthetic that bridges the gap between retro and contemporary high-performance software design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4rtj29Hrik_uTV5UpaSviFeLnTicniAMaGsJtVH8aHzJQCmsveEts1Qp5eARd16EjgtknjqtzN-y-FDhX1stYVMNpmNv_EsbtLdRC0_coC8VKIO6qiAL6tT_r8zOHzC_iY_O_PMS86KMfWN41ObeNK_3c2JGsUJ-_0BpqMWNRmzGHh0MfF9egD20bxw1cw8-5YB00lkRwYqgU980Vw0hA0DI_RdrqwTKmHH9JY_LN8yPJzloQO8TP26eUS4l2OxhIDfguVvh5nCM"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm">Use Template</button>
+<button class="bg-white/10 backdrop-blur text-white p-2 rounded-lg border border-white/20"><span class="material-symbols-outlined text-base">visibility</span></button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-white font-bold text-lg">SaaS Landing Page</h3>
+<span class="text-secondary text-[10px] font-bold uppercase bg-secondary/10 px-2 py-0.5 rounded-full border border-secondary/20">Pro</span>
+</div>
+<p class="text-on-surface-variant text-sm">Conversion-optimized landing page kit.</p>
+<div class="mt-4 flex items-center gap-4 text-outline text-xs">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">web</span> Desktop/Mobile</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
+</div>
+</div>
+</div>
+<!-- Template Card 5 -->
+<div class="prism-card group rounded-xl overflow-hidden flex flex-col">
+<div class="aspect-[4/3] relative overflow-hidden bg-surface-container">
+<img alt="App UI Kit" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A clean mobile app UI kit design featuring high-contrast dashboards and data visualization widgets. The layout uses translucent cards over a deep indigo background. Vibrant blue accents highlight active user elements. The scene is lit with a soft top-down light that emphasizes the sharp 1px borders and rounded corners of the modern design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjsT1tirE_u_u45A2_u01zHgRG4iLFknWzpcuwZLTBcodS7bir7qYJWGfA4ZdY_usBTRCMD8chJZ7HD5WYYRJGIJ_Xd7c_nwaeqyCkPAuwAE7BwpD5dN3MzPjJA6mhvdBvkIO0oN_Y2MnFX2s-UqUSXWjLxKAT8M1xIxabWj8szideT6_vOYKySMNr4NE0MZl1OJjy8Wbsia5P-wexGgMaDQWrdHFUS4djPVj0rwbLOZxfBBMGTuCnMIGQmdBhaXMyCTwJBuaPx1k"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-primary text-on-primary font-bold px-4 py-2 rounded-lg text-sm">Use Template</button>
+<button class="bg-white/10 backdrop-blur text-white p-2 rounded-lg border border-white/20"><span class="material-symbols-outlined text-base">visibility</span></button>
+</div>
+</div>
+<div class="p-5 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-white font-bold text-lg">Fintech App Kit</h3>
+<span class="text-on-surface-variant text-[10px] font-bold uppercase bg-surface-container px-2 py-0.5 rounded-full">Free</span>
+</div>
+<p class="text-on-surface-variant text-sm">Modern mobile UI for banking apps.</p>
+<div class="mt-4 flex items-center gap-4 text-outline text-xs">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">smartphone</span> 30 Screens</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span> 4.6</span>
+</div>
+</div>
+</div>
+<!-- Blank Canvas Action -->
+<div class="border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center gap-4 p-10 hover:border-primary/50 hover:bg-primary-container/5 transition-all cursor-pointer group">
+<div class="size-16 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<div class="text-center">
+<h3 class="text-white font-bold text-lg">Blank Canvas</h3>
+<p class="text-on-surface-variant text-sm">Start your design from scratch</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Load More Footer -->
+<footer class="p-10 border-t border-outline-variant text-center">
+<button class="px-8 py-3 rounded-lg border border-outline hover:border-white transition-all text-sm font-bold">
+                    Load More Templates
+                </button>
+<p class="mt-6 text-outline text-xs">Displaying 12 of 1,240 templates</p>
+</footer>
+</main>
+</div>
+</div>
+<script>
+    // Micro-interaction for filter buttons
+    const filterButtons = document.querySelectorAll('section button.rounded-full');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => {
+                b.classList.remove('bg-primary', 'text-on-primary');
+                b.classList.add('bg-surface-container-high', 'text-on-surface');
+            });
+            btn.classList.remove('bg-surface-container-high', 'text-on-surface');
+            btn.classList.add('bg-primary', 'text-on-primary');
+        });
+    });
+
+    // Subtitle parallax effect on scroll
+    const mainContent = document.querySelector('main');
+    const heroContent = document.querySelector('section h1');
+    mainContent.addEventListener('scroll', () => {
+        const scrolled = mainContent.scrollTop;
+        if (heroContent) {
+            heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
+            heroContent.style.opacity = 1 - (scrolled / 400);
+        }
+    });
+</script>
+</body></html>

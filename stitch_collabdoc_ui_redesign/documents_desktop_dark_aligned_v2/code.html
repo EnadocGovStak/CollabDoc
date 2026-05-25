@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Documents | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#cabeff",
+                        "surface-container-highest": "#353534",
+                        "on-primary": "#002d6c",
+                        "tertiary-container": "#937dff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary-container": "#2a0088",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container-low": "#1c1b1b",
+                        "primary-container": "#528dff",
+                        "primary-fixed": "#d9e2ff",
+                        "inverse-on-surface": "#313030",
+                        "surface-tint": "#afc6ff",
+                        "primary-fixed-dim": "#afc6ff",
+                        "error-container": "#93000a",
+                        "background": "#131313",
+                        "outline-variant": "#424753",
+                        "tertiary": "#cabeff",
+                        "on-primary-fixed": "#001a43",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "secondary-fixed-dim": "#00e29c",
+                        "surface": "#131313",
+                        "outline": "#8c909f",
+                        "on-error-container": "#ffdad6",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary": "#003824",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#004398",
+                        "on-background": "#e5e2e1",
+                        "on-primary-container": "#00275f",
+                        "surface-dim": "#131313",
+                        "surface-container": "#201f1f",
+                        "on-tertiary-fixed": "#1c0062",
+                        "surface-variant": "#353534",
+                        "surface-bright": "#393939",
+                        "secondary": "#00e29c",
+                        "surface-container-high": "#2a2a2a",
+                        "primary": "#afc6ff",
+                        "tertiary-fixed": "#e6deff",
+                        "on-secondary-fixed": "#002113",
+                        "secondary-container": "#00a571",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary-fixed": "#48ffb6",
+                        "inverse-primary": "#0059c6",
+                        "on-tertiary": "#31009a",
+                        "on-secondary-container": "#00311e",
+                        "on-surface-variant": "#c2c6d6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "desktop-max-width": "1440px",
+                        "gutter": "16px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            font-family: 'Hanken Grotesk', sans-serif;
+            color: #e5e2e1;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant flex flex-col py-unit z-50">
+<div class="px-6 py-4 mb-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-xl">view_in_ar</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">Prism Workspace</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-r-4 border-primary bg-surface-container-high rounded-lg group" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="database">database</span>
+<span class="font-label-md text-label-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="edit_note">edit_note</span>
+<span class="font-label-md text-label-md">Editor</span>
+</a>
+</nav>
+<div class="px-4 py-6 border-t border-outline-variant space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="account_circle">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 z-40 flex justify-between items-center px-container-margin h-16 bg-surface/80 backdrop-blur-xl border-b border-white/10 shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary rounded-lg transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container/50 border-none rounded-lg pl-10 pr-4 py-2 text-sm text-on-surface placeholder:text-on-surface-variant focus:ring-0" placeholder="Search documents, IDs, or metadata..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-outline-variant">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Compliance Lead</p>
+</div>
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoK8lSqvg8xSZoGFKtWOrbloHrclIcHi6ycTTAof0L2xGdR1LfvsVpaSAZxVMnhe84Ii2cgnMdGjNbZvdL2Ec3-Aa0QIuQuSGQ60r0K9xl3tp22rwMzJ44tIEem7CA7IfpwIl_-EEPk8W1OeNL3GXaTZQpLaslGJPwBjHpx53LG3qTHrW4bmMzn_cxV1BS3blv0W-CdkFF08epyif2_K6iAqIL6ombLM8X5IKML92TANVwroR2NnPNoSyXZ5jCyOBJqxKUl-9OuX8"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-16 min-h-screen bg-surface">
+<div class="p-container-margin max-w-desktop-max-width mx-auto">
+<!-- Header Section -->
+<section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="text-headline-xl font-headline-xl text-on-surface mb-2">My Documents</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Manage and track your professional document lifecycles.</p>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2.5 rounded-lg flex items-center gap-2 hover:bg-primary hover:text-on-primary transition-all font-label-md">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'wght' 600;">add</span>
+                    New Document
+                </button>
+</section>
+<!-- Filters & Controls Bar -->
+<section class="bg-surface-container border border-outline-variant rounded-xl p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md transition-colors">All</button>
+<button class="px-4 py-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-label-md transition-colors">In Progress</button>
+<button class="px-4 py-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-label-md transition-colors">Final</button>
+<button class="px-4 py-2 rounded-lg hover:bg-surface-container-high text-on-surface-variant font-label-md transition-colors">Archived</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-on-surface-variant border-r border-outline-variant pr-4">
+<span class="text-label-md font-label-md">Sort by:</span>
+<select class="bg-transparent border-none text-label-md font-label-md text-primary focus:ring-0 cursor-pointer">
+<option class="bg-surface-container-high">Modified Date</option>
+<option class="bg-surface-container-high">Alphabetical</option>
+<option class="bg-surface-container-high">Retention Status</option>
+</select>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-primary bg-primary-container/20 rounded-lg">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined" data-icon="list">list</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Document Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+<!-- Card 1: Quarterly Compliance Review -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 hover:border-primary transition-all group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary group-hover:w-2 transition-all"></div>
+<div class="flex justify-between items-start mb-4 pl-2">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="circle" style="font-variation-settings: 'FILL' 1;">circle</span>
+                                In Progress
+                            </span>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Quarterly Compliance Review_v2</h3>
+</div>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-y-4 mb-6 pl-2">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Document ID</p>
+<p class="text-body-md font-body-md font-bold">DOC-2024-0891</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Visibility</p>
+<p class="text-body-md font-body-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span> Team Only
+                            </p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Last Modified</p>
+<p class="text-body-md font-body-md">Oct 24, 2023</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Retention Period</p>
+<p class="text-body-md font-body-md">7 Years</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant pt-4 pl-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7Uy1SVnPVBNvwrBYSjdxGjFcx3NIQZkbGt9A8qqJBsC8XN_AUIsj9AwWVk1DeEQYFDD939FRl2l6hHQhHv72YGQNgHQpuMAaAdyv3ZUoUF56HC9eqEpqFcqp-Mc6_YYh8mfbFhLdDxljkK4Em1nGV0vkkBiqJezHJxeO-utwOPy3pgTGdRxMA2LrSVEFrQW-ZnHo2RU62zq9xAuPTrocakaR88bPG0oG5M3g6swa9FNcAV6ZHTj5VM1vSyYikei2BwsU2xus8y_I"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-primary flex items-center justify-center text-[10px] text-on-primary font-bold">+3</div>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label-md hover:bg-primary hover:text-on-primary transition-all">
+                            Open Document
+                        </button>
+</div>
+</div>
+<!-- Card 2: Employee Handbook 2024 -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 hover:border-primary transition-all group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary group-hover:w-2 transition-all"></div>
+<div class="flex justify-between items-start mb-4 pl-2">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-primary flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                Final
+                            </span>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Employee Handbook 2024</h3>
+</div>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-y-4 mb-6 pl-2">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Document ID</p>
+<p class="text-body-md font-body-md font-bold">DOC-2023-1102</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Visibility</p>
+<p class="text-body-md font-body-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="public">public</span> Public
+                            </p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Last Modified</p>
+<p class="text-body-md font-body-md">Jan 12, 2024</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Retention Period</p>
+<p class="text-body-md font-body-md">Permanent</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant pt-4 pl-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwooZtoZNTi-qXDpkZewIR2PvRfdgy5O-iQn_cff4VhfQHBOsCISz9_8gjcrK0wjxd-_EeSnue8pT3xDpqtDOHHq7liL3brr9hDONCYacv_Jn0aTREMeXVHvPpTrTOGZPobHDlsoJhas99i5D6zrrHrqwo6NerX17fnL7M83-QAbADlDJs62TnixUYCEcStg3la5w21mXF-btw9opI3SU9lfe3xmGPut4rbhJnuBPARe3cUmn157G95ixV6dUNxwa8wrCtx9r_bcM"/>
+</div>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label-md hover:bg-primary hover:text-on-primary transition-all">
+                            Open Document
+                        </button>
+</div>
+</div>
+<!-- Card 3: Vendor Agreement -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 hover:border-primary transition-all group relative overflow-hidden opacity-80 hover:opacity-100">
+<div class="absolute top-0 left-0 w-1 h-full bg-outline group-hover:w-2 transition-all"></div>
+<div class="flex justify-between items-start mb-4 pl-2">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="archive" style="font-variation-settings: 'FILL' 1;">archive</span>
+                                Archived
+                            </span>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Vendor Agreement - TechSol Inc.</h3>
+</div>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-y-4 mb-6 pl-2">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Document ID</p>
+<p class="text-body-md font-body-md font-bold">DOC-2022-0455</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Visibility</p>
+<p class="text-body-md font-body-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="admin_panel_settings">admin_panel_settings</span> Restricted
+                            </p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Last Modified</p>
+<p class="text-body-md font-body-md">Mar 15, 2022</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Retention Period</p>
+<p class="text-body-md font-body-md">10 Years</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant pt-4 pl-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWq_4nCPZhA9O7lgYVb6Lw3a-qNuVLtIgupod8QOSU15Dl6mV1_4AYipFq2T8Cx1dvqigKRwjvuJ901HxwrRJcEj_wYenM7SlAWhvUDf7byw1F6eTBk0BkRG7ALsG9kb3EKM4PmJl-t9vF7EpWqjln4uF511YJDzPTid5AXDKc7QsZ7iXeWAo0Q2tSOjBdnp5moIv7vaEBNDhVxNHtY2sJaC6MATJrQsdT6e0oHbIZw5qGcnfQcF0pqitkqNSOGQS2psd7QE-sEl0"/>
+</div>
+</div>
+<button class="bg-surface-container-high text-on-surface-variant px-6 py-2 rounded font-label-md hover:bg-outline-variant transition-all">
+                            Restore
+                        </button>
+</div>
+</div>
+<!-- Card 4: Marketing Strategy -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-6 hover:border-primary transition-all group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary group-hover:w-2 transition-all"></div>
+<div class="flex justify-between items-start mb-4 pl-2">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="circle" style="font-variation-settings: 'FILL' 1;">circle</span>
+                                In Progress
+                            </span>
+<h3 class="text-headline-md font-headline-md text-on-surface group-hover:text-primary transition-colors">Marketing Strategy - Q4 2024</h3>
+</div>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-y-4 mb-6 pl-2">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Document ID</p>
+<p class="text-body-md font-body-md font-bold">DOC-2024-0912</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Visibility</p>
+<p class="text-body-md font-body-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="groups">groups</span> Internal
+                            </p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Last Modified</p>
+<p class="text-body-md font-body-md">Just now</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase">Retention Period</p>
+<p class="text-body-md font-body-md">3 Years</p>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant pt-4 pl-2">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAQNxbhVTpJfv8_4JMs9zRidViMYt8JgPjZV4nDDEN4moe1V3geVasnVTWA5MAYaHpyOsGhVWeXzLNr-vsUyXdPb15ajDa964OVx9aC9_TwUVe9XpwJ4cGGnrFCfE1edqO2uie05uvt-HXG2MQ77ZTtOeXtwIuAbamJD_cmFGskRXMFg4fKBWlkkvKik85fRSad82TDTtumThvOtNwPIOxMYergxeY5kfnurrixOhcnOKpZLVa4TXkoM8OrltLtViE88sOmEkGWLA"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container-low bg-surface-container overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCysg1eRaVJmMacSpl5GuupM65XgcehPzXPox-DvHp4kxAn4D8YbP4X5PHvy5IySG6kMwaLc1JE8qm4Q-Nfu6FFD7plK4t6DuBB999_4baP19IrCeMH53Tgpb4tSqhIHJcT9mKAF5XSWFtaeiadav-E9WiUGrdxj3NWkB3emcWq9BTZEaRZEVAmgUyAsg8ohW1gsecoWDv1k3PZDN77Buu-pCe06vzkg6XkE-p6dPauOK0EGxn2yebqe5fum8ewifNDAl_kWhAAAQE"/>
+</div>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label-md hover:bg-primary hover:text-on-primary transition-all">
+                            Open Document
+                        </button>
+</div>
+</div>
+<!-- Create New Placeholder Card -->
+<button class="border-2 border-dashed border-outline-variant rounded-xl p-6 hover:bg-surface-container-high/30 hover:border-primary transition-all flex flex-col items-center justify-center group gap-3 min-h-[300px]">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-headline-md" data-icon="add_circle">add_circle</span>
+</div>
+<div class="text-center">
+<p class="text-headline-md font-headline-md text-on-surface-variant group-hover:text-primary">Create New Document</p>
+<p class="text-label-md font-label-md text-on-surface-variant/70">Start from a blank page or template</p>
+</div>
+</button>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 rounded-full bg-secondary text-on-secondary shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[32px]" data-icon="add" style="font-variation-settings: 'wght' 600;">add</span>
+</button>
+</div>
+</body></html>

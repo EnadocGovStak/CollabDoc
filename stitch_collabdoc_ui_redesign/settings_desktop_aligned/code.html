@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workspace Settings | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#007243",
+                    "surface-bright": "#f9f9ff",
+                    "background": "#f9f9ff",
+                    "tertiary-fixed": "#ffdad7",
+                    "tertiary": "#a70819",
+                    "on-surface-variant": "#414750",
+                    "on-secondary-fixed-variant": "#00522f",
+                    "on-error-container": "#93000a",
+                    "secondary": "#006d40",
+                    "surface-variant": "#d9e3f9",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "on-primary-fixed-variant": "#004881",
+                    "surface-container": "#e7eeff",
+                    "on-background": "#121c2c",
+                    "surface-tint": "#1960a3",
+                    "surface-container-highest": "#d9e3f9",
+                    "surface-container-low": "#f0f3ff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#ffe6e3",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#c1c7d2",
+                    "on-tertiary-fixed": "#410004",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#d0daf0",
+                    "secondary-container": "#8ef5b5",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#f9f9ff",
+                    "outline": "#727782",
+                    "on-primary-container": "#e1ecff",
+                    "primary-container": "#2b6cb0",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#001c38",
+                    "inverse-on-surface": "#ebf1ff",
+                    "surface-container-high": "#dee8ff",
+                    "secondary-fixed": "#91f8b8",
+                    "primary": "#005394",
+                    "error-container": "#ffdad6",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "inverse-surface": "#273141",
+                    "on-surface": "#121c2c",
+                    "on-secondary-fixed": "#002110",
+                    "secondary-fixed-dim": "#74db9d",
+                    "primary-fixed": "#d3e4ff",
+                    "tertiary-container": "#ca2a2e",
+                    "inverse-primary": "#a2c9ff",
+                    "on-tertiary-fixed-variant": "#930013"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin": "32px",
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f9f9ff; color: #121c2c; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c7d2; border-radius: 10px; }
+        .card-shadow { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-hidden">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-outline-variant/30 flex flex-col z-50">
+<div class="px-6 py-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Evia Collab</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Professional Workspace</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-body-md">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-md">Profile</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-6 border-t border-outline-variant/30 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest rounded-r-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-8">
+<div class="flex gap-6 items-center">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Recent</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Shared</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Favorites</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-on-surface-variant">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+</span>
+<input class="bg-surface-container-low border border-outline-variant rounded-full py-1.5 pl-10 pr-4 text-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none w-64 transition-all" placeholder="Search workspace..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary p-2 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold cursor-pointer overflow-hidden border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvolfQa71GmzApm4JU7uNNuC8Qdl38__T2hJrg-fLsAX4sfxHqyQ_1YZlbIFRAGo7EcYZfiwyESaQXliYabst-lCNKdMQcl8R9Z-S2XqHKoQoIPYagjtxiG1v3d_k5o7QidH0wjTbXYBjk7KNkWM3wyT-rvL8OCYB1LHe1YjsQCAxcYSstYc96R7B0Yl4tzNTEWIAzlkt_BEoZRc-_aWhQqV6Xyos9ijr_GeAGWUs2KMTRLPSKHgAXVKDxqWOnToz2L_-V8GgEmzY"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="pl-64 pt-16 h-screen overflow-y-auto custom-scrollbar">
+<div class="max-w-[1200px] mx-auto px-12 py-10">
+<!-- Heading Section -->
+<div class="mb-10">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Workspace Settings</h2>
+<p class="font-body-lg text-on-surface-variant">Manage your workspace's identity, security, and team permissions.</p>
+</div>
+<!-- Settings Layout Structure -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Left Column: General Information -->
+<div class="col-span-8 bg-white border border-outline-variant p-8 rounded-xl card-shadow">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">General Information</h3>
+<p class="text-on-surface-variant font-label-md mt-1">Update your workspace name and branding.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-md hover:opacity-90 transition-all shadow-sm active:scale-95">Save Changes</button>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="space-y-1.5">
+<label class="font-label-sm uppercase tracking-wider text-on-surface-variant">Workspace Name</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" type="text" value="Design Engineering Lab"/>
+</div>
+<div class="space-y-1.5">
+<label class="font-label-sm uppercase tracking-wider text-on-surface-variant">Workspace URL</label>
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition-all">
+<span class="text-on-surface-variant/60 mr-1">evia.collab/</span>
+<input class="bg-transparent border-none p-0 text-on-surface focus:ring-0 flex-1" type="text" value="design-eng"/>
+</div>
+</div>
+<div class="col-span-2 space-y-1.5">
+<label class="font-label-sm uppercase tracking-wider text-on-surface-variant">Workspace Description</label>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none min-h-[120px]" rows="3">Centralized hub for all design systems and engineering documentation across the organization.</textarea>
+</div>
+</div>
+</div>
+<!-- Right Column: Current Plan -->
+<div class="col-span-4 bg-primary-container text-on-primary-container p-8 rounded-xl card-shadow relative overflow-hidden h-full flex flex-col justify-between">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-xl" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-sm uppercase font-bold tracking-widest">Current Plan</span>
+</div>
+<h3 class="font-headline-md text-2xl font-extrabold mb-1">Enterprise Pro</h3>
+<p class="font-body-md opacity-80">Renews on Oct 24, 2024</p>
+</div>
+<div class="mt-12 relative z-10">
+<div class="flex justify-between items-end mb-2.5">
+<span class="font-label-md font-medium">Storage Used</span>
+<span class="font-label-md font-bold text-lg">84%</span>
+</div>
+<div class="w-full h-2.5 bg-on-primary-container/15 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-fixed w-[84%] relative shadow-[0_0_15px_rgba(116,219,157,0.4)]">
+</div>
+</div>
+<button class="mt-8 w-full border border-on-primary-container/30 hover:bg-on-primary-container/10 px-4 py-2.5 rounded-lg font-label-md transition-all text-center">Upgrade Storage</button>
+</div>
+<!-- Background Decoration -->
+<div class="absolute -right-16 -bottom-16 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Bottom Section: Team Members -->
+<div class="col-span-12 bg-white border border-outline-variant p-8 rounded-xl card-shadow mt-2">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Team Members</h3>
+<p class="text-on-surface-variant font-label-md mt-1">Manage user roles and invitation links.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 border border-outline-variant px-6 py-2.5 rounded-lg font-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="link">link</span>
+                            Copy Invite Link
+                        </button>
+<button class="bg-inverse-surface text-inverse-on-surface px-6 py-2.5 rounded-lg font-label-md hover:opacity-90 transition-all active:scale-95">Invite Members</button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Sarah Drasner -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl border border-transparent hover:border-primary/20 hover:bg-surface-container transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img alt="Sarah Drasner" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7p-7f1CJPZvhjKJhtt2T1QGsmHh8SKiJQb-HwlgkxNF-_VAcJRC3wFk_g9V7oJ53x42ilmqqCTwFKEGtHytPzPWParZ0f1hYnvPc40sCoWzhSaHtW-1NRhrHlqhbcw9eaANdzqsitYB5xFG_TXtYEODlmIouHUpU-MWo4HFAaS9XvTKO6ngCNiyPG30BcBDhV8umcyNatK0zAPLxzD7fIUExOVOFmKYAAqQXiJTUSduZvSz0IF2MTWii3AZmtW0MW26sZPE48lo8"/>
+</div>
+<div>
+<h4 class="font-headline-md text-base text-on-surface font-semibold">Sarah Drasner</h4>
+<p class="text-on-surface-variant text-label-md">sarah@evia.design</p>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<span class="px-4 py-1 bg-secondary-container/30 text-on-secondary-container border border-secondary-container/50 rounded-full font-label-sm uppercase tracking-wide">Workspace Owner</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer min-w-[80px]">
+<span class="font-label-md">Admin</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+<!-- Marcus Aurelius -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl border border-transparent hover:border-primary/20 hover:bg-surface-container transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img alt="Marcus Aurelius" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpZDp37ZNevHYEge57-qNNxxBeOPSv7nZRN_olv5u-ivcQ0ouxw_JNwoHrPKRBop4yg0qL_nqafHMY_gpQ9SHMBSlewNeYHJhCGz5-8p8GC-_EqZe0uqkZN1w-gqOJi-A6EHR_QrvX8BaKWiA3RgtQCeKSeBF4GG5OyFa87j-DlJ7r5ciF9Wej6n0cdHDNr8uA4LJTqX0QzgdBVsrVYVM3uj1mJgRE97FB3KrY4wvYG2YqgbPd8x03qVTFQOmzhxV_1-pZ7H-wrzY"/>
+</div>
+<div>
+<h4 class="font-headline-md text-base text-on-surface font-semibold">Marcus Aurelius</h4>
+<p class="text-on-surface-variant text-label-md">marcus.a@evia.eng</p>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<span class="px-4 py-1 bg-surface-container-highest text-on-surface-variant border border-outline-variant/30 rounded-full font-label-sm uppercase tracking-wide">Project Lead</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer min-w-[80px]">
+<span class="font-label-md">Editor</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+<!-- Elena Rodriguez -->
+<div class="flex items-center justify-between p-5 bg-surface-container-low rounded-xl border border-transparent hover:border-primary/20 hover:bg-surface-container transition-all group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
+<img alt="Elena Rodriguez" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf6f1VAFcgFKrf_paavBpjP-i2pSuW2JHmBJt7E3O8bd200sFKfo5KvmzyVCZ1_Xwrzk2cCfbsGtLd5CkwZvJh_9tLZSMTVro5rDgrxTIXcBXQcrchxPt2Wne1BCWU7MpyfRqndArF-lN93En94GmmACWJO5RrhpZOUJKXqah04BDz2hTt5UpaOdKiJlH2_2-XvIN007ctQM0aCahOIGD0wITzwa5QLxCCcJ8lqvtx-YFfIsvFgdkU7LD-Dabqn6V9LfV36FYv1og"/>
+</div>
+<div>
+<h4 class="font-headline-md text-base text-on-surface font-semibold">Elena Rodriguez</h4>
+<p class="text-on-surface-variant text-label-md">elena.r@evia.ops</p>
+</div>
+</div>
+<div class="flex items-center gap-10">
+<span class="px-4 py-1 bg-surface-container-highest text-on-surface-variant border border-outline-variant/30 rounded-full font-label-sm uppercase tracking-wide">Strategy</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer min-w-[80px]">
+<span class="font-label-md">Viewer</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Danger Zone Section -->
+<div class="col-span-12 border-2 border-dashed border-error/20 bg-error-container/5 p-8 rounded-xl mt-6">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-error font-bold">Danger Zone</h3>
+<p class="text-on-surface-variant font-body-md mt-1">Irreversible actions that affect the entire workspace and all its data.</p>
+</div>
+<button class="border border-error text-error px-8 py-2.5 rounded-lg font-label-md hover:bg-error hover:text-on-error transition-all active:scale-95 shadow-sm">Archive Workspace</button>
+</div>
+</div>
+</div>
+<!-- Footer Spacer -->
+<div class="h-24"></div>
+</div>
+</main>
+<script>
+    // Micro-interactions
+    document.querySelectorAll('button, a').forEach(el => {
+        el.addEventListener('mousedown', () => {
+            el.style.transform = 'scale(0.97)';
+        });
+        el.addEventListener('mouseup', () => {
+            el.style.transform = 'scale(1)';
+        });
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = 'scale(1)';
+        });
+    });
+
+    // Sidebar active state logic (simplified)
+    const currentPath = window.location.hash || '#settings';
+    document.querySelectorAll('aside nav a, aside div a').forEach(link => {
+        // Just for demo visual feedback
+        link.addEventListener('click', () => {
+            document.querySelectorAll('aside a').forEach(l => {
+                l.classList.remove('text-primary', 'font-bold', 'border-l-4', 'border-primary', 'bg-surface-container-highest');
+                l.classList.add('text-on-surface-variant');
+            });
+            link.classList.add('text-primary', 'font-bold', 'border-l-4', 'border-primary', 'bg-surface-container-highest');
+            link.classList.remove('text-on-surface-variant');
+        });
+    });
+</script>
+</body></html>

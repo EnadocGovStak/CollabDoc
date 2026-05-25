@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>My Documents | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#91f8b8",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "on-secondary-fixed": "#002110",
+                    "inverse-on-surface": "#ebf1ff",
+                    "primary": "#005394",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#121c2c",
+                    "secondary": "#006d40",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#a2c9ff",
+                    "on-surface-variant": "#414750",
+                    "inverse-surface": "#273141",
+                    "surface-variant": "#d9e3f9",
+                    "on-primary-fixed": "#001c38",
+                    "surface-container": "#e7eeff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-background": "#121c2c",
+                    "outline": "#727782",
+                    "on-tertiary-fixed-variant": "#930013",
+                    "on-primary-container": "#e1ecff",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#d3e4ff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#004881",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-tertiary-container": "#ffe6e3",
+                    "tertiary-container": "#ca2a2e",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "surface-container-highest": "#d9e3f9",
+                    "secondary-fixed-dim": "#74db9d",
+                    "secondary-container": "#8ef5b5",
+                    "surface-tint": "#1960a3",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#a70819",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#dee8ff",
+                    "on-secondary-fixed-variant": "#00522f",
+                    "primary-container": "#2b6cb0",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "surface-dim": "#d0daf0",
+                    "outline-variant": "#c1c7d2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#410004",
+                    "background": "#f9f9ff",
+                    "on-secondary-container": "#007243"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "margin": "32px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center h-16 px-4 w-full border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-high">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="A professional corporate headshot of a woman with a confident expression, set against a clean, neutral-toned office background. The lighting is soft and even, highlighting her professional attire in a modern, collaborative workspace. The overall aesthetic is clean, reliable, and high-trust, perfectly matching a professional document management application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY5rntqUhTzegfVzu0V-MjDuoe-kSXb306x9Ap6pI9BffFmTfxrUAX1mlqmroB-4CYmLkVP6V3qtlNEAJcr63QP8pmOnDcL_QcFhmgCnw3roB8zuCu-P9JVe3KQZeQOzD9HrI8-9-8SIwZkGTkah0mvUUlU7kxmYN3rh8wxDqbStX5Bwp7Rmr_VWved5vf7RP7ldtGRYs64irTXpO2Nt6qqSN4M0Wl74AGCsURAsUB7J25lOU4Uylv-QZ-ru7Ng6iK7Kad07DXssQ"/>
+</div>
+</header>
+<main class="px-4 pt-6 max-w-lg mx-auto">
+<!-- Header Section -->
+<section class="mb-6">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-1">My Documents</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your collaborative document lifecycle.</p>
+</section>
+<!-- Search and Filter -->
+<section class="space-y-4 mb-8">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" placeholder="Search templates and fields..." type="text"/>
+</div>
+<!-- Horizontal Filter Tabs -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary font-label-md transition-colors">All</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-md hover:bg-surface-variant transition-colors">In Progress</button>
+<button class="px-5 py-2 rounded-full bg-surface-container-high text-on-surface-variant font-label-md hover:bg-surface-variant transition-colors">Final</button>
+</div>
+</section>
+<!-- Document List -->
+<section class="space-y-4">
+<!-- Document Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Invoice Template</h3>
+<div class="flex gap-2 items-center">
+<span class="flex items-center gap-1 bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-label-sm">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+                                FINAL
+                            </span>
+<span class="text-on-surface-variant font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">public</span>
+                                Public
+                            </span>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="flex flex-col">
+<span class="text-outline font-label-sm">Modified</span>
+<span class="text-on-surface font-body-md">Oct 24, 2023</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-label-md flex items-center gap-2 hover:bg-primary-container transition-colors">
+                        Open
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Document Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Leave Policy</h3>
+<div class="flex gap-2 items-center">
+<span class="flex items-center gap-1 bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full font-label-sm">
+<span class="w-1.5 h-1.5 bg-outline rounded-full"></span>
+                                IN PROGRESS
+                            </span>
+<span class="text-on-surface-variant font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                                Internal
+                            </span>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="flex flex-col">
+<span class="text-outline font-label-sm">Modified</span>
+<span class="text-on-surface font-body-md">Yesterday</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-label-md flex items-center gap-2 hover:bg-primary-container transition-colors">
+                        Open
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Document Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Employment Contract</h3>
+<div class="flex gap-2 items-center">
+<span class="flex items-center gap-1 bg-surface-variant text-on-surface-variant px-2 py-0.5 rounded-full font-label-sm">
+<span class="w-1.5 h-1.5 bg-outline rounded-full"></span>
+                                IN PROGRESS
+                            </span>
+<span class="text-on-surface-variant font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                                Internal
+                            </span>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="flex flex-col">
+<span class="text-outline font-label-sm">Modified</span>
+<span class="text-on-surface font-body-md">Oct 20, 2023</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-label-md flex items-center gap-2 hover:bg-primary-container transition-colors">
+                        Open
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Document Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 transition-all hover:border-primary">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Q4 Budget Draft</h3>
+<div class="flex gap-2 items-center">
+<span class="flex items-center gap-1 bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded-full font-label-sm">
+<span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+                                FINAL
+                            </span>
+<span class="text-on-surface-variant font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+                                Internal
+                            </span>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex justify-between items-center mt-6">
+<div class="flex flex-col">
+<span class="text-outline font-label-sm">Modified</span>
+<span class="text-on-surface font-body-md">Oct 18, 2023</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-label-md flex items-center gap-2 hover:bg-primary-container transition-colors">
+                        Open
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full shadow-lg flex items-center justify-center transition-transform active:scale-90 z-40">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface border-t border-outline-variant z-50">
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-sm text-label-sm">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform scale-95 active:scale-90 hover:text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="folder_copy">folder_copy</span>
+<span class="font-label-sm text-label-sm">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform scale-95 active:scale-90 hover:text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="schema">schema</span>
+<span class="font-label-sm text-label-sm">Fields</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant transition-transform scale-95 active:scale-90 hover:text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple Interaction for Filter Buttons
+        const filterButtons = document.querySelectorAll('section .flex.gap-2 button');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+                });
+                btn.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+                btn.classList.add('bg-primary', 'text-on-primary');
+            });
+        });
+
+        // Add subtle scroll reveal effect
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.bg-surface-container-lowest').forEach(card => {
+            card.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

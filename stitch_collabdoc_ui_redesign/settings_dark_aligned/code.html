@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #131313;
+            color: #e5e2e1;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .rim-light {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 10px;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #00e29c;
+        }
+        .toggle-checkbox:checked + .toggle-label .toggle-dot {
+            transform: translateX(20px);
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#424753",
+                        "inverse-on-surface": "#313030",
+                        "tertiary-fixed": "#e6deff",
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-highest": "#353534",
+                        "on-primary-fixed-variant": "#004398",
+                        "on-primary-container": "#00275f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "error-container": "#93000a",
+                        "secondary-container": "#00a571",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary": "#31009a",
+                        "tertiary-fixed-dim": "#cabeff",
+                        "on-tertiary-container": "#2a0088",
+                        "surface": "#131313",
+                        "secondary-fixed": "#48ffb6",
+                        "on-tertiary-fixed": "#1c0062",
+                        "on-secondary": "#003824",
+                        "inverse-primary": "#0059c6",
+                        "primary-fixed-dim": "#afc6ff",
+                        "on-background": "#e5e2e1",
+                        "on-primary": "#002d6c",
+                        "tertiary-container": "#937dff",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed-dim": "#00e29c",
+                        "background": "#131313",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-secondary-fixed": "#002113",
+                        "primary": "#afc6ff",
+                        "primary-fixed": "#d9e2ff",
+                        "surface-tint": "#afc6ff",
+                        "secondary": "#00e29c",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#cabeff",
+                        "primary-container": "#528dff",
+                        "on-surface-variant": "#c2c6d6",
+                        "surface-container": "#201f1f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed": "#001a43",
+                        "surface-bright": "#393939",
+                        "on-secondary-container": "#00311e",
+                        "on-error": "#690005",
+                        "outline": "#8c909f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "desktop-max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface custom-scrollbar font-body-md flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-md text-primary dark:text-primary-fixed-dim top-0 sticky border-b border-white/10 shadow-sm flex justify-between items-center px-gutter w-full h-16 z-50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors duration-200 active:scale-95 p-2 rounded-full">menu</button>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-primary">Evia Collab</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined text-on-surface-variant dark:text-on-surface-variant hover:bg-white/5 transition-colors duration-200 active:scale-95 p-2 rounded-full">search</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-primary/20">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARWMvWpsXanRx5ZTj8ssUAlzUbalqvO8YOHZdEEo3K-YWt8sJOsM5QRCxm4N7dc6k6gByXTaAouc43mhsolmN5ZCwaJczPiqgMgVxfjSzTWT568Oer-lLxO30AqNwCG6EbZriGJKXQz1VrsVIEHxG6YcYiylJ9ipnaSMRAiXqEgfuniszbE4FmS3kwMcgqBtzhrobF099TMGjTglPE2njBLPzZhPTlMFqQrvNInuVIb32P6iHVn4y5wCvyaLuF4aKDP5RLRDDeeQc"/>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-desktop-max-width mx-auto px-4 py-6 pb-24 w-full">
+<!-- Header Section -->
+<div class="mb-6">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-widest">WORKSPACE CONFIGURATION</span>
+<h2 class="text-headline-lg font-headline-lg text-on-surface mt-1">Settings</h2>
+</div>
+<!-- Section: Workspace -->
+<section class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">corporate_fare</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Workspace</h3>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden border border-outline-variant/30 shadow-sm">
+<!-- Default View -->
+<div class="p-4 flex items-center justify-between border-b border-outline-variant/20 hover:bg-white/5 transition-colors duration-200">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Default view</span>
+<span class="text-body-md text-on-surface-variant">Grid layout for dashboards</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+<!-- Template Source -->
+<div class="p-4 flex items-center justify-between hover:bg-white/5 transition-colors duration-200">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Template source</span>
+<span class="text-body-md text-on-surface-variant">Institutional Library</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Section: Preferences -->
+<section class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl">tune</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Preferences</h3>
+</div>
+<div class="bg-surface-container rounded-xl overflow-hidden border border-outline-variant/30 shadow-sm">
+<!-- Editor Autosave -->
+<div class="p-4 flex items-center justify-between border-b border-outline-variant/20">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Editor autosave</span>
+<span class="text-body-md text-on-surface-variant">Sync changes every 30s</span>
+</div>
+<div class="relative inline-block w-10 h-5 align-middle select-none">
+<input checked="" class="hidden toggle-checkbox" id="toggle_autosave" type="checkbox"/>
+<label class="toggle-label block h-5 w-10 rounded-full bg-surface-container-highest cursor-pointer transition-colors duration-200 relative" for="toggle_autosave">
+<span class="toggle-dot absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200"></span>
+</label>
+</div>
+</div>
+<!-- Validation Prompts -->
+<div class="p-4 flex items-center justify-between border-b border-outline-variant/20">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Validation prompts</span>
+<span class="text-body-md text-on-surface-variant">Alert on schema mismatch</span>
+</div>
+<div class="relative inline-block w-10 h-5 align-middle select-none">
+<input class="hidden toggle-checkbox" id="toggle_validation" type="checkbox"/>
+<label class="toggle-label block h-5 w-10 rounded-full bg-surface-container-highest cursor-pointer transition-colors duration-200 relative" for="toggle_validation">
+<span class="toggle-dot absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200"></span>
+</label>
+</div>
+</div>
+<!-- High Precision Mode -->
+<div class="p-4 flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">High precision mode</span>
+<span class="text-body-md text-on-surface-variant">Enhanced validation rules</span>
+</div>
+<div class="relative inline-block w-10 h-5 align-middle select-none">
+<input checked="" class="hidden toggle-checkbox" id="toggle_precision" type="checkbox"/>
+<label class="toggle-label block h-5 w-10 rounded-full bg-surface-container-highest cursor-pointer transition-colors duration-200 relative" for="toggle_precision">
+<span class="toggle-dot absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform duration-200"></span>
+</label>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary Cards (Bento Style) -->
+<div class="grid grid-cols-2 gap-3 mb-8">
+<div class="bg-primary-container/10 border border-primary/20 rounded-xl p-3 flex flex-col justify-between overflow-hidden relative min-h-[112px]">
+<span class="text-label-sm font-label-sm text-primary uppercase">CURRENT WORKSPACE</span>
+<span class="text-headline-md font-headline-md text-on-surface truncate">Global Ops</span>
+<div class="absolute -right-4 -bottom-4 opacity-5">
+<span class="material-symbols-outlined text-6xl">database</span>
+</div>
+</div>
+<div class="bg-secondary-container/10 border border-secondary/20 rounded-xl p-3 flex flex-col justify-between min-h-[112px]">
+<span class="text-label-sm font-label-sm text-secondary uppercase">STORAGE USED</span>
+<div class="flex flex-col gap-2">
+<span class="text-headline-md font-headline-md text-on-surface">82%</span>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 82%"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-container-margin py-3 pb-safe bg-surface-container/95 backdrop-blur-xl border-t border-white/5 z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-label-sm font-label-sm mt-1">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-label-sm font-label-sm mt-1">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">schema</span>
+<span class="text-label-sm font-label-sm mt-1">Fields</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="text-label-sm font-label-sm font-bold mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Templates - Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#91f8b8",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#f9f9ff",
+                      "on-secondary-fixed": "#002110",
+                      "inverse-on-surface": "#ebf1ff",
+                      "primary": "#005394",
+                      "surface": "#f9f9ff",
+                      "on-surface": "#121c2c",
+                      "secondary": "#006d40",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#a2c9ff",
+                      "on-surface-variant": "#414750",
+                      "inverse-surface": "#273141",
+                      "surface-variant": "#d9e3f9",
+                      "on-primary-fixed": "#001c38",
+                      "surface-container": "#e7eeff",
+                      "surface-container-low": "#f0f3ff",
+                      "on-background": "#121c2c",
+                      "outline": "#727782",
+                      "on-tertiary-fixed-variant": "#930013",
+                      "on-primary-container": "#e1ecff",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#d3e4ff",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#004881",
+                      "tertiary-fixed": "#ffdad7",
+                      "on-tertiary-container": "#ffe6e3",
+                      "tertiary-container": "#ca2a2e",
+                      "primary-fixed-dim": "#a2c9ff",
+                      "surface-container-highest": "#d9e3f9",
+                      "secondary-fixed-dim": "#74db9d",
+                      "secondary-container": "#8ef5b5",
+                      "surface-tint": "#1960a3",
+                      "on-primary": "#ffffff",
+                      "tertiary": "#a70819",
+                      "error": "#ba1a1a",
+                      "surface-container-high": "#dee8ff",
+                      "on-secondary-fixed-variant": "#00522f",
+                      "primary-container": "#2b6cb0",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#ffb3ad",
+                      "surface-dim": "#d0daf0",
+                      "outline-variant": "#c1c7d2",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed": "#410004",
+                      "background": "#f9f9ff",
+                      "on-secondary-container": "#007243"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "margin": "32px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "headline-xl": ["Hanken Grotesk"],
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 border-b border-outline-variant flex justify-between items-center h-16 px-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-low transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User profile photo" data-alt="A professional headshot of a woman with a confident smile, set against a soft-focus corporate office background. The lighting is bright and natural, reflecting a modern workspace aesthetic. The overall color palette is clean, dominated by cool whites and soft greys with subtle blue professional tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD86l-gCRs5DRX2nBlR2XvEGsNDpXobcZ_HYa7McYnOJ2knU8TSxRlhwsUuIOqlivMi_XfNATfzruyu8NnrXGPyD_ZkIjjOb7nWS9tEoQxuQmmwKFIlgnfczHWWE-WZ3glXWYfnJkXR3FAPh5zldse_jioSBDz5NOsoL_XA2Jwk3HOF2Nisf_qUBvNAks2w7TU8KsmzOgwQuC_mxIl4zw9yGe-uSTH75wSm9CXao_-5Yuoq5qMmtA-QUZQ8a_W_TVZZKrhVNB7xVaI"/>
+</div>
+</div>
+</header>
+<main class="px-4 py-6 max-w-lg mx-auto">
+<!-- Search & Title -->
+<div class="mb-6">
+<h2 class="font-headline-lg text-headline-lg mb-4">Document Templates</h2>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary transition-all font-body-md text-body-md" placeholder="Search templates..." type="text"/>
+</div>
+</div>
+<!-- Category Filters -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar mb-8 -mx-4 px-4">
+<button class="whitespace-nowrap px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-sm">All</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">General</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Business</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">HR</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Finance</button>
+<button class="whitespace-nowrap px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-low transition-colors">Legal</button>
+</div>
+<!-- Template Grid -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div class="w-16 h-20 bg-surface-container-high rounded flex items-center justify-center border border-outline-variant shrink-0 overflow-hidden">
+<img class="opacity-40 group-hover:opacity-60 transition-opacity" data-alt="A clean, minimalist document preview showing structured text blocks and a header area. The background is a crisp white paper texture with soft grey lines suggesting a professional layout. The lighting is even and bright, emphasizing a corporate and reliable aesthetic that aligns with a high-precision workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADZY5MRv_ZsS7wtn6-_s-6uTfIzf8MGguvnrHdgnVGFv0dM0xstXRB5TFsmE7v4W4CXq0hcOIpVh3f4tLXthpUdUQLjObW-Ht85x_pHguf85hLYxUE48Nlfo20wZs9iOuvwVxIbwiJ8SofFf6LYKd6Il38kSenSOexg2xlNPcMAKUuW_yYuhbG0-SRTmyoNobRMGdY9PiTeuLdSg9HxkKDe9sskC1EPgL3-C8Lz5gZ32E6R4-acJc3gGF-85OMceBJfeDeUb32Zyw"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 bg-secondary-container rounded-full mb-2 inline-block">Legal</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">NDA Agreement</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Standard non-disclosure agreement for external collaborators.</p>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div class="w-16 h-20 bg-surface-container-high rounded flex items-center justify-center border border-outline-variant shrink-0 overflow-hidden">
+<img class="opacity-40 group-hover:opacity-60 transition-opacity" data-alt="A financial spreadsheet mockup with clean blue-toned charts and tables. The visual style is crisp and professional, featuring a bright light-mode workspace with minimal shadows. The composition focuses on functional clarity and data organization, using a sophisticated palette of corporate blues and whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZHsLxwc5zIFKbbTZ--jOsUslNLOhIo3ZHTj824Ngaz3O57j7LNQXGdaCiqQTEmtBelStZ8WcNHgDAcH6zt4uyVqpJ_ze-3rAwP_Ouw_44gEJmt4UpZPsQiOvJ-4JfPVIzCX-p_ciTYhK6o2275_7APHqJTnkBS9ZCtrMzoqBNPHMkPYcnpFOdhZqTktOvQLf-B6MQg3tuvs7cjdNuk8HY2j8VFUPxjpTrBmKo6XnCeeu54s8Kpoh4B1X2cSbS8zDpHMTEg-GzmGE"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-primary px-2 py-0.5 bg-primary-fixed rounded-full mb-2 inline-block">Finance</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Annual Budget</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Consolidated financial planning sheet for departmental use.</p>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div class="w-16 h-20 bg-surface-container-high rounded flex items-center justify-center border border-outline-variant shrink-0 overflow-hidden">
+<img class="opacity-40 group-hover:opacity-60 transition-opacity" data-alt="An HR onboarding document template featuring checklist items and person icons. The design is modern and minimalist, utilizing purposeful whitespace and a clean grid layout. Soft white lighting creates a bright, focused atmosphere, while a palette of reliable greens and whites provides a sense of systematic order." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBE26SuYr-YIams6oRQgjLY4l613TBIs3de2wwzwqIbBmbfdHUVHgYAGiRNmX4Ei-AFbyfhuV4LJMIEuKqi9-ItSwDdb-bUWd096XOQrD3DF2nHdMQELLzSIu-rvopPyuFNJ2tuhoOutqXV-PO83FXymc9Ck4MV0654b7H03g0MeHqkdCFVsTeU4drMGm6Qa9En2XM5lWYmMJ0GcwrnTx8qg_J8BJ6KV9Nntj0dnlTw5hwpVnUyDLOqaFgfY8h6y_pgs5NvRaD2ou8"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-tertiary px-2 py-0.5 bg-tertiary-fixed rounded-full mb-2 inline-block">HR</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Onboarding Pack</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Welcome documentation and policy checklists for new hires.</p>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div class="w-16 h-20 bg-surface-container-high rounded flex items-center justify-center border border-outline-variant shrink-0 overflow-hidden">
+<img class="opacity-40 group-hover:opacity-60 transition-opacity" data-alt="A business strategy document outline with professional icons and clear heading structures. The lighting is high-key and professional, reinforcing a sense of institutional trust. The visual aesthetic is corporate and modern, focusing on institutional reliability and focused productivity through systematic design elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD70M-H4Uy4ijW58svfkqggj1z9ue4xPwT5yq6W0I-8sIlsJYvkWOptTGVHVrunUI44WN5pUnqnOOWoj5Ba06EhCf_gG-Krq8YgAig2iTv0SSGJPPWKdwGgJOufh0mKJxyziCqJpLKnrtrEBkOZ0gm3xF0H7VNyMqtOY0GOCxy03U-6q46NRrMrI-hj6tXYqaWX6eysKB4D0KmVKldyfvNi82EtkbTPozW0lyhBsRpz2W0dNj3zOV3FU5Az0Oc7LCdV5dAcUyi6wFM"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary-fixed-dim bg-on-secondary-fixed text-white px-2 py-0.5 rounded-full mb-2 inline-block">Business</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Quarterly Review</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Standard format for summarizing business objectives and results.</p>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-4 rounded-lg flex gap-4 hover:border-primary transition-colors cursor-pointer group">
+<div class="w-16 h-20 bg-surface-container-high rounded flex items-center justify-center border border-outline-variant shrink-0 overflow-hidden">
+<img class="opacity-40 group-hover:opacity-60 transition-opacity" data-alt="A meeting minutes template featuring a clean table layout and bulleted points. The atmosphere is professional and collaborative, with even, soft illumination. The color scheme is a minimalist combination of light greys, whites, and corporate blue accents, emphasizing clarity and ease of reading in a data-dense environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_PPFsxOAO7c2zmuxEAzZQd7B6LV7wY-p0XGxMXY6vBdPSpowVmLXJ5stT3IK93PbKqMgwXX_kCf3O0zvHw4xuWttAfOM-YO1Si5Zax3h5BKyqvv8gRCl9hEOIsiafCLNmA8ZjCDfHX9o5GV7SPuCkjrzotUsQl7tZ9v8kl7jOzqfLpc9Egq6muZeAU9Zzz7vW0iCU8-ST-LvZ9zBgyqCw4sSctt40wU3pKrflsP5n861ycFfoRqzdSIhT_ChqaOd4av9sItrECeA"/>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant px-2 py-0.5 bg-surface-variant rounded-full mb-2 inline-block">General</span>
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary transition-colors">Meeting Notes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-1">Clean structure for recording minutes and action items.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface border-t border-outline-variant z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-sm text-label-sm">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="folder_copy" style="font-variation-settings: 'FILL' 1;">folder_copy</span>
+<span class="font-label-sm text-label-sm">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="schema">schema</span>
+<span class="font-label-sm text-label-sm">Fields</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-transform scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for category chips
+        const chips = document.querySelectorAll('.overflow-x-auto button');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => {
+                    c.classList.remove('bg-primary', 'text-on-primary');
+                    c.classList.add('border', 'border-outline-variant', 'text-on-surface-variant');
+                });
+                chip.classList.remove('border', 'border-outline-variant', 'text-on-surface-variant');
+                chip.classList.add('bg-primary', 'text-on-primary');
+            });
+        });
+
+        // Floating Action Button interaction
+        const fab = document.querySelector('button.fixed.bottom-24');
+        fab.addEventListener('click', () => {
+            console.log('Create New Template initiated');
+            // Mock effect
+            fab.classList.add('scale-125', 'opacity-50');
+            setTimeout(() => fab.classList.remove('scale-125', 'opacity-50'), 200);
+        });
+    </script>
+</body></html>

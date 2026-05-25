@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Field Library | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#91f8b8",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#f9f9ff",
+                    "on-secondary-fixed": "#002110",
+                    "inverse-on-surface": "#ebf1ff",
+                    "primary": "#005394",
+                    "surface": "#f9f9ff",
+                    "on-surface": "#121c2c",
+                    "secondary": "#006d40",
+                    "on-error-container": "#93000a",
+                    "inverse-primary": "#a2c9ff",
+                    "on-surface-variant": "#414750",
+                    "inverse-surface": "#273141",
+                    "surface-variant": "#d9e3f9",
+                    "on-primary-fixed": "#001c38",
+                    "surface-container": "#e7eeff",
+                    "surface-container-low": "#f0f3ff",
+                    "on-background": "#121c2c",
+                    "outline": "#727782",
+                    "on-tertiary-fixed-variant": "#930013",
+                    "on-primary-container": "#e1ecff",
+                    "on-error": "#ffffff",
+                    "primary-fixed": "#d3e4ff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#004881",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-tertiary-container": "#ffe6e3",
+                    "tertiary-container": "#ca2a2e",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "surface-container-highest": "#d9e3f9",
+                    "secondary-fixed-dim": "#74db9d",
+                    "secondary-container": "#8ef5b5",
+                    "surface-tint": "#1960a3",
+                    "on-primary": "#ffffff",
+                    "tertiary": "#a70819",
+                    "error": "#ba1a1a",
+                    "surface-container-high": "#dee8ff",
+                    "on-secondary-fixed-variant": "#00522f",
+                    "primary-container": "#2b6cb0",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "surface-dim": "#d0daf0",
+                    "outline-variant": "#c1c7d2",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#410004",
+                    "background": "#f9f9ff",
+                    "on-secondary-container": "#007243"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "unit": "4px",
+                    "margin": "32px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface w-full top-0 sticky z-40 border-b border-outline-variant flex justify-between items-center h-16 px-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant">
+<img alt="User profile photo" data-alt="A professional close-up headshot of a corporate individual in a modern, bright office environment. The lighting is soft and natural, emphasizing a trustworthy and reliable professional character. The background shows blurred architectural details of a high-end glass building, maintaining the corporate and systematic theme of the application. The aesthetic is clean, minimalist, and high-precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJmzG5kXrSkCEAI6R5lzgLm861EMO7s43PLZxrdlBxCKPm598JrXIK5BHbPzEvCSSpnZSVgzaHdm9oKEHXCSgDfnEluWk9R3oX9dXq3GuPNqvAgt5Gd-iRRO3GTvkuIFMBHzULPWGfWOErMYwe7RHSiaCSqquDJ40A2Z0MkpFPEGrGqGsIUKpO33sAlTOyImX6yqShsFDKtxBawlJBJAHi8yZ5P5ZgOp-owDjgoTVPQj5BF8Uo4Fzj-BCev9ymng7MhlDzEu_DXh4"/>
+</div>
+</header>
+<main class="p-4 space-y-6">
+<!-- Hero Search Section -->
+<section class="space-y-4">
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Field Library</h2>
+<p class="text-on-surface-variant font-body-md">Manage and reuse standardized data fields across all templates.</p>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search field names or descriptions..." type="text"/>
+</div>
+<!-- Horizontal Filter Chips -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded-full text-label-md whitespace-nowrap">All Fields</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-label-md whitespace-nowrap hover:bg-surface-variant transition-colors">Client Info</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-label-md whitespace-nowrap hover:bg-surface-variant transition-colors">Project Details</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-label-md whitespace-nowrap hover:bg-surface-variant transition-colors">Finance</button>
+<button class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full text-label-md whitespace-nowrap hover:bg-surface-variant transition-colors">Legal</button>
+</div>
+</section>
+<!-- Fields List -->
+<section class="space-y-3">
+<div class="flex justify-between items-center px-1">
+<span class="text-label-md text-on-surface-variant uppercase tracking-wider">12 Fields Found</span>
+<button class="text-primary flex items-center gap-1 font-label-md">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                    Sort
+                </button>
+</div>
+<div class="space-y-3">
+<!-- Field Item 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3 group active:scale-[0.98] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-secondary-container rounded text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Client name</h3>
+<div class="flex gap-2 mt-1">
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Text</span>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Client Info</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="pt-2 border-t border-surface-container-high">
+<p class="text-label-sm text-outline uppercase">Example Value</p>
+<p class="text-body-md text-on-surface mt-0.5">Acme Corp Global Ltd.</p>
+</div>
+</div>
+<!-- Field Item 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3 group active:scale-[0.98] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-secondary-container rounded text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Company address</h3>
+<div class="flex gap-2 mt-1">
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Text Area</span>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Finance</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="pt-2 border-t border-surface-container-high">
+<p class="text-label-sm text-outline uppercase">Example Value</p>
+<p class="text-body-md text-on-surface mt-0.5">123 Business Way, Silicon Valley, CA 94025</p>
+</div>
+</div>
+<!-- Field Item 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3 group active:scale-[0.98] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-secondary-container rounded text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Project Deadline</h3>
+<div class="flex gap-2 mt-1">
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Date</span>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Project Details</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="pt-2 border-t border-surface-container-high">
+<p class="text-label-sm text-outline uppercase">Example Value</p>
+<p class="text-body-md text-on-surface mt-0.5">December 31, 2024</p>
+</div>
+</div>
+<!-- Field Item 4 (Compact) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col gap-3 group active:scale-[0.98] transition-transform">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-secondary-container rounded text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Tax ID</h3>
+<div class="flex gap-2 mt-1">
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Number</span>
+<span class="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-label-sm">Legal</span>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_vert">more_vert</span></button>
+</div>
+<div class="pt-2 border-t border-surface-container-high">
+<p class="text-label-sm text-outline uppercase">Example Value</p>
+<p class="text-body-md text-on-surface mt-0.5">99-12345678</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-30 active:scale-90 transition-transform" onclick="toggleModal('fieldModal')">
+<span class="material-symbols-outlined text-[32px]" data-icon="add">add</span>
+</button>
+<!-- New Field Modal Overlay -->
+<div class="fixed inset-0 bg-on-background/40 backdrop-blur-sm z-[60] hidden flex items-end sm:items-center justify-center" id="fieldModal">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-6 space-y-6 animate-in slide-in-from-bottom duration-300">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Create New Field</h2>
+<button class="text-on-surface-variant" onclick="toggleModal('fieldModal')">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="space-y-1.5">
+<label class="font-label-md text-on-surface-variant">Field Name</label>
+<input class="w-full px-4 py-3 bg-surface-container border border-outline-variant rounded-lg focus:outline-none focus:border-primary" placeholder="e.g. Account Executive" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="font-label-md text-on-surface-variant">Type</label>
+<select class="w-full px-4 py-3 bg-surface-container border border-outline-variant rounded-lg focus:outline-none focus:border-primary">
+<option>Text</option>
+<option>Number</option>
+<option>Date</option>
+<option>Dropdown</option>
+</select>
+</div>
+<div class="space-y-1.5">
+<label class="font-label-md text-on-surface-variant">Category</label>
+<select class="w-full px-4 py-3 bg-surface-container border border-outline-variant rounded-lg focus:outline-none focus:border-primary">
+<option>Client Info</option>
+<option>Finance</option>
+<option>Project Details</option>
+</select>
+</div>
+</div>
+<div class="space-y-1.5">
+<label class="font-label-md text-on-surface-variant">Example Value</label>
+<input class="w-full px-4 py-3 bg-surface-container border border-outline-variant rounded-lg focus:outline-none focus:border-primary" placeholder="Default placeholder text" type="text"/>
+</div>
+<div class="flex items-center gap-3 py-2">
+<input class="w-5 h-5 text-secondary border-outline-variant rounded focus:ring-secondary" id="requiredField" type="checkbox"/>
+<label class="text-body-md text-on-surface" for="requiredField">Mark as required by default</label>
+</div>
+</div>
+<div class="flex gap-3 pt-4">
+<button class="flex-1 py-3 border border-outline text-primary font-label-md rounded-lg hover:bg-surface-container-low transition-colors" onclick="toggleModal('fieldModal')">Cancel</button>
+<button class="flex-1 py-3 bg-primary text-on-primary font-label-md rounded-lg hover:bg-primary-container transition-colors shadow-sm">Save Field</button>
+</div>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full bg-surface flex justify-around items-center px-4 py-3 pb-safe border-t border-outline-variant z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-sm text-label-sm mt-1">Docs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="folder_copy">folder_copy</span>
+<span class="font-label-sm text-label-sm mt-1">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="schema" style="font-variation-settings: 'FILL' 1;">schema</span>
+<span class="font-label-sm text-label-sm">Fields</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal on background click
+        window.onclick = function(event) {
+            const modal = document.getElementById('fieldModal');
+            if (event.target == modal) {
+                toggleModal('fieldModal');
+            }
+        }
+    </script>
+</body></html>

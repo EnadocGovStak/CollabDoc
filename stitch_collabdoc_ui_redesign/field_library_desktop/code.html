@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Field Library | Field Manager Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "outline": "#727782",
+                "error": "#ba1a1a",
+                "tertiary": "#a70819",
+                "on-tertiary-fixed": "#410004",
+                "surface-container-low": "#f0f3ff",
+                "surface-bright": "#f9f9ff",
+                "on-surface-variant": "#414750",
+                "primary-fixed-dim": "#a2c9ff",
+                "on-tertiary-container": "#ffe6e3",
+                "secondary-fixed": "#91f8b8",
+                "on-tertiary-fixed-variant": "#930013",
+                "on-background": "#121c2c",
+                "tertiary-container": "#ca2a2e",
+                "on-error": "#ffffff",
+                "surface-container-highest": "#d9e3f9",
+                "secondary-fixed-dim": "#74db9d",
+                "on-primary-container": "#e1ecff",
+                "inverse-on-surface": "#ebf1ff",
+                "on-primary-fixed": "#001c38",
+                "surface": "#f9f9ff",
+                "tertiary-fixed": "#ffdad7",
+                "error-container": "#ffdad6",
+                "on-primary": "#ffffff",
+                "on-secondary-fixed": "#002110",
+                "surface-variant": "#d9e3f9",
+                "on-secondary": "#ffffff",
+                "on-secondary-fixed-variant": "#00522f",
+                "surface-container-lowest": "#ffffff",
+                "secondary-container": "#8ef5b5",
+                "inverse-surface": "#273141",
+                "on-secondary-container": "#007243",
+                "on-tertiary": "#ffffff",
+                "primary-fixed": "#d3e4ff",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "primary": "#005394",
+                "on-error-container": "#93000a",
+                "background": "#f9f9ff",
+                "surface-container": "#e7eeff",
+                "primary-container": "#2b6cb0",
+                "surface-tint": "#1960a3",
+                "surface-container-high": "#dee8ff",
+                "secondary": "#006d40",
+                "surface-dim": "#d0daf0",
+                "on-primary-fixed-variant": "#004881",
+                "on-surface": "#121c2c",
+                "outline-variant": "#c1c7d2",
+                "inverse-primary": "#a2c9ff"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+              },
+              "spacing": {
+                "container-max": "1440px",
+                "margin": "32px",
+                "unit": "4px",
+                "gutter": "24px"
+              },
+              "fontFamily": {
+                "body-lg": ["Inter"],
+                "label-sm": ["Inter"],
+                "headline-lg": ["Hanken Grotesk"],
+                "headline-md": ["Hanken Grotesk"],
+                "headline-xl": ["Hanken Grotesk"],
+                "body-md": ["Inter"],
+                "label-md": ["Inter"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-active { border-left: 4px solid #005394; background-color: #e7eeff; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f0f3ff; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c7d2; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-on-surface">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Side Navigation Bar (Shared Component Strategy) -->
+<aside class="w-64 flex flex-col border-r border-outline-variant bg-surface overflow-y-auto">
+<div class="p-6 flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+</div>
+<div>
+<h1 class="text-on-surface font-headline-md text-base leading-tight">Field Manager</h1>
+<p class="text-on-surface-variant text-label-sm">Enterprise Edition</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-body-md font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 sidebar-active text-primary rounded transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">database</span>
+<span class="text-body-md font-medium">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-body-md font-medium">Data Sets</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors" href="#">
+<span class="material-symbols-outlined">fork_right</span>
+<span class="text-body-md font-medium">Schemes</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-body-md font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors mb-1" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="text-body-md font-medium">Support</span>
+</a>
+<div class="flex items-center gap-3 px-3 py-2 mt-2">
+<div class="size-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate software engineer in a bright modern office setting. The person is wearing a minimalist dark navy sweater and has a friendly, professional expression. The background is softly blurred with hints of glass partitions and warm wood textures, matching the light-mode UI aesthetic of high-productivity enterprise tools." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqSoRsEFY_p0v3Q9BsR0j-MuXWEFPBPdRpdxid2bVeKcj9L7s3egEBGhewLYPRp9G0A917mhZ_i2eLSZ5K6xWZi-gGqoMEZMzLueMkRnmsxetPZb648hDcQtBr6G3ovmGA4k4W3tFt4ZLyirOv3D4U5wMOKTmkxlOg8VruAX0AK2hEUa8G46riZ064Gp5NdNECR8ZGp1xv1s6vUBBwNG12adBJXlIiSQRf2gDro3HlSYUiwQl5vvEp3NyRcKiAoyQedZeX5kweXeI"/>
+</div>
+<div class="overflow-hidden">
+<p class="text-body-md font-semibold truncate">Alex Rivera</p>
+<p class="text-label-sm text-on-surface-variant truncate">System Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background overflow-hidden">
+<!-- Top Bar Header -->
+<header class="h-16 border-b border-outline-variant bg-surface-container-lowest flex items-center justify-between px-gutter shrink-0 z-10">
+<div class="flex items-center gap-6 flex-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">layers</span>
+<h2 class="font-headline-md text-on-surface">Field Library</h2>
+</div>
+<div class="max-w-md w-full relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary-container placeholder:text-outline transition-all" placeholder="Search across all fields..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-primary text-on-primary font-label-md px-4 py-2 rounded-lg hover:bg-primary-container transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Create Field
+                </button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-error rounded-full border-2 border-surface-container-lowest"></span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">history</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</header>
+<!-- Breadcrumbs & Stats Area -->
+<div class="p-gutter space-y-6 overflow-y-auto custom-scrollbar">
+<div class="flex items-center justify-between">
+<div class="space-y-1">
+<nav class="flex items-center gap-2 text-label-md text-on-surface-variant uppercase tracking-wider">
+<a class="hover:text-primary" href="#">Workspace</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-bold">Library</span>
+</nav>
+<h3 class="font-headline-xl text-on-surface">Data Schema Management</h3>
+<p class="text-body-md text-on-surface-variant max-w-2xl">Configure global data fields, validation rules, and integration mappings across your enterprise datasets.</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-high rounded-lg font-label-md text-on-surface hover:bg-surface-container-highest transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+                        Export Schema
+                    </button>
+<button class="px-4 py-2 bg-surface-container-high rounded-lg font-label-md text-on-surface hover:bg-surface-container-highest transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">filter_alt</span>
+                        Advanced Filters
+                    </button>
+</div>
+</div>
+<!-- Filters Bar -->
+<div class="flex flex-wrap gap-3">
+<div class="flex rounded-lg border border-outline-variant bg-surface overflow-hidden">
+<button class="px-4 py-1.5 text-label-md bg-primary-container text-on-primary font-semibold">All Fields</button>
+<button class="px-4 py-1.5 text-label-md text-on-surface-variant hover:bg-surface-container border-l border-outline-variant">Required</button>
+<button class="px-4 py-1.5 text-label-md text-on-surface-variant hover:bg-surface-container border-l border-outline-variant">Standard</button>
+<button class="px-4 py-1.5 text-label-md text-on-surface-variant hover:bg-surface-container border-l border-outline-variant">Custom</button>
+</div>
+<div class="flex-1"></div>
+<div class="flex items-center gap-2">
+<span class="text-label-md text-on-surface-variant uppercase">View:</span>
+<div class="flex bg-surface border border-outline-variant rounded-lg p-0.5">
+<button class="p-1 rounded bg-surface-container-highest text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">list</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">grid_on</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider w-12">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider">Field Name</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider">Data Type</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider">Visibility</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider">Last Modified</th>
+<th class="px-6 py-4 text-label-md text-on-surface-variant font-bold uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">alternate_email</span>
+<div>
+<p class="text-body-md font-semibold text-on-surface">primary_email_address</p>
+<p class="text-label-sm text-on-surface-variant">User registration identifier</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant rounded text-label-sm font-medium border border-outline-variant">String (Email)</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-on-secondary-container bg-secondary-container px-2.5 py-1 rounded-full w-fit">
+<span class="size-1.5 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-bold uppercase">Ready</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span class="text-body-md">Public</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">
+                                Oct 24, 2023
+                            </td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary-fixed rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input checked="" class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">calendar_today</span>
+<div>
+<p class="text-body-md font-semibold text-on-surface">subscription_renewal_date</p>
+<p class="text-label-sm text-on-surface-variant">Billing cycle tracker</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant rounded text-label-sm font-medium border border-outline-variant">ISO-Date</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant bg-surface-container px-2.5 py-1 rounded-full w-fit">
+<span class="size-1.5 rounded-full bg-outline"></span>
+<span class="text-label-sm font-bold uppercase">Draft</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+<span class="text-body-md">Internal</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">
+                                Nov 02, 2023
+                            </td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary-fixed rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">attach_money</span>
+<div>
+<p class="text-body-md font-semibold text-on-surface">annual_contract_value</p>
+<p class="text-label-sm text-on-surface-variant">Financial performance metric</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant rounded text-label-sm font-medium border border-outline-variant">Decimal</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-on-secondary-container bg-secondary-container px-2.5 py-1 rounded-full w-fit">
+<span class="size-1.5 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-bold uppercase">Ready</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span class="text-body-md">Public</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">
+                                Oct 15, 2023
+                            </td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary-fixed rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<input class="rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container">translate</span>
+<div>
+<p class="text-body-md font-semibold text-on-surface">preferred_language_code</p>
+<p class="text-label-sm text-on-surface-variant">Localization preference</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant rounded text-label-sm font-medium border border-outline-variant">Pick-list</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-1.5 text-on-secondary-container bg-secondary-container px-2.5 py-1 rounded-full w-fit">
+<span class="size-1.5 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-bold uppercase">Ready</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">public</span>
+<span class="text-body-md">Public</span>
+</div>
+</td>
+<td class="px-6 py-4 text-body-md text-on-surface-variant">
+                                Sep 28, 2023
+                            </td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-primary-fixed rounded transition-colors" title="Edit">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary-fixed rounded transition-colors" title="Delete">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<p class="text-label-md text-on-surface-variant">Showing <span class="font-bold text-on-surface">1 - 4</span> of 152 fields</p>
+<div class="flex gap-2">
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant bg-primary text-on-primary font-bold text-label-md">1</button>
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container transition-colors">2</button>
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container transition-colors">3</button>
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant bg-surface text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Insights Section -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="p-6 rounded-xl border border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3 mb-4">
+<div class="p-2 rounded-lg bg-primary-fixed text-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h4 class="font-headline-md text-on-surface">Schema Usage</h4>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between text-label-md uppercase tracking-wide">
+<span>Core Attributes</span>
+<span class="font-bold">82%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 82%;"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-label-md uppercase tracking-wide">
+<span>Custom Metadata</span>
+<span class="font-bold">18%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 18%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 rounded-xl border border-outline-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3 mb-4">
+<div class="p-2 rounded-lg bg-secondary-fixed text-on-secondary-container">
+<span class="material-symbols-outlined">rule</span>
+</div>
+<h4 class="font-headline-md text-on-surface">Data Quality</h4>
+</div>
+<div class="flex items-end gap-2 mb-2">
+<span class="text-4xl font-bold text-on-surface">94.2</span>
+<span class="text-label-md text-secondary font-bold pb-1">+1.4% this month</span>
+</div>
+<p class="text-body-md text-on-surface-variant">Across 12 interconnected schemas and 450+ datasets.</p>
+</div>
+<div class="p-6 rounded-xl border border-outline-variant bg-primary-container text-on-primary">
+<h4 class="font-headline-md mb-2">Pro Feature: Bulk Sync</h4>
+<p class="text-body-md text-on-primary-container mb-4">Automatically map your existing Field Library to External CRM data models in one click.</p>
+<button class="w-full py-2 bg-on-primary text-primary font-bold rounded-lg hover:bg-on-primary-container transition-colors">Start Bulk Sync</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Side Panel Details (Contextual Editor) -->
+<aside class="w-80 border-l border-outline-variant bg-surface hidden xl:flex flex-col">
+<div class="p-6 border-b border-outline-variant flex items-center justify-between">
+<h5 class="font-headline-md text-on-surface">Field Properties</h5>
+<button class="text-on-surface-variant hover:bg-surface-container p-1 rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+<div class="space-y-2">
+<label class="text-label-md text-on-surface-variant uppercase font-bold">Internal Name</label>
+<div class="px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-md font-mono text-on-surface">
+                    primary_email_address
+                </div>
+</div>
+<div class="space-y-2">
+<label class="text-label-md text-on-surface-variant uppercase font-bold">Display Label</label>
+<input class="w-full border-outline-variant rounded-lg text-body-md focus:ring-primary focus:border-primary" type="text" value="Primary Email"/>
+</div>
+<div class="space-y-2">
+<label class="text-label-md text-on-surface-variant uppercase font-bold">Description</label>
+<textarea class="w-full border-outline-variant rounded-lg text-body-md focus:ring-primary focus:border-primary" rows="3">Main contact email address used for system login and high-priority notifications.</textarea>
+</div>
+<div class="space-y-2">
+<label class="text-label-md text-on-surface-variant uppercase font-bold">Validation Rules</label>
+<div class="space-y-2">
+<label class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg cursor-pointer border border-transparent hover:border-outline-variant transition-colors">
+<input checked="" class="rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md">Required Field</span>
+</label>
+<label class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg cursor-pointer border border-transparent hover:border-outline-variant transition-colors">
+<input checked="" class="rounded text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md">Unique Value</span>
+</label>
+</div>
+</div>
+<div class="p-4 bg-surface-container rounded-xl border border-outline-variant">
+<div class="flex items-center gap-2 mb-2 text-primary">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="text-label-md uppercase font-bold">System Meta</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-label-sm">
+<span class="text-on-surface-variant">ID:</span>
+<span class="font-mono text-on-surface">fld_921_ax3</span>
+</div>
+<div class="flex justify-between text-label-sm">
+<span class="text-on-surface-variant">Origin:</span>
+<span class="text-on-surface">Core System</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant flex gap-2">
+<button class="flex-1 py-2.5 bg-primary text-on-primary font-bold rounded-lg hover:bg-primary-container transition-all">Save Changes</button>
+<button class="px-4 py-2.5 bg-surface-container-high rounded-lg font-bold text-on-surface hover:bg-surface-container-highest">Reset</button>
+</div>
+</aside>
+</div>
+<script>
+    // Simple micro-interaction for row selection or highlighting
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.addEventListener('click', (e) => {
+            if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+                document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('bg-primary-fixed'));
+                row.classList.add('bg-primary-fixed');
+            }
+        });
+    });
+
+    // Handle search input focus effects
+    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    searchInput.addEventListener('focus', () => {
+        searchInput.parentElement.classList.add('ring-2', 'ring-primary-container');
+    });
+    searchInput.addEventListener('blur', () => {
+        searchInput.parentElement.classList.remove('ring-2', 'ring-primary-container');
+    });
+</script>
+</body></html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workspace Settings | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#424753",
+                      "inverse-on-surface": "#313030",
+                      "tertiary-fixed": "#e6deff",
+                      "surface-dim": "#131313",
+                      "surface-container-low": "#1c1b1b",
+                      "surface-container-highest": "#353534",
+                      "on-primary-fixed-variant": "#004398",
+                      "on-primary-container": "#00275f",
+                      "error": "#ffb4ab",
+                      "on-tertiary-fixed-variant": "#4717ca",
+                      "error-container": "#93000a",
+                      "secondary-container": "#00a571",
+                      "on-surface": "#e5e2e1",
+                      "on-tertiary": "#31009a",
+                      "tertiary-fixed-dim": "#cabeff",
+                      "on-tertiary-container": "#2a0088",
+                      "surface": "#131313",
+                      "secondary-fixed": "#48ffb6",
+                      "on-tertiary-fixed": "#1c0062",
+                      "on-secondary": "#003824",
+                      "inverse-primary": "#0059c6",
+                      "primary-fixed-dim": "#afc6ff",
+                      "on-background": "#e5e2e1",
+                      "on-primary": "#002d6c",
+                      "tertiary-container": "#937dff",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary-fixed-dim": "#00e29c",
+                      "background": "#131313",
+                      "inverse-surface": "#e5e2e1",
+                      "surface-variant": "#353534",
+                      "on-secondary-fixed": "#002113",
+                      "primary": "#afc6ff",
+                      "primary-fixed": "#d9e2ff",
+                      "surface-tint": "#afc6ff",
+                      "secondary": "#00e29c",
+                      "on-secondary-fixed-variant": "#005236",
+                      "on-error-container": "#ffdad6",
+                      "tertiary": "#cabeff",
+                      "primary-container": "#528dff",
+                      "on-surface-variant": "#c2c6d6",
+                      "surface-container": "#201f1f",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-primary-fixed": "#001a43",
+                      "surface-bright": "#393939",
+                      "on-secondary-container": "#00311e",
+                      "on-error": "#690005",
+                      "outline": "#8c909f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "gutter": "16px",
+                      "container-margin": "24px",
+                      "desktop-max-width": "1440px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "label-md": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"],
+                      "headline-xl": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "label-sm": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #121212;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 40px 40px rgba(0, 0, 0, 0.4);
+        }
+        .card-rim {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-hidden">
+<!-- SideNavBar Anchor Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant/20 shadow-sm flex flex-col py-gutter z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+<p class="text-on-surface-variant font-label-sm uppercase tracking-widest mt-1">Professional Workspace</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-body-md">Editor</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1 border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar Anchor Component -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/20 z-40 flex justify-between items-center px-gutter">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Recent</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Shared</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Favorites</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center bg-surface-container-highest rounded-full px-4 py-1.5 w-64">
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="bg-transparent border-none text-on-surface text-label-md focus:ring-0 placeholder-on-surface-variant/50 w-full ml-2" placeholder="Search workspace..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">notifications</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20 cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a creative director in a high-tech studio environment. The lighting is moody and cinematic with cool blue and deep charcoal tones. The person is looking directly at the camera with a confident and focused expression. The background is softly blurred showing digital screens and sleek architectural elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOn7TtVIG09P0eOBS6zUCuOoGe7OkCoyux0qdMOhuMrJnuYQiYZj9YaQe3bQ91x8b8qvBhmcBb-6cLxgmh0NZ6Ua8_7EVVnBxWJa6glIaQ5qUKN1z_5MyCIU6R_qWBKjfBo9Vo-TMJbVND56tekiP0CQI8QM6-WhBIHs5odgQR-M4-WgrQ36pFgGHqYOZ5lyiMBk-OSgQBnc8TD6iHbERzARTKaKrdMH7IT8Sd0GtQBmebRvHF33Ptf1bPSrto4toqu7Du3MVm1m0"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="pl-64 pt-16 h-screen overflow-y-auto bg-surface">
+<div class="max-w-[1200px] mx-auto p-12">
+<!-- Page Header -->
+<div class="mb-12">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Workspace Settings</h2>
+<p class="font-body-lg text-on-surface-variant">Manage your workspace's identity, security, and team permissions.</p>
+</div>
+<!-- Bento Layout Settings -->
+<div class="grid grid-cols-12 gap-6">
+<!-- General Info Card -->
+<div class="col-span-8 bg-surface-container-low p-8 rounded-xl border border-outline-variant/20">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">General Information</h3>
+<p class="text-on-surface-variant font-label-md">Update your workspace name and branding.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md hover:shadow-[0_0_20px_rgba(175,198,255,0.3)] transition-all active:scale-95">Save Changes</button>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="font-label-sm uppercase text-on-surface-variant">Workspace Name</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all" type="text" value="Design Engineering Lab"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-sm uppercase text-on-surface-variant">Workspace URL</label>
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3">
+<span class="text-on-surface-variant mr-1">evia.collab/</span>
+<input class="bg-transparent border-none p-0 text-on-surface focus:ring-0 flex-1" type="text" value="design-eng"/>
+</div>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="font-label-sm uppercase text-on-surface-variant">Workspace Description</label>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all" rows="3">Centralized hub for all design systems and engineering documentation across the organization.</textarea>
+</div>
+</div>
+</div>
+<!-- Plan Status Card -->
+<div class="col-span-4 bg-primary-container text-on-primary-container p-8 rounded-xl relative overflow-hidden flex flex-col justify-between shadow-lg">
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-sm uppercase font-bold">Current Plan</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-extrabold mb-1">Enterprise Pro</h3>
+<p class="font-body-md opacity-90">Renews on Oct 24, 2024</p>
+</div>
+<div class="mt-8 relative z-10">
+<div class="flex justify-between items-end mb-2">
+<span class="font-label-md">Storage Used</span>
+<span class="font-label-md font-bold">84%</span>
+</div>
+<div class="w-full h-2 bg-on-primary-container/20 rounded-full overflow-hidden">
+<div class="h-full bg-secondary-fixed w-[84%] relative">
+<div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+</div>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<!-- Team Management -->
+<div class="col-span-12 bg-surface-container-low p-8 rounded-xl border border-outline-variant/20">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Team Members</h3>
+<p class="text-on-surface-variant font-label-md">Manage user roles and invitation links.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 border border-outline-variant px-6 py-2 rounded-lg font-label-md text-on-surface hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="link">link</span>
+                                Copy Invite Link
+                            </button>
+<button class="bg-on-surface text-inverse-on-surface px-6 py-2 rounded-lg font-label-md hover:bg-white transition-colors active:scale-95">Invite Members</button>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Member Row -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a digital product designer with glasses working in a dark minimalist workspace. The lighting is sophisticated with soft magenta and blue rim lighting on their hair. The atmosphere is professional, sleek, and high-contrast, perfectly aligning with a modern dark mode design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7p-7f1CJPZvhjKJhtt2T1QGsmHh8SKiJQb-HwlgkxNF-_VAcJRC3wFk_g9V7oJ53x42ilmqqCTwFKEGtHytPzPWParZ0f1hYnvPc40sCoWzhSaHtW-1NRhrHlqhbcw9eaANdzqsitYB5xFG_TXtYEODlmIouHUpU-MWo4HFAaS9XvTKO6ngCNiyPG30BcBDhV8umcyNatK0zAPLxzD7fIUExOVOFmKYAAqQXiJTUSduZvSz0IF2MTWii3AZmtW0MW26sZPE48lo8"/>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface">Sarah Drasner</h4>
+<p class="text-on-surface-variant text-label-sm">sarah@evia.design</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<span class="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full font-label-sm uppercase">Workspace Owner</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-on-surface transition-colors cursor-pointer">
+<span class="font-label-md">Admin</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+<!-- Member Row 2 -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a software engineer in a high-tech studio setting. Deep charcoal background with crisp cyan highlights reflecting off their shoulder. The style is modern-corporate with an emphasis on technical precision and focused energy. The image is clean and minimalist with sharp focus on the subject." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpZDp37ZNevHYEge57-qNNxxBeOPSv7nZRN_olv5u-ivcQ0ouxw_JNwoHrPKRBop4yg0qL_nqafHMY_gpQ9SHMBSlewNeYHJhCGz5-8p8GC-_EqZe0uqkZN1w-gqOJi-A6EHR_QrvX8BaKWiA3RgtQCeKSeBF4GG5OyFa87j-DlJ7r5ciF9Wej6n0cdHDNr8uA4LJTqX0QzgdBVsrVYVM3uj1mJgRE97FB3KrY4wvYG2YqgbPd8x03qVTFQOmzhxV_1-pZ7H-wrzY"/>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface">Marcus Aurelius</h4>
+<p class="text-on-surface-variant text-label-sm">marcus.a@evia.eng</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<span class="px-3 py-1 bg-on-surface-variant/10 text-on-surface-variant border border-on-surface-variant/20 rounded-full font-label-sm uppercase">Project Lead</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-on-surface transition-colors cursor-pointer">
+<span class="font-label-md">Editor</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+<!-- Member Row 3 -->
+<div class="flex items-center justify-between p-4 bg-surface-container rounded-xl hover:bg-surface-container-high transition-colors group">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a female professional in a dark-themed corporate office. She is smiling confidently at the camera. The lighting is high-key and soft, illuminating her from the front while keeping the background in deep atmospheric shadow. The color palette is strictly deep greys and blacks with subtle skin tones and white light accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf6f1VAFcgFKrf_paavBpjP-i2pSuW2JHmBJt7E3O8bd200sFKfo5KvmzyVCZ1_Xwrzk2cCfbsGtLd5CkwZvJh_9tLZSMTVro5rDgrxTIXcBXQcrchxPt2Wne1BCWU7MpyfRqndArF-lN93En94GmmACWJO5RrhpZOUJKXqah04BDz2hTt5UpaOdKiJlH2_2-XvIN007ctQM0aCahOIGD0wITzwa5QLxCCcJ8lqvtx-YFfIsvFgdkU7LD-Dabqn6V9LfV36FYv1og"/>
+</div>
+<div>
+<h4 class="font-label-md text-on-surface">Elena Rodriguez</h4>
+<p class="text-on-surface-variant text-label-sm">elena.r@evia.ops</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<span class="px-3 py-1 bg-on-surface-variant/10 text-on-surface-variant border border-on-surface-variant/20 rounded-full font-label-sm uppercase">Strategy</span>
+<div class="flex items-center gap-2 text-on-surface-variant group-hover:text-on-surface transition-colors cursor-pointer">
+<span class="font-label-md">Viewer</span>
+<span class="material-symbols-outlined text-lg" data-icon="expand_more">expand_more</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors" data-icon="more_vert">more_vert</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Danger Zone -->
+<div class="col-span-12 border border-error/20 bg-error-container/10 p-8 rounded-xl mt-6">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-error">Danger Zone</h3>
+<p class="text-on-surface-variant font-label-md">Irreversible actions that affect the entire workspace.</p>
+</div>
+<button class="border border-error text-error px-6 py-2 rounded-lg font-label-md hover:bg-error hover:text-on-error transition-colors active:scale-95">Archive Workspace</button>
+</div>
+</div>
+</div>
+<!-- Footer Spacer -->
+<div class="h-24"></div>
+</div>
+</main>
+<!-- Interactive script for micro-interactions -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.98)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = 'scale(1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add a subtle parallax effect to the glass panel
+        const mainCanvas = document.querySelector('main');
+        mainCanvas.addEventListener('scroll', () => {
+            const scrolled = mainCanvas.scrollTop;
+            const glassPanel = document.querySelector('.glass-panel');
+            if (glassPanel) {
+                glassPanel.style.transform = `translateY(${scrolled * 0.05}px)`;
+            }
+        });
+    </script>
+</body></html>

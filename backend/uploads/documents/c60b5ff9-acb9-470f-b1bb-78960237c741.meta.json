@@ -1,0 +1,44 @@
+{
+  "id": "c60b5ff9-acb9-470f-b1bb-78960237c741",
+  "name": "Invoice Template - Generated",
+  "title": "Invoice Template - Generated",
+  "templateId": "a2e8ed36-0112-4d3c-b698-131b76d49c91",
+  "templateName": "Invoice Template",
+  "category": "General",
+  "documentType": "Document",
+  "mergeData": {
+    "CompanyName": "Acme Legal Operations",
+    "ClientName": "Contoso Services",
+    "InvoiceNumber": "INV-SAMPLE-001",
+    "InvoiceDate": "1999-12-10",
+    "DueDate": "2290-12-10",
+    "ServiceDescription": "Document preparation services",
+    "Amount": "1230.00"
+  },
+  "recordsManagement": {
+    "classification": "Public",
+    "retentionPeriod": "1 Year"
+  },
+  "createdAt": "2026-05-20T09:30:01.232Z",
+  "updatedAt": "2026-05-20T09:30:01.232Z",
+  "modifiedAt": "2026-05-20T23:58:46.765Z",
+  "currentVersion": 3,
+  "versions": [
+    {
+      "version": 1,
+      "timestamp": "2026-05-20T09:30:01.232Z",
+      "comment": "Generated from template"
+    },
+    {
+      "version": 2,
+      "timestamp": "2026-05-20T10:02:03.768Z",
+      "comment": "Version 2"
+    },
+    {
+      "version": 3,
+      "timestamp": "2026-05-20T23:58:46.765Z",
+      "comment": "Version 3"
+    }
+  ],
+  "status": "draft"
+}

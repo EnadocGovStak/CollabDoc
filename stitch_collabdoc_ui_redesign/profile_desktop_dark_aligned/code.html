@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#424753",
+                        "inverse-on-surface": "#313030",
+                        "tertiary-fixed": "#e6deff",
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-highest": "#353534",
+                        "on-primary-fixed-variant": "#004398",
+                        "on-primary-container": "#00275f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "error-container": "#93000a",
+                        "secondary-container": "#00a571",
+                        "on-surface": "#e5e2e1",
+                        "on-tertiary": "#31009a",
+                        "tertiary-fixed-dim": "#cabeff",
+                        "on-tertiary-container": "#2a0088",
+                        "surface": "#131313",
+                        "secondary-fixed": "#48ffb6",
+                        "on-tertiary-fixed": "#1c0062",
+                        "on-secondary": "#003824",
+                        "inverse-primary": "#0059c6",
+                        "primary-fixed-dim": "#afc6ff",
+                        "on-background": "#e5e2e1",
+                        "on-primary": "#002d6c",
+                        "tertiary-container": "#937dff",
+                        "surface-container-high": "#2a2a2a",
+                        "secondary-fixed-dim": "#00e29c",
+                        "background": "#131313",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "on-secondary-fixed": "#002113",
+                        "primary": "#afc6ff",
+                        "primary-fixed": "#d9e2ff",
+                        "surface-tint": "#afc6ff",
+                        "secondary": "#00e29c",
+                        "on-secondary-fixed-variant": "#005236",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#cabeff",
+                        "primary-container": "#528dff",
+                        "on-surface-variant": "#c2c6d6",
+                        "surface-container": "#201f1f",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-primary-fixed": "#001a43",
+                        "surface-bright": "#393939",
+                        "on-secondary-container": "#00311e",
+                        "on-error": "#690005",
+                        "outline": "#8c909f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "desktop-max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+        .prism-card {
+            background: rgba(32, 31, 31, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #424753;
+            border-radius: 10px;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-surface">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low border-r border-outline-variant/10 shadow-sm flex flex-col py-gutter z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+<p class="font-body-md text-on-surface-variant opacity-70">Professional Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="font-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md">Editor</span>
+</a>
+</nav>
+<div class="px-4 mb-6">
+<button class="w-full py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 20;">add</span>
+                New Project
+            </button>
+</div>
+<div class="border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary bg-surface-container-highest/30" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-body-md">Support</span>
+</a>
+<div class="mt-4 pt-4 border-t border-outline-variant/10 flex items-center gap-3 px-4">
+<img alt="User" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3HU2tN6RrbmXEND5pFKbxzoPQRFOkHCs8HlKUDlrf46osCPKTl7VXravrCMQGPK5UTQjsTZ3OYmwCGH7VMkrmBSoWTc30CwaAuSF0hVM5NJF8cBJPoMqzSsZUHLlOre--MilN8rA8xWVpbtKqswLYBKnDW_3zlZtZluSPROvKx4z9aRHJMZfcdpxELARdYZjQQZMWHuE5BsCNe8AZBMuLDSMD5AHt_DNBpQ3rvB05f0Pi382gJEZyd-DCitZMWECLRYHm1tTAZ-k"/>
+<div class="overflow-hidden">
+<p class="font-label-md truncate text-on-surface">Alex Harrison</p>
+<p class="text-[10px] text-on-surface-variant truncate">Lead Architect</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 z-40 flex justify-between items-center px-gutter">
+<div class="flex items-center gap-8">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Profile Settings</h2>
+<nav class="flex gap-6">
+<a class="font-label-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" href="#">Recent</a>
+<a class="font-label-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" href="#">Shared</a>
+<a class="font-label-md text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" href="#">Favorites</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative w-80 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/20 rounded-full pl-10 pr-4 py-1.5 font-label-md focus:outline-none focus:border-primary transition-all text-on-surface" placeholder="Search resources..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold cursor-pointer">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-8 min-h-screen">
+<div class="max-w-[1200px] mx-auto">
+<!-- Header Section -->
+<section class="mb-10 flex justify-between items-end">
+<div>
+<h3 class="font-headline-xl text-headline-xl text-on-surface mb-2">Account Intelligence</h3>
+<p class="text-body-lg text-on-surface-variant">Manage your corporate identity and collaborative footprint.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface text-primary border border-primary rounded-xl font-label-md hover:bg-surface-container-high transition-all active:scale-95">
+                        Download Report
+                    </button>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-xl font-label-md shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-95">
+                        Update Identity
+                    </button>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="bento-grid">
+<!-- Profile Card (Span 4) -->
+<div class="col-span-12 lg:col-span-4 prism-card border border-outline-variant/20 p-8 rounded-3xl flex flex-col items-center text-center">
+<div class="relative mb-6">
+<img alt="Alex Harrison" class="w-32 h-32 rounded-2xl border-4 border-surface shadow-2xl relative z-10 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2ylUt3boria99dRGV_asGBW36W0ZxRtEZo2a-hANKIKjCD1OguwIhDOAEYUxfiavOOyDAMnaEHujHIpEOwtV25UDkHq5wSmpGAbm77vauqKVqO4DO5Lks8Kq2hdL2ZVi4SPe5d3ia9BebtOqqlxPRhdO5qOWFmx1HLkbTUJ-atekrQRvBzivLpwnPf8WjW6WQC7kpOUJFytF8WIC6cCshSjhZiOMAwTaHTHQuJNJxkQNt1wBlmVoIm5xWrtOcYmgT26ms9NWV9Dg"/>
+<div class="absolute -bottom-2 -right-2 bg-secondary text-on-secondary p-2 rounded-lg shadow-lg z-20 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-1">Alex Harrison</h4>
+<p class="text-primary font-label-md mb-6">Lead Document Architect</p>
+<div class="w-full space-y-4 pt-6 border-t border-outline-variant/10">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Status</span>
+<span class="bg-secondary-container/20 text-secondary border border-secondary/30 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                Active
+                            </span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Joined</span>
+<span class="text-on-surface font-body-md">Jan 2022</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-label-md">Tier</span>
+<span class="text-on-surface font-body-md">Enterprise Pro</span>
+</div>
+</div>
+<div class="mt-8 flex gap-4">
+<button class="p-3 bg-surface-container-highest/50 text-on-surface-variant rounded-xl hover:text-primary hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">alternate_email</span>
+</button>
+<button class="p-3 bg-surface-container-highest/50 text-on-surface-variant rounded-xl hover:text-primary hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-3 bg-surface-container-highest/50 text-on-surface-variant rounded-xl hover:text-primary hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined">link</span>
+</button>
+</div>
+</div>
+<!-- Stats & Velocity Section (Span 8) -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="prism-card border border-outline-variant/20 p-6 rounded-3xl group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-container/20 text-primary rounded-xl">
+<span class="material-symbols-outlined">folder_special</span>
+</div>
+<span class="text-secondary font-label-md">+12%</span>
+</div>
+<p class="text-on-surface-variant text-label-md mb-1">Managed Docs</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">1,284</p>
+</div>
+<div class="prism-card border border-outline-variant/20 p-6 rounded-3xl group hover:border-secondary/50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary-container/20 text-secondary rounded-xl">
+<span class="material-symbols-outlined">group_work</span>
+</div>
+<span class="text-secondary font-label-md">+5.2%</span>
+</div>
+<p class="text-on-surface-variant text-label-md mb-1">Collaborators</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">48</p>
+</div>
+<div class="prism-card border border-outline-variant/20 p-6 rounded-3xl group hover:border-tertiary/50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary-container/20 text-tertiary rounded-xl">
+<span class="material-symbols-outlined">speed</span>
+</div>
+<span class="text-on-surface-variant text-label-md">Avg.</span>
+</div>
+<p class="text-on-surface-variant text-label-md mb-1">Edit Speed</p>
+<p class="font-headline-lg text-headline-lg text-on-surface">2.4m</p>
+</div>
+</div>
+<!-- Velocity Chart -->
+<div class="prism-card border border-outline-variant/20 p-6 rounded-3xl">
+<div class="flex justify-between items-center mb-8">
+<h5 class="font-headline-md text-headline-md text-on-surface">Activity Velocity</h5>
+<div class="flex gap-1 p-1 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<button class="px-4 py-1.5 bg-primary text-on-primary text-label-md rounded-md shadow-sm">Weekly</button>
+<button class="px-4 py-1.5 text-on-surface-variant hover:text-on-surface text-label-md rounded-md transition-colors">Monthly</button>
+</div>
+</div>
+<div class="h-48 flex items-end gap-3 px-2">
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 60%;">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-surface-container-high text-on-surface text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">84 units</div>
+</div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 45%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 80%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 35%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 95%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 50%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 70%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 40%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 85%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 55%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 75%;"></div>
+<div class="flex-1 bg-primary/20 rounded-lg hover:bg-primary/40 transition-all cursor-help relative group" style="height: 90%;"></div>
+</div>
+<div class="flex justify-between mt-6 text-[11px] text-on-surface-variant font-label-md uppercase tracking-widest px-1">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+<span>Sun</span>
+</div>
+</div>
+</div>
+<!-- Organization Details (Span 6) -->
+<div class="col-span-12 lg:col-span-6 prism-card border border-outline-variant/20 p-8 rounded-3xl">
+<h5 class="font-headline-md text-headline-md text-on-surface mb-8">Organization Details</h5>
+<div class="space-y-8">
+<div class="flex items-start gap-5">
+<div class="w-14 h-14 bg-primary-container/20 rounded-2xl flex items-center justify-center shrink-0 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-3xl">corporate_fare</span>
+</div>
+<div>
+<p class="font-headline-sm text-headline-md text-on-surface font-semibold">Vertex Design Systems</p>
+<p class="text-on-surface-variant text-body-md mt-1">Primary Workspace • Admin Access</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-highest/30 rounded-2xl border border-outline-variant/10">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1.5 tracking-wider">Tax ID</p>
+<p class="text-body-md text-on-surface font-medium">US-99201-XX</p>
+</div>
+<div class="p-4 bg-surface-container-highest/30 rounded-2xl border border-outline-variant/10">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-1.5 tracking-wider">Billing Cycle</p>
+<p class="text-body-md text-on-surface font-medium">Annual (May 24)</p>
+</div>
+</div>
+<div class="pt-6 border-t border-outline-variant/10">
+<h6 class="text-label-sm text-on-surface-variant font-bold uppercase tracking-widest mb-4">Workspace Permissions</h6>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg text-[11px] font-medium text-primary">DOCUMENT_EDIT</span>
+<span class="px-3 py-1.5 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg text-[11px] font-medium text-primary">USER_MANAGEMENT</span>
+<span class="px-3 py-1.5 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg text-[11px] font-medium text-primary">TEMPLATE_FORGE</span>
+<span class="px-3 py-1.5 bg-surface-container-highest/50 border border-outline-variant/20 rounded-lg text-[11px] font-medium text-on-surface-variant">+4 MORE</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Feed (Span 6) -->
+<div class="col-span-12 lg:col-span-6 prism-card border border-outline-variant/20 p-8 rounded-3xl flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h5 class="font-headline-md text-headline-md text-on-surface">Recent Activity</h5>
+<button class="text-primary text-label-md font-semibold hover:underline flex items-center gap-1">View All <span class="material-symbols-outlined text-sm">arrow_outward</span></button>
+</div>
+<div class="space-y-6 overflow-y-auto custom-scrollbar flex-1 pr-2">
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant/20"></div>
+<div class="w-8 h-8 rounded-full bg-primary-container/20 flex items-center justify-center shrink-0 z-10 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-lg">edit</span>
+</div>
+<div class="pt-0.5">
+<p class="text-body-md text-on-surface">Updated <span class="font-semibold text-primary">Project_Osprey_V4.pdf</span></p>
+<p class="text-on-surface-variant text-label-sm mt-0.5">2 hours ago • Editor</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant/20"></div>
+<div class="w-8 h-8 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0 z-10 border border-secondary/20">
+<span class="material-symbols-outlined text-secondary text-lg">person_add</span>
+</div>
+<div class="pt-0.5">
+<p class="text-body-md text-on-surface">Added <span class="font-semibold">Sarah Jenkins</span> to Workspace</p>
+<p class="text-on-surface-variant text-label-sm mt-0.5">5 hours ago • Team</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant/20"></div>
+<div class="w-8 h-8 rounded-full bg-error-container/20 flex items-center justify-center shrink-0 z-10 border border-error/20">
+<span class="material-symbols-outlined text-error text-lg" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="pt-0.5">
+<p class="text-body-md text-on-surface">Security alert: <span class="font-semibold text-error">New Login</span> from San Francisco</p>
+<p class="text-on-surface-variant text-label-sm mt-0.5">Yesterday • System</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest/50 flex items-center justify-center shrink-0 z-10 border border-outline-variant/20">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">cloud_done</span>
+</div>
+<div class="pt-0.5">
+<p class="text-body-md text-on-surface">Archive completed for <span class="font-semibold text-primary">Q3 Reports</span></p>
+<p class="text-on-surface-variant text-label-sm mt-0.5">Oct 12 • Library</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Atmosphere Elements -->
+<div class="fixed top-[20%] right-[-10%] w-96 h-96 bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+<div class="fixed bottom-[10%] left-[20%] w-64 h-64 bg-secondary/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
+<script>
+        // Micro-interaction: Card Hover Effects
+        document.querySelectorAll('.prism-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Activity Velocity Animation
+        const bars = document.querySelectorAll('.h-48 > div');
+        bars.forEach((bar, index) => {
+            const originalHeight = bar.style.height;
+            bar.style.height = '0%';
+            setTimeout(() => {
+                bar.style.transition = `height 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${index * 0.08}s`;
+                bar.style.height = originalHeight;
+            }, 300);
+        });
+    </script>
+</body></html>

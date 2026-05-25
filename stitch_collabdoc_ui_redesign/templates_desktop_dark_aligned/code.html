@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Templates - Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#afc6ff",
+                    "tertiary-fixed": "#e6deff",
+                    "on-secondary-fixed": "#002113",
+                    "surface-container-high": "#2a2a2a",
+                    "on-surface-variant": "#c2c6d6",
+                    "secondary-fixed": "#48ffb6",
+                    "inverse-primary": "#0059c6",
+                    "on-tertiary": "#31009a",
+                    "on-secondary-container": "#00311e",
+                    "inverse-surface": "#e5e2e1",
+                    "secondary-container": "#00a571",
+                    "on-error": "#690005",
+                    "error": "#ffb4ab",
+                    "surface-container": "#201f1f",
+                    "on-tertiary-fixed": "#1c0062",
+                    "surface-variant": "#353534",
+                    "surface-bright": "#393939",
+                    "secondary": "#00e29c",
+                    "on-primary-container": "#00275f",
+                    "surface-dim": "#131313",
+                    "on-primary-fixed-variant": "#004398",
+                    "on-background": "#e5e2e1",
+                    "secondary-fixed-dim": "#00e29c",
+                    "on-tertiary-fixed-variant": "#4717ca",
+                    "outline-variant": "#424753",
+                    "tertiary": "#cabeff",
+                    "on-primary-fixed": "#001a43",
+                    "on-secondary": "#003824",
+                    "on-surface": "#e5e2e1",
+                    "on-error-container": "#ffdad6",
+                    "surface": "#131313",
+                    "outline": "#8c909f",
+                    "primary-fixed": "#d9e2ff",
+                    "on-tertiary-container": "#2a0088",
+                    "on-secondary-fixed-variant": "#005236",
+                    "surface-container-low": "#1c1b1b",
+                    "primary-container": "#528dff",
+                    "tertiary-container": "#937dff",
+                    "surface-container-lowest": "#0e0e0e",
+                    "tertiary-fixed-dim": "#cabeff",
+                    "surface-container-highest": "#353534",
+                    "on-primary": "#002d6c",
+                    "error-container": "#93000a",
+                    "background": "#131313",
+                    "surface-tint": "#afc6ff",
+                    "primary-fixed-dim": "#afc6ff",
+                    "inverse-on-surface": "#313030"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "desktop-max-width": "1440px",
+                    "gutter": "16px",
+                    "container-margin": "24px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"],
+                    "label-md": ["Hanken Grotesk"],
+                    "label-sm": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .glass-card {
+            background: rgba(28, 27, 27, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(140, 144, 159, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 40px 40px -20px rgba(0, 0, 0, 0.4);
+            border-color: rgba(175, 198, 255, 0.4);
+        }
+        .primary-glow:hover {
+            box-shadow: 0 0 15px rgba(175, 198, 255, 0.4);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #424753;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="bg-surface-container-low h-screen w-64 fixed left-0 top-0 flex flex-col py-gutter border-r border-outline-variant/10 shadow-sm z-50">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Evia Collab</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Professional Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary font-bold border-l-4 border-primary hover:bg-surface-container-highest transition-colors transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md text-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-md text-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-body-md text-body-md">Editor</span>
+</a>
+<div class="mt-auto pt-6 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 z-40 flex justify-between items-center px-gutter">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<input class="bg-surface-container-low text-on-surface font-label-md text-label-md pl-10 pr-4 py-2 rounded-full border border-outline-variant focus:border-primary outline-none transition-all w-full" placeholder="Search templates, categories, or keywords..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary">search</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAoJlrHT7MNbnx0fwKhoaLyDPFE57Z80z2a7gFCVECgl-PzoDQbtrKlLNt0nzvDW2NL06STgfaEryw-rhEZA3FaLCzVhv4vw3yVJI8nrSOH8dGhLlXHwAUgZScXVmuzwjnpPRwQmXxbMfcalqenAulPa0cJvtxVumrQsuRQYg2UC7XsfNxZ7SMLfENuMBka_goJYYP2pSj1b4WU1t1M3Oyezjw0klyVjQwyJYkKlqO5Yu3YthdypZ-g-WTDEIjiFTRUhNWpDOivEQ"/>
+</div>
+<span class="font-label-md text-label-md hidden lg:block group-hover:text-primary transition-colors">Alex Morgan</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-16 p-container-margin w-full max-w-desktop-max-width mx-auto h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Document Templates</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Standardize your document workflow with pre-configured high-precision templates.</p>
+</div>
+<button class="bg-primary text-on-primary font-bold px-6 py-3 rounded-lg flex items-center gap-2 primary-glow transition-all active:scale-95 shadow-sm">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'wght' 600;">add</span>
+<span class="font-label-md text-label-md">Create New Template</span>
+</button>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 border-b border-outline-variant/30">
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md transition-all">All</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all">General</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all">Business</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all">Human Resources</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all">Legal</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-all">Engineering</button>
+<button class="ml-auto text-primary font-label-md text-label-md flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                Advanced Filters
+            </button>
+</div>
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Template 1: Quarterly Business Review -->
+<div class="glass-card rounded-xl overflow-hidden group flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img alt="Quarterly review preview" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf2MyD--5bVFrOrU1WjaGhD8UtI0pHRrh4B4EmXOoriJkjVZALS3nao8yTsN1aS5bOLYmTgnEyk_nmbn7zIVRL2urs8vaugVqxZjLnziRDwPEpVz95m-BHs6Xnl8JG260V26B15lRgKFPvWbbIE5yf3wP4Ne-4j3KUwMg2s8OzMpc0qRYiXbTecFcwnD-Gs47CN5PtYfCsGIXtyTxpCduHdpDFIVm7Q8maONY74rrearaM394p26N34Ad-feeQXy5d4ACvmCPM8P0"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-surface p-2 rounded-full text-primary hover:bg-primary-container transition-colors shadow-lg"><span class="material-symbols-outlined">visibility</span></button>
+<button class="bg-surface p-2 rounded-full text-primary hover:bg-primary-container transition-colors shadow-lg"><span class="material-symbols-outlined">content_copy</span></button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Business
+                        </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="font-headline-md text-on-surface mb-2 line-clamp-1">Quarterly Performance Review</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">A standardized framework for assessing employee achievements and setting upcoming goals with automated metric calculations.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Updated 2d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>7 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img alt="User" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8plFSDKFPitY5Kv2HzQpIzEbQIQ5ifdBLTK5_t1YJTR4-cPOv3N5ugxcxZ7zyKRmL4JcRKHAU1jJ_bizfmysuykv4aqbS7b9VJMbNDAj6Z6BfJd4EDy8RWGBBZOVZz6dsYl3JjaurSo9uGKi3t0m7O0d3aOUMn_8mm1Qh4xjzu58y42kzNVvbktgmfXPUYcTBnqdVGuS3PA6BfDW82NUMWHkynxHX7_39leVBJJLi0MpQT6d6SOc1QCJzi3z7TLpBWV6a3Zc8ngQ"/>
+<img alt="User" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxD0oIkH9j2Tb7tD2PMUmpXg65Rz6JPeXwwAJgDdYQk0E-gIvlc12-pTjHxQk1TgE8XlhwT_6rr0t8QOEcu1WvwJ9R1UfO6zAMz32DVt6d7OACQPfDEGu-JQsJ2-tXQuHiD3sDbgrsCJkYI1KlEa0lZwzJgPhazv9W03EuYmkL-5B1X2Couf9e4m5d1rzlzHJG6a5NqS-oXvcVGOe-Zm5Kl-1T1givqi15yTD93h58AvrHkW0zJ6p28hsRpwcEpP2suRUFQItRvws"/>
+</div>
+<span class="text-label-sm text-on-surface-variant/70">+3 Contributors</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template 2: Service Level Agreement -->
+<div class="glass-card rounded-xl overflow-hidden group flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img alt="Legal agreement preview" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARoa-_vNWwksO_KXnCS7ec1CuIh-gwKYBYNqyJRPNQSxapFVuBCdhccWE0hNRlURy91qFezim06WQNPjfRcbmM29kjdDEFICNxa0NZY0-aYkigmmuyA0oTJOyQEcgKotGm6eRvV7fk0K9vysQ0BSrDQBjXxqwEd5jHiVfS9EE1U96pg0rBGRXuZcTUfPnjgvqBJ1PyuBsz-aRirKCWf1jjxKLORCZMUmxh7qpRLL9j4bk2HKft-h2ebByTQeXcisG84LHTRskyRP8"/>
+<div class="absolute top-3 left-3">
+<span class="bg-tertiary-container text-on-tertiary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Legal
+                        </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="font-headline-md text-on-surface mb-2 line-clamp-1">Service Level Agreement (SLA)</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">Standard vendor agreement covering uptime, response times, and dispute resolution for cloud services.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Updated 1w ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>Permanent Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<img alt="Legal team" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_VR3WYBpVdfwk-FI_YHWdNtEQ0MdqnTYfIYzndoFj58c5wWx9GyrEIdmDTUn7WUWrncbs7cl3fylRL3FnCT8O7nPQwPR1YsAllpecMKdzfkMU9LS6P8ysnzl2L8sJ4_syAS6X3jhvzLh6NxdBC_tyU8nylrmdrWxjCfBpB5DYvtmWCW2Jlw1LjdpmebfUvXDLFBezvGEYt76P9g2jMxF24y6EROG9xln6OqqOTf3TyDPCdVGRs11GSKU6NXQfC0qLM0WhsyprUWw"/>
+<span class="text-label-sm text-on-surface-variant/70">Legal Team</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template 3: Employee Onboarding -->
+<div class="glass-card rounded-xl overflow-hidden group flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img alt="Onboarding preview" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3taXm490qlZuWNedus0Io5eYnsEW5oNM_328Z8kKdd_BtJUG5tNekk12JFu9wLuiUfsMpc8RVTJrzsZogIQ1lOh-9mINFpyNqriokSAqgqO8CE_7vuwjpf1Zn4qqc_8pyNSYUtIPKC_9N4sPIt9S_kegxsU9l-3ImJIZiGuJJfgtlb8KwWuYflzW81Dmp84Kaub30WmYctgSN2Dgi8H1jeSr5BVstiO1dQD6ElnMF2xz-LZSMdXhTnIMl70VFpD3Af63YSdDrSrk"/>
+<div class="absolute top-3 left-3">
+<span class="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> HR
+                        </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="font-headline-md text-on-surface mb-2 line-clamp-1">Employee Onboarding Kit</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">Comprehensive welcome guide including policy sign-offs, equipment requests, and team introductions.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Updated 3d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>3 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img alt="User" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9FsTaHcBM6dE1kR5IWojh6iwaX6kFedguM0INY5CXs_wxwaWRngeJbPfpmEiphAXaVNCpPHFrREvkJIJXkS1hENz6g5t7h7XrccwWYsfO1LgkMo0kxbU0i_q-suq1Jl0OReELLER-gDQodU_MSPhZxIt6zOYikck-eKcgsr4F9pFjNFhr_zmt9kpRRi71Zsk8AmpEpBciHBdyFhLHaJjtoypgsjbokzDXw10eGwFij2iRZt14yx00d_nU_3ORNTaj7Kqu5TkYTYs"/>
+<img alt="User" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVdeHPMebCDiAea8D6Io_rWDFYdL80-p72ycVBl9-JzeVMPx72JWrnHrgiiE5ajOWa1_4QtZUgnJcqj9B8ArNAfPGYbk5ivtSPTf6S7d1NbjW5xoDFzvnykl0WxoWeZ5H9LWzz9R3OwQRBMREnMF1tb5k7_7tzqGr5-ILXrqQ5rIwG4L4Ruav7k8MgPZ1mONXzLHU_pTLaTfssVgK4PspepNWr6JHksFfV8mc7BPVsGB6qwddqd9dtNotBadnsybSy-iyi3CQ1MUQ"/>
+</div>
+<span class="text-label-sm text-on-surface-variant/70">+5 Others</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template 4: PRD -->
+<div class="glass-card rounded-xl overflow-hidden group flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img alt="PRD preview" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK-7Ch_MeV4EuMtq-9fWfgbXIMshA5dYXz92yjw8W386OjMhDQLE8B51SVqqgD50pseqaepuNgOrqnmViIkWkMkE7U6e4Ko_G_1YVRSgk2ea2s1spuGl7PFjO_LVR8bkhGqyallqbo0sXZ0BaPlpHTDImsxzAB9ciGTqu329hLcP1dRdz0oJf2MHQ0Y8wgdedvCNIQ9Is9aI8h9FLXyPdnbt_nziOZAzz2uFSuhJYuhsTKd36FBExn7EHY-wLfA6NeNVYfnb9RNFU"/>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> General
+                        </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="font-headline-md text-on-surface mb-2 line-clamp-1">Product Requirements Doc (PRD)</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">Standardized blueprint for defining product features, user stories, and technical constraints for engineering teams.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Updated 10h ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>5 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<img alt="Product Org" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_Yxjb74TtWzu5mHBxMcIyyJnrC01iv3oehCppHF2eQYnW2qV86SETt3llMdJxnOjDJqO4RcRPdzsRUrFwVPWIhk0MeTyeXYngL66FkLafrJ8HMlM71tZApUOi8dtN2LGyVjBQVW8Fm5OI2cQpk1xdHRio7vfxaCt-g4E_t14t_AjPQzLWO2hyeKFKjgcDiNei7bd3L6hCMJ6ywOuo7bJvDRveExK-mREHW1-IRVsWP-VrXqUDUCHkuCI6CG8wgadoftS1L_po4eA"/>
+<span class="text-label-sm text-on-surface-variant/70">Product Org</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template 5: Annual Marketing Plan -->
+<div class="glass-card rounded-xl overflow-hidden group flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img alt="Marketing plan preview" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQTJluGRvU0SCZm8bW-aen9gL9cl_pje8aA4m6ke3HCSg3b6xrsM4rjPnEeag3zGEDPbvle5cjdaJZjKzX5wWGEzo8K0tdbcln1LEwf7HWv9S2vZQisQ4o_5VEBKe4YtN_k-xlVD18R0_AOJmRDrdDG10-2oR0FDypKl879zPeJlSeB8t6V1QvgxUrNC3cyYQVgy_2GSUEU4swHu1oMim9l9HeNnL2rns5YP6MCFVmOkViGTLuWzbi4-262VDmItPblKrIaOINOMA"/>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Business
+                        </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="font-headline-md text-on-surface mb-2 line-clamp-1">Annual Marketing Strategy</h3>
+<p class="font-body-md text-on-surface-variant mb-4 line-clamp-2">High-level strategic planning document for annual campaigns, budget allocation, and KPI tracking.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<span>Updated 4d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>2 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<img alt="Growth team" class="w-6 h-6 rounded-full border-2 border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkgyiYBwCMUlhY1vMyayYwXSKCpDQEYAuE7yxV_G1a4RpJEDPiXm9ixQAGFX2AdVaPVYzDYJ9PUXZFre5IjvX5X_zP5AczGt_s4GTtEK1PVOaH6vm-aPFHLjh9ucDv2ZZIqGUWV3h1EUWiZipaJydbnCRHs_Sy6dRpvwmalIs0LC6ytrDYYTbt_RecasjkzjGVkHxcW5d0_vukyL5Mb0ywn1xksPqKWiYO3z3WgDOXtlzxSaPTGWcDzfmwm0yKx9KDbOotVdyVsEo"/>
+<span class="text-label-sm text-on-surface-variant/70">Growth Team</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Start from Blank placeholder -->
+<div class="border-2 border-dashed border-outline-variant/30 rounded-xl overflow-hidden flex flex-col items-center justify-center p-8 bg-surface-container-low/30 hover:bg-surface-container hover:border-primary transition-all group cursor-pointer h-full min-h-[400px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-3xl">add_circle</span>
+</div>
+<h3 class="font-headline-md text-on-surface-variant group-hover:text-primary transition-colors">Start from Blank</h3>
+<p class="font-body-md text-on-surface-variant text-center mt-2">Create a custom template with the Evia editor from scratch.</p>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-16 pt-8 border-t border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant/60 mb-20">
+<p class="font-label-md text-label-md">Viewing 1-12 of 48 Templates</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded font-label-md">3</button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for filter buttons
+        const filterButtons = document.querySelectorAll('.flex.items-center.gap-2 button');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.innerText.includes('Advanced Filters')) return;
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('hover:bg-surface-container-high', 'text-on-surface-variant');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary');
+                btn.classList.remove('hover:bg-surface-container-high', 'text-on-surface-variant');
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

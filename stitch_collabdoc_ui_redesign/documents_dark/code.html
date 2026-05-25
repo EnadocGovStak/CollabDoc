@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evia Collab - Documents Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#cabeff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-tint": "#afc6ff",
+                        "outline": "#8c909f",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container": "#201f1f",
+                        "on-tertiary": "#31009a",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "error": "#ffb4ab",
+                        "on-background": "#e5e2e1",
+                        "background": "#131313",
+                        "secondary-fixed": "#48ffb6",
+                        "tertiary-fixed": "#e6deff",
+                        "surface": "#131313",
+                        "on-primary-fixed": "#001a43",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c2c6d6",
+                        "primary-container": "#528dff",
+                        "tertiary": "#cabeff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#00311e",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "on-secondary": "#003824",
+                        "surface-container-highest": "#353534",
+                        "on-primary": "#002d6c",
+                        "primary": "#afc6ff",
+                        "secondary-fixed-dim": "#00e29c",
+                        "outline-variant": "#424753",
+                        "on-tertiary-container": "#2a0088",
+                        "secondary": "#00e29c",
+                        "on-tertiary-fixed": "#1c0062",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-on-surface": "#313030",
+                        "primary-fixed-dim": "#afc6ff",
+                        "tertiary-container": "#937dff",
+                        "on-primary-fixed-variant": "#004398",
+                        "inverse-primary": "#0059c6",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#00a571",
+                        "on-error": "#690005",
+                        "on-primary-container": "#00275f",
+                        "surface-variant": "#353534",
+                        "primary-fixed": "#d9e2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "desktop-max-width": "1440px",
+                        "container-margin": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #121212;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-md text-primary dark:text-primary-fixed-dim docked full-width top-0 sticky border-b border-white/10 shadow-sm flex justify-between items-center px-gutter w-full h-16 z-50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined transition-colors duration-200 active:scale-95 hover:bg-white/5 p-2 rounded-full">menu</button>
+<h1 class="text-headline-md-mobile font-headline-md-mobile font-bold text-primary dark:text-primary">Evia Collab</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="material-symbols-outlined transition-colors duration-200 active:scale-95 hover:bg-white/5 p-2 rounded-full">search</button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-white/10">
+<img alt="User Profile" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGwSIey_lu9v1FSZyg0dDsG2Jm1zAYFiVY1dpTaXJ5oLo2_T1WzsYDwRpFzUERNgeor2ux6L-6a2aBeqgvPQ_ojVk7p1P8i8i0siXpRIMeRT5zuEbfChaPK8BMPZQW94V7W3hJgd4g1kAu_KAaOaWtaB68ZBo2r9BuTtVtqFbGyUcI7sHxjE5Axk1207G35aQyoXyTStavhMTts8HtAd7EUu-OUApJhDGkp1OS1N8NfkdK-BY_f_Mhzz6dd_MRb2dbm6EcR6QCTzc"/>
+</div>
+</div>
+</header>
+<main class="max-w-desktop-max-width mx-auto px-container-margin py-8">
+<!-- Search & Filter Bar -->
+<section class="mb-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/30 rounded-xl py-4 pl-12 pr-4 text-on-surface focus:outline-none focus:border-primary transition-all duration-300 glass-panel" placeholder="Search your digital ecosystem..." type="text"/>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Hero Spotlight -->
+<div class="md:col-span-8 group relative overflow-hidden rounded-xl bg-surface-container border border-white/5 h-64 md:h-80 shadow-sm transition-transform duration-500 hover:scale-[1.01]">
+<img class="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110" data-alt="A sophisticated 3D abstract digital environment featuring flowing obsidian-like ribbons and glowing crystalline structures. The lighting is dramatic and moody with deep shadows and sharp blue rim highlights, creating a sense of technical precision and expansive workspace. The aesthetic is clean, cinematic, and professional, perfectly suited for a high-performance collaborator dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW8w_jxfHorRJhaBZpDCfYAsHnHkDVgqFmcvJQFl0Jc3p7uF7_qbHcvxMMmwuuI65wd75WdscnkoIGeRITvgwbqhFmKI89FL4iMPZWUEJOlSQV3iPASY3f09c1sZUZMxyX3maA4HkMvLwM-eL0AF0k1FuwDQUJqs9E7686IVK6-itgIpe4vO1RMyrUFupcaQYMtwnN1CYCjDU8ZxKNs2nQopt3iIBKjgjM39VKc2pOzQkb30ZahtT5LIoaQs9lMZW6YVlr8eiGu70"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-8">
+<span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-label-sm font-label-sm mb-4 border border-secondary/20">
+                        FEATURED PROJECT
+                    </span>
+<h2 class="text-headline-lg font-headline-lg text-white mb-2">Q4 Strategic Infrastructure</h2>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-md">Collaborative documentation for the next phase of global systems deployment.</p>
+</div>
+</div>
+<!-- Stats Card -->
+<div class="md:col-span-4 rounded-xl bg-surface-container border border-white/5 p-6 flex flex-col justify-between glass-panel">
+<div>
+<h3 class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider mb-6">Storage Overview</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-headline-md font-headline-md text-primary">82.4 GB</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">of 100 GB used</span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 82.4%"></div>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-white/5 mt-6 grid grid-cols-2 gap-4">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Total Docs</p>
+<p class="text-headline-md font-headline-md text-on-surface">1,248</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Active Collab</p>
+<p class="text-headline-md font-headline-md text-on-surface">24</p>
+</div>
+</div>
+</div>
+<!-- Documents List Container -->
+<div class="md:col-span-12 rounded-xl bg-surface-container border border-white/5 overflow-hidden shadow-sm">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h3 class="text-headline-md font-headline-md">Recent Documents</h3>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">sort</span>
+</button>
+</div>
+</div>
+<div class="divide-y divide-white/5">
+<!-- Doc Item 1 -->
+<div class="group flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Architecture_Blueprint_v4.pdf</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Modified 2h ago • 4.2 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary text-label-sm font-label-sm border border-secondary/20">
+                                Final
+                            </span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</div>
+</div>
+<!-- Doc Item 2 -->
+<div class="group flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">table_chart</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Q3_Revenue_Projection.xlsx</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Modified 5h ago • 1.8 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-primary-container/10 text-primary-container text-label-sm font-label-sm border border-primary-container/20">
+                                In Progress
+                            </span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</div>
+</div>
+<!-- Doc Item 3 -->
+<div class="group flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">slideshow</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Product_Keynote_Main.pptx</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Modified Yesterday • 12.5 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-primary-container/10 text-primary-container text-label-sm font-label-sm border border-primary-container/20">
+                                In Progress
+                            </span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</div>
+</div>
+<!-- Doc Item 4 -->
+<div class="group flex items-center justify-between p-4 hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">UI_Assets_Export_Final.zip</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Modified 2 days ago • 84.0 MB</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary text-label-sm font-label-sm border border-secondary/20">
+                                Final
+                            </span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors">more_vert</button>
+</div>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low/50 flex justify-center">
+<button class="text-label-md font-label-md text-primary hover:underline">View All Documents</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-24 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 z-40">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container dark:bg-surface-container fixed bottom-0 left-0 w-full flex justify-around items-center px-container-margin py-3 pb-safe z-50 border-t border-white/5 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.4)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center bg-secondary-container/20 text-secondary dark:text-secondary-fixed rounded-full px-4 py-1.5 active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined active-icon">description</span>
+<span class="text-label-sm font-label-sm">Documents</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary transition-all active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-label-sm font-label-sm">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary transition-all active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="text-label-sm font-label-sm">Fields</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1.5 hover:text-primary transition-all active:scale-90 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for document items
+        document.querySelectorAll('.group').forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                setTimeout(() => {
+                    item.style.backgroundColor = '';
+                }, 150);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workspace Settings | Evia Prism</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#a70819",
+                        "primary-fixed-dim": "#a2c9ff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#74db9d",
+                        "surface-container-high": "#dee8ff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#002110",
+                        "secondary": "#006d40",
+                        "on-primary": "#ffffff",
+                        "background": "#f9f9ff",
+                        "on-surface-variant": "#414750",
+                        "on-primary-fixed": "#001c38",
+                        "on-background": "#121c2c",
+                        "on-tertiary-fixed": "#410004",
+                        "on-primary-container": "#e1ecff",
+                        "primary-fixed": "#d3e4ff",
+                        "inverse-primary": "#a2c9ff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#8ef5b5",
+                        "surface-tint": "#1960a3",
+                        "outline-variant": "#c1c7d2",
+                        "surface-container": "#e7eeff",
+                        "on-primary-fixed-variant": "#004881",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#ca2a2e",
+                        "surface-container-low": "#f0f3ff",
+                        "on-secondary-fixed-variant": "#00522f",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-dim": "#d0daf0",
+                        "tertiary-fixed": "#ffdad7",
+                        "on-secondary-container": "#007243",
+                        "on-tertiary-container": "#ffe6e3",
+                        "primary": "#005394",
+                        "secondary-fixed": "#91f8b8",
+                        "inverse-surface": "#273141",
+                        "primary-container": "#2b6cb0",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f9f9ff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-surface": "#121c2c",
+                        "surface-variant": "#d9e3f9",
+                        "outline": "#727782",
+                        "surface-container-highest": "#d9e3f9",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "margin": "32px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9ff; color: #121c2c; }
+        h1, h2, h3 { font-family: 'Hanken Grotesk', sans-serif; }
+        .sidebar-item-active { border-left: 4px solid #005394; background-color: #e7eeff; }
+        .card-shadow { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- Shared TopNavBar Inclusion -->
+<div class="relative flex h-auto w-full flex-col bg-gray-50 group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e9edf1] px-10 py-3 bg-white">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-[#101419]">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6_330)">
+<path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+</g>
+<defs><clippath id="clip0_6_330"><rect fill="white" height="48" width="48"></rect></clippath></defs>
+</svg>
+</div>
+<h2 class="text-[#101419] text-lg font-bold leading-tight tracking-[-0.015em]">Evia Prism</h2>
+</div>
+<label class="flex flex-col min-w-64 !h-10 max-w-96">
+<div class="flex w-full flex-1 items-stretch rounded h-full">
+<div class="text-[#57728e] flex border-none bg-[#e9edf1] items-center justify-center pl-4 rounded-l border-r-0" data-icon="search" data-size="24px" data-weight="regular">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded text-[#101419] focus:outline-0 focus:ring-0 border-none bg-[#e9edf1] focus:border-none h-full placeholder:text-[#57728e] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search settings..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-4">
+<div class="flex gap-2">
+<button class="flex cursor-pointer items-center justify-center rounded h-10 w-10 bg-[#e9edf1] text-[#101419]">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex cursor-pointer items-center justify-center rounded h-10 w-10 bg-[#e9edf1] text-[#101419]">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary-fixed" data-alt="A professional headshot of a diverse corporate executive in a bright, modern office setting. The lighting is soft and professional, reflecting a high-precision workspace for professionals. The background is slightly blurred to emphasize the subject, maintaining a light-mode corporate aesthetic with clean lines and soft blue tones." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBwF4oM_THFQpozvnO6m-F7tMN-y2urYWZrMcdWSgdoAM0yruVWegh00AljwXMRw9dc-ytF6Gy_35xTa763bX0pfkmfY5eetkKdrrh-1ndRilwf7U25C3VZ5Rpw8eU7B_BB53CRunQSb_ucLjwSnZe2TGS0dAgfIwGNbLx2fu_gChig5FvmvYC0DKDTrskyZhLoRlaGKpp8hRmUcC5zooI5pPBdhCV1zASIqkgu3po_7BFz5gHzl2CblXtiKSUMYlJgQrC2GnlNApY");'></div>
+</div>
+</header>
+<div class="flex flex-1 h-[calc(100vh-64px)]">
+<!-- Sidebar Navigation -->
+<aside class="w-72 bg-white border-r border-outline-variant flex flex-col justify-between py-6">
+<div class="flex flex-col gap-1">
+<div class="px-6 mb-4">
+<h1 class="text-on-surface text-lg font-bold">Acme Corp</h1>
+<p class="text-on-surface-variant text-sm">Enterprise Admin</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium text-sm">General</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 sidebar-item-active text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">corporate_fare</span>
+<span class="font-bold text-sm">Workspace</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">shield_person</span>
+<span class="font-medium text-sm">Security</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-medium text-sm">Preferences</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-medium text-sm">Billing</span>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-1 border-t border-outline-variant pt-4">
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-medium text-sm">Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background p-8">
+<div class="max-w-4xl mx-auto">
+<div class="flex flex-col gap-2 mb-8">
+<h1 class="text-headline-xl text-on-surface">Workspace Settings</h1>
+<p class="text-body-lg text-on-surface-variant">Manage your organization's core configuration, team access, and shared environment rules.</p>
+</div>
+<!-- Organization Profile Section -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow mb-6">
+<div class="p-6 border-b border-outline-variant">
+<h2 class="text-headline-md text-on-surface">Organization Profile</h2>
+<p class="text-body-md text-on-surface-variant">Update your public workspace identity and contact details.</p>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-label-md text-on-surface">Workspace Name</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all" type="text" value="Acme Corp Global"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-md text-on-surface">Organization URL</label>
+<div class="flex items-center">
+<span class="bg-surface-container px-3 py-3 rounded-l-lg border border-r-0 border-outline text-on-surface-variant text-sm">evia.app/</span>
+<input class="flex-1 px-4 py-3 rounded-r-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary bg-white transition-all" type="text" value="acmecorp"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 col-span-full">
+<label class="text-label-md text-on-surface">Business Description</label>
+<textarea class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all h-24">Global logistics and innovation leader focused on high-precision workspace document lifecycles.</textarea>
+</div>
+</div>
+<div class="px-6 py-4 bg-surface-container-low flex justify-end gap-3 rounded-b-xl">
+<button class="px-4 py-2 text-primary font-bold text-sm hover:bg-surface-container transition-colors rounded">Reset</button>
+<button class="px-6 py-2 bg-primary text-white font-bold text-sm rounded shadow-sm hover:bg-primary-container transition-colors">Save Changes</button>
+</div>
+</section>
+<!-- Preferences Section -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow mb-6">
+<div class="p-6 border-b border-outline-variant">
+<h2 class="text-headline-md text-on-surface">Regional Preferences</h2>
+</div>
+<div class="p-6 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<h3 class="font-bold text-on-surface">Auto-Archive Projects</h3>
+<p class="text-sm text-on-surface-variant">Automatically move inactive documents to internal storage after 90 days.</p>
+</div>
+<button class="w-12 h-6 bg-secondary rounded-full relative flex items-center px-1 transition-colors" onclick="this.classList.toggle('bg-secondary'); this.classList.toggle('bg-outline'); this.children[0].classList.toggle('translate-x-6')">
+<div class="w-4 h-4 bg-white rounded-full transition-transform translate-x-6 shadow-sm"></div>
+</button>
+</div>
+<div class="border-t border-outline-variant pt-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="text-label-md text-on-surface">Default Currency</label>
+<select class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary bg-white">
+<option>USD - US Dollar</option>
+<option>EUR - Euro</option>
+<option>GBP - British Pound</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-md text-on-surface">Timezone</label>
+<select class="w-full px-4 py-3 rounded-lg border border-outline focus:border-primary bg-white">
+<option>(GMT-08:00) Pacific Time</option>
+<option>(GMT-05:00) Eastern Time</option>
+<option>(GMT+00:00) London</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Security Section -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant card-shadow mb-8">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<div>
+<h2 class="text-headline-md text-on-surface">Security &amp; Access</h2>
+<p class="text-body-md text-on-surface-variant">Manage how team members authenticate and share data.</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-sm uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">verified</span> Secure
+                                </span>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="p-2 bg-primary-container rounded text-on-primary-container">
+<span class="material-symbols-outlined">authenticator</span>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">Two-Factor Authentication (2FA)</h3>
+<p class="text-sm text-on-surface-variant mb-3">Enforce 2FA for all members of the organization to prevent unauthorized access.</p>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline">
+                                            Configure 2FA policy <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-low border border-outline-variant">
+<div class="p-2 bg-tertiary-container rounded text-on-tertiary-container">
+<span class="material-symbols-outlined">block</span>
+</div>
+<div class="flex-1">
+<h3 class="font-bold text-on-surface">Domain Restricted Sharing</h3>
+<p class="text-sm text-on-surface-variant">Only allow sharing documents with verified company domains.</p>
+<div class="mt-2 flex flex-wrap gap-2">
+<span class="bg-white border border-outline-variant px-2 py-1 rounded text-xs text-on-surface">@acmecorp.com</span>
+<span class="bg-white border border-outline-variant px-2 py-1 rounded text-xs text-on-surface">@acmesubsidiary.io</span>
+<button class="text-primary text-xs font-bold px-2 py-1">+ Add domain</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Danger Zone -->
+<div class="border-t-2 border-dashed border-error-container pt-8 pb-12">
+<div class="flex flex-col gap-4">
+<h2 class="text-headline-md text-error">Danger Zone</h2>
+<div class="p-6 border border-error-container bg-error-container/10 rounded-xl flex items-center justify-between">
+<div>
+<h3 class="font-bold text-on-surface">Delete Workspace</h3>
+<p class="text-sm text-on-surface-variant">Permanently delete this workspace and all associated document data. This action is irreversible.</p>
+</div>
+<button class="px-6 py-2 border border-error text-error font-bold text-sm rounded hover:bg-error hover:text-white transition-all">Delete Forever</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+<script>
+        // Simple toggle logic for atmospheric interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('ring-2', 'ring-primary/10');
+                });
+                input.addEventListener('blur', () => {
+                    input.parentElement.classList.remove('ring-2', 'ring-primary/10');
+                });
+            });
+        });
+    </script>
+</body></html>

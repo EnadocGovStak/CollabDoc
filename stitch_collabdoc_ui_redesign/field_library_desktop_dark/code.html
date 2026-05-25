@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Field Library | SchemaPro Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001a43",
+                        "surface-tint": "#afc6ff",
+                        "surface-bright": "#393939",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#1c0062",
+                        "on-tertiary": "#31009a",
+                        "outline-variant": "#424753",
+                        "surface-container-highest": "#353534",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-container-low": "#1c1b1b",
+                        "primary-fixed-dim": "#afc6ff",
+                        "tertiary": "#cabeff",
+                        "on-background": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "surface-container": "#201f1f",
+                        "secondary": "#00e29c",
+                        "background": "#131313",
+                        "inverse-primary": "#0059c6",
+                        "tertiary-fixed-dim": "#cabeff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary-fixed": "#002113",
+                        "on-surface": "#e5e2e1",
+                        "surface": "#131313",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-container": "#2a0088",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#313030",
+                        "secondary-fixed-dim": "#00e29c",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary-fixed": "#e6deff",
+                        "surface-variant": "#353534",
+                        "error-container": "#93000a",
+                        "primary": "#afc6ff",
+                        "on-primary-fixed-variant": "#004398",
+                        "on-primary": "#002d6c",
+                        "tertiary-container": "#937dff",
+                        "primary-container": "#528dff",
+                        "secondary-container": "#00a571",
+                        "primary-fixed": "#d9e2ff",
+                        "on-secondary-container": "#00311e",
+                        "secondary-fixed": "#48ffb6",
+                        "outline": "#8c909f",
+                        "on-secondary": "#003824",
+                        "on-primary-container": "#00275f",
+                        "on-surface-variant": "#c2c6d6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "unit": "8px",
+                        "desktop-max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Hanken Grotesk", "sans-serif"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .prism-glass {
+            background: rgba(28, 27, 27, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 10px;
+        }
+        .field-row:hover {
+            background-color: #2a2a2a;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-sans selection:bg-primary selection:text-on-primary">
+<div class="flex h-screen overflow-hidden">
+<!-- Shared SideNavBar Integrated -->
+<aside class="w-64 flex-shrink-0 flex flex-col bg-surface-container-lowest border-r border-outline-variant">
+<div class="p-6 flex flex-col gap-8 h-full">
+<!-- Branding -->
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-outline-variant" data-alt="A sleek minimalist corporate logo representing advanced data structures and enterprise connectivity. The icon uses sharp neon blue lines against a deep charcoal background to evoke a sense of technical precision and modern digital architecture within a high-end software environment." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCmWK4depnPeaCydQb0mwEFMaQe-EaqWzcUeSdAqqBVk6FyqkdjxwdnRJZ3crFtOGTbV-tEUhsdUhJwKzXUw-piB9zlwe-1JB2n4SiRbkaNd9R-e975GBrbxz5fW1y8_AD6SN06qjE0waCXSYH_uDaiMkHVn9yre-hhdrdGPPXuZ6u-MA3OYMu_o4jMvhxVrhkChxfE6cjUHAt1TpEWbogQZbw0KoAMWEAnNLw6UJ6fwQmkNmAqZLQUvWwDa73IsbWzHjQPXE1HSa0");'>
+</div>
+<div class="flex flex-col">
+<h1 class="text-on-surface text-base font-bold leading-none">SchemaPro</h1>
+<p class="text-on-surface-variant text-xs font-medium opacity-70">Enterprise Workspace</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-2 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<div class="text-current" data-icon="Layout" data-size="20px">
+<span class="material-symbols-outlined">dashboard</span>
+</div>
+<p class="text-sm font-medium">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-surface-container-high text-primary shadow-sm border border-outline-variant/20" href="#">
+<div class="text-primary" data-icon="Database" data-size="20px" data-weight="fill">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">database</span>
+</div>
+<p class="text-sm font-bold">Field Library</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<div class="text-current" data-icon="Code" data-size="20px">
+<span class="material-symbols-outlined">account_tree</span>
+</div>
+<p class="text-sm font-medium">Data Models</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<div class="text-current" data-icon="Key" data-size="20px">
+<span class="material-symbols-outlined">key</span>
+</div>
+<p class="text-sm font-medium">API Keys</p>
+</a>
+<div class="mt-auto">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" href="#">
+<div class="text-current" data-icon="Gear" data-size="20px">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<p class="text-sm font-medium">Settings</p>
+</a>
+</div>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background overflow-hidden">
+<!-- Header Section -->
+<header class="flex items-center justify-between border-b border-outline-variant px-8 py-4 bg-surface-container-lowest/50 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<h2 class="text-on-surface text-xl font-bold tracking-tight">Field Library</h2>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Bar -->
+<div class="relative w-80 group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="block w-full bg-surface-container border-none rounded-lg py-2 pl-10 pr-3 text-sm text-on-surface placeholder-on-surface-variant/50 focus:ring-1 focus:ring-primary focus:bg-surface-container-high transition-all" placeholder="Quick search commands..." type="text"/>
+</div>
+<!-- Action Icons -->
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</div>
+<div class="size-9 rounded-full border-2 border-primary/20 p-0.5">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="A professional headshot of a software architect in a high-tech office environment. The lighting is moody and cinematic with soft blue highlights reflecting off glass surfaces. The overall aesthetic is professional, modern, and aligned with a premium enterprise software interface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnzliGtCmzH6QHeRPNunAu_X6Pp0GN5wzTdyt_krtDpSRKzCuvaf6o9Pybrj6sRzI7G1susnWyUiSKchsu0eSeVLFBmeX8pJ74CmY0JqrNhDST1aZe08vrWZ_YNjFmdbwnNSNbxloIS5_KTd6jvGYfs08byAG4EkLSOS9uHSjNhQ5wKzEBUDy-1r9uJ2bQYomxj-wzY6NaZiTft7NQ9U9WaH-aY12uCLDSqKV-23O2SfI9lFdfsblYiQpMq2KESBhMcGVIbBgVCdk')">
+</div>
+</div>
+</div>
+</header>
+<!-- Page Title & Actions -->
+<div class="px-8 py-8 flex flex-col gap-6 overflow-y-auto custom-scrollbar">
+<div class="flex justify-between items-end">
+<div class="max-w-2xl">
+<div class="flex items-center gap-2 text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">
+<span>Workspace</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary">Schema Definitions</span>
+</div>
+<h3 class="text-4xl font-bold text-on-surface tracking-tight mb-2">Global Metadata</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed">Centralized schema definitions for cross-environment data consistency. Manage field types, constraints, and validation rules.</p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm hover:opacity-90 transition-opacity shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+<span>Create New Field</span>
+</button>
+</div>
+<!-- Filters & Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="prism-glass p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">apps</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant uppercase">Total Fields</p>
+<p class="text-2xl font-bold text-on-surface leading-none mt-1">1,248</p>
+</div>
+</div>
+<div class="prism-glass p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-secondary-container/20 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant uppercase">Validated</p>
+<p class="text-2xl font-bold text-on-surface leading-none mt-1">98.2%</p>
+</div>
+</div>
+<div class="prism-glass p-4 rounded-xl flex items-center gap-4">
+<div class="size-12 rounded-lg bg-tertiary-container/20 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">history</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant uppercase">Last Sync</p>
+<p class="text-2xl font-bold text-on-surface leading-none mt-1">4m ago</p>
+</div>
+</div>
+<div class="prism-glass p-4 rounded-xl flex flex-col justify-center gap-2">
+<div class="flex justify-between items-center text-xs font-bold text-on-surface-variant uppercase">
+<span>Storage Usage</span>
+<span class="text-primary">64%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 64%"></div>
+</div>
+</div>
+</div>
+<!-- Field List Content -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-2xl">
+<!-- List Header -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low border-b border-outline-variant text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+<div class="col-span-4 flex items-center gap-2 cursor-pointer hover:text-on-surface transition-colors">
+<span>Field Identity</span>
+<span class="material-symbols-outlined text-sm">unfold_more</span>
+</div>
+<div class="col-span-2">Type</div>
+<div class="col-span-3">Example Payload</div>
+<div class="col-span-2">Status</div>
+<div class="col-span-1 text-right">Actions</div>
+</div>
+<!-- List Rows -->
+<div class="divide-y divide-outline-variant/30">
+<!-- Field Row 1 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-5 field-row transition-colors items-center">
+<div class="col-span-4 flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-bold text-base">user_id</span>
+<span class="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-tighter">Primary Key</span>
+</div>
+<span class="text-on-surface-variant text-sm truncate">Unique identifier for system users across nodes.</span>
+</div>
+<div class="col-span-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">fingerprint</span>
+<span class="text-on-surface text-sm font-medium">UUID_V4</span>
+</div>
+</div>
+<div class="col-span-3">
+<code class="text-xs bg-surface-container px-2 py-1 rounded text-secondary font-mono tracking-tighter">"550e8400-e29b-41d4..."</code>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold">
+<div class="size-1.5 rounded-full bg-secondary animate-pulse"></div>
+                                    Active
+                                </div>
+</div>
+<div class="col-span-1 flex justify-end gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Field Row 2 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-5 field-row transition-colors items-center">
+<div class="col-span-4 flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-bold text-base">billing_tier</span>
+<span class="px-2 py-0.5 rounded bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-tighter">Enums</span>
+</div>
+<span class="text-on-surface-variant text-sm truncate">Categorization of account subscription levels.</span>
+</div>
+<div class="col-span-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-lg">list_alt</span>
+<span class="text-on-surface text-sm font-medium">STRING_ENUM</span>
+</div>
+</div>
+<div class="col-span-3">
+<code class="text-xs bg-surface-container px-2 py-1 rounded text-secondary font-mono tracking-tighter">["Basic", "Pro", "Enterprise"]</code>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold">
+<div class="size-1.5 rounded-full bg-secondary"></div>
+                                    Synchronized
+                                </div>
+</div>
+<div class="col-span-1 flex justify-end gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Field Row 3 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-5 field-row transition-colors items-center">
+<div class="col-span-4 flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-bold text-base">last_login_at</span>
+</div>
+<span class="text-on-surface-variant text-sm truncate">Timestamp of the most recent user authentication.</span>
+</div>
+<div class="col-span-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-lg">schedule</span>
+<span class="text-on-surface text-sm font-medium">TIMESTAMP_ISO</span>
+</div>
+</div>
+<div class="col-span-3">
+<code class="text-xs bg-surface-container px-2 py-1 rounded text-secondary font-mono tracking-tighter">"2023-11-20T14:48:00Z"</code>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-error/10 text-error text-xs font-bold">
+<div class="size-1.5 rounded-full bg-error"></div>
+                                    Conflict
+                                </div>
+</div>
+<div class="col-span-1 flex justify-end gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Field Row 4 -->
+<div class="grid grid-cols-12 gap-4 px-6 py-5 field-row transition-colors items-center">
+<div class="col-span-4 flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-bold text-base">meta_data_payload</span>
+<span class="px-2 py-0.5 rounded bg-outline-variant/30 text-on-surface-variant text-[10px] font-bold uppercase tracking-tighter">Encrypted</span>
+</div>
+<span class="text-on-surface-variant text-sm truncate">Extended attributes stored in binary JSON format.</span>
+</div>
+<div class="col-span-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">data_object</span>
+<span class="text-on-surface text-sm font-medium">JSONB</span>
+</div>
+</div>
+<div class="col-span-3">
+<code class="text-xs bg-surface-container px-2 py-1 rounded text-secondary font-mono tracking-tighter">{"flags": [1, 0, 1], "src": "ext"}</code>
+</div>
+<div class="col-span-2">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-xs font-bold border border-outline-variant/30">
+<div class="size-1.5 rounded-full bg-on-surface-variant"></div>
+                                    Deprecated
+                                </div>
+</div>
+<div class="col-span-1 flex justify-end gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+</div>
+<!-- List Footer / Pagination -->
+<div class="flex items-center justify-between px-6 py-4 bg-surface-container-low border-t border-outline-variant">
+<span class="text-xs font-medium text-on-surface-variant uppercase">Showing 1-10 of 1,248 definitions</span>
+<div class="flex items-center gap-2">
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<div class="flex gap-1 text-xs font-bold">
+<button class="size-8 flex items-center justify-center rounded bg-primary text-on-primary">1</button>
+<button class="size-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">2</button>
+<button class="size-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">3</button>
+<span class="size-8 flex items-center justify-center text-on-surface-variant">...</span>
+<button class="size-8 flex items-center justify-center rounded hover:bg-surface-container transition-colors">125</button>
+</div>
+<button class="size-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // Simple search interactivity
+        const searchInput = document.querySelector('input[placeholder="Quick search commands..."]');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.field-row');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Add visual interest to prism glass elements
+        document.querySelectorAll('.prism-glass').forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                el.style.setProperty('--mouse-x', `${x}px`);
+                el.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>

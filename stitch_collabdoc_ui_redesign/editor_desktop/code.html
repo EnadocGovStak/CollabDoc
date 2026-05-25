@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#00522f",
+                        "primary-container": "#2b6cb0",
+                        "secondary-fixed": "#91f8b8",
+                        "on-background": "#121c2c",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d0daf0",
+                        "tertiary-fixed": "#ffdad7",
+                        "tertiary": "#a70819",
+                        "outline-variant": "#c1c7d2",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#a2c9ff",
+                        "on-primary-fixed-variant": "#004881",
+                        "secondary": "#006d40",
+                        "on-secondary-fixed": "#002110",
+                        "primary-fixed": "#d3e4ff",
+                        "on-tertiary-container": "#ffe6e3",
+                        "surface-tint": "#1960a3",
+                        "surface-bright": "#f9f9ff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-primary-fixed": "#001c38",
+                        "on-surface": "#121c2c",
+                        "inverse-primary": "#a2c9ff",
+                        "on-primary-container": "#e1ecff",
+                        "surface-variant": "#d9e3f9",
+                        "secondary-container": "#8ef5b5",
+                        "surface-container-highest": "#d9e3f9",
+                        "on-surface-variant": "#414750",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed-dim": "#74db9d",
+                        "on-secondary-container": "#007243",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9ff",
+                        "inverse-surface": "#273141",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#dee8ff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-container": "#e7eeff",
+                        "on-error": "#ffffff",
+                        "outline": "#727782",
+                        "primary": "#005394",
+                        "tertiary-container": "#ca2a2e",
+                        "background": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin": "32px",
+                        "unit": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-hidden h-screen flex">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface-container border-r border-outline-variant flex flex-col py-6">
+<div class="px-6 mb-8">
+<h1 class="text-headline-md font-headline-md font-bold text-primary">Evia Collab</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant tracking-wider">Professional Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="font-label-md text-label-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-primary font-bold border-l-4 border-primary bg-primary-container/10" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-label-md text-label-md">Editor</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low border border-outline-variant">
+<img alt="User Profile" class="w-10 h-10 rounded-full" data-alt="A professional headshot of a corporate executive in a modern office environment. The person is wearing a sharp, charcoal grey suit and has a warm, confident expression. Soft natural light spills across the scene, highlighting the clean, minimalist interior with subtle blue and white accents that mirror a high-end document management software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQS8TNOfb0UJXS-2WlLYSFND4yf007SDU86ZDbDTJS9M6xMGKZCEVy1aBuwQ3NTVogFPJV2bLVKt4QENkLLIFfBcgV4Yi1_WI2S_QcWunwXB0Xsa_LA8IxfDKV4gmy69KdWJ0Hslrv8k4Se8ONP4JLBG5TVWqTN3ZJ3SFoYHNCeYyFdfra5fjSB6EfSVD3uXUigOcVxetB08F3g7dTUDESZiw2__rYAxW650h-_lrsBIj5c4BjcZymo0PL3NfmxqKRShsetLq7NS8"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Mercer</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Senior Archivist</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-[280px] flex flex-col h-full bg-background overflow-hidden">
+<!-- TopAppBar Anchor -->
+<header class="h-16 px-gutter flex items-center justify-between bg-surface border-b border-outline-variant z-40 sticky top-0">
+<div class="flex items-center gap-6">
+<h2 class="text-headline-md font-headline-md font-bold text-primary">Strategic Enterprise Protocol v4.2</h2>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-container">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5"></span>
+                        ACTIVE DRAFT
+                    </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant italic">Last autosaved 2m ago</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded font-label-md text-label-md transition-all hover:bg-primary-container active:scale-95">
+<span class="material-symbols-outlined text-sm" data-icon="cloud_done">cloud_done</span>
+                    PUBLISH
+                </button>
+</div>
+</header>
+<!-- Editor Controls Toolbar -->
+<div class="h-12 bg-surface-container-lowest border-b border-outline-variant flex items-center px-gutter gap-1 shadow-sm">
+<div class="flex items-center gap-1 pr-4 border-r border-outline-variant">
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant" title="Undo"><span class="material-symbols-outlined" data-icon="undo">undo</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant" title="Redo"><span class="material-symbols-outlined" data-icon="redo">redo</span></button>
+</div>
+<div class="flex items-center gap-1 px-4 border-r border-outline-variant">
+<div class="flex items-center px-2 py-1 bg-surface-variant rounded gap-2 cursor-pointer">
+<span class="text-label-md font-label-md">H2 - Subheader</span>
+<span class="material-symbols-outlined text-xs" data-icon="arrow_drop_down">arrow_drop_down</span>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_bold">format_bold</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_italic">format_italic</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_underlined">format_underlined</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_color_text">format_color_text</span></button>
+</div>
+<div class="flex items-center gap-1 px-4 border-r border-outline-variant">
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_align_left">format_align_left</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_align_center">format_align_center</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="format_list_bulleted">format_list_bulleted</span></button>
+</div>
+<div class="flex items-center gap-1 pl-4">
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="link">link</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="image">image</span></button>
+<button class="p-1.5 hover:bg-surface-variant rounded text-on-surface-variant"><span class="material-symbols-outlined" data-icon="table_chart">table_chart</span></button>
+</div>
+</div>
+<!-- Main Workspace Split -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Editor Pane (Center/Left) -->
+<div class="flex-1 overflow-y-auto bg-surface-container-low p-margin flex justify-center">
+<div class="w-full max-w-[850px] bg-surface-container-lowest min-h-[1100px] shadow-sm border border-outline-variant p-20 flex flex-col gap-6 ring-1 ring-black/5">
+<h1 class="text-headline-xl font-headline-xl text-on-surface border-b pb-8 border-outline-variant">Strategic Enterprise Protocol v4.2</h1>
+<div class="space-y-4">
+<h2 class="text-headline-md font-headline-md text-primary">1. Executive Governance Framework</h2>
+<p class="text-body-lg font-body-lg leading-relaxed text-on-surface-variant">
+                            This document outlines the systematic collaborative structures required for high-precision document lifecycles within the Evia Collab ecosystem. Reliability and institutional trust serve as the core anchors of our governance model.
+                        </p>
+<p class="text-body-lg font-body-lg leading-relaxed text-on-surface-variant">
+                            Producers must adhere to the 12-column fluid grid rhythm and maintain comfortable density for dashboard views while ensuring compact density remains optimized for data tables.
+                        </p>
+</div>
+<div class="p-6 bg-surface-container border-l-4 border-primary rounded-r">
+<p class="text-body-md font-body-md italic text-on-surface">
+                            "Systematic precision is not merely an aesthetic choice, but a functional imperative for large-scale data integrity."
+                        </p>
+</div>
+<div class="space-y-4 pt-4">
+<h2 class="text-headline-md font-headline-md text-primary">2. Information Architecture</h2>
+<ul class="list-disc pl-6 space-y-2 text-body-lg font-body-lg text-on-surface-variant">
+<li>Surface 0 (Background) defines the application shell using Light grey-blue (#F7FAFC).</li>
+<li>Surface 1 (Cards) utilizes a "sheet" metaphor for intuitive document handling.</li>
+<li>Active working areas are clearly demarcated from global navigation through tonal layering.</li>
+</ul>
+</div>
+<!-- Decorative Image -->
+<div class="mt-8 rounded-xl overflow-hidden border border-outline-variant group cursor-pointer relative">
+<img alt="Modern Office Architecture" class="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" data-alt="An expansive, wide-angle shot of a futuristic corporate headquarters with sleek glass walls and high-tech minimalist furniture. The lighting is crisp and cool, featuring soft blue and white tones that match a professional digital workspace. The overall atmosphere is one of systematic order, high-end productivity, and technological sophistication, perfectly aligned with the brand's reliable and collaborative identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7PX-lEkfo0ul2dgVu-js3k67UVPZAeZOMyKf_fa_1YZ4B0-AkqRpCeTYNLK_q6AZp-ICMDusmSooHjtwpaH-yy4MYuuMZuhVXTFwpcMB2b98JI9t4nE9T1d3kQhHUx7mTBI5UEzjzpfGQRoEzv7lg27yha2MCJ6XDp_TcEWXFR9TvZs0GFyqXt8X5scIFc5V4PqkrhNaj9i36mfXbX9Fd_p1MADkMQr7U-8LeU3XuZhUpXJXT63Fz5n8BPyTk4tUL5yz8oDK4mtM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+<span class="text-white font-label-md text-label-md">Click to replace header imagery</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Properties Sidebar (Right) -->
+<aside class="w-[320px] bg-surface border-l border-outline-variant overflow-y-auto flex flex-col">
+<!-- Section: Document Info -->
+<div class="p-gutter border-b border-outline-variant">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-label-md font-label-md text-primary tracking-widest uppercase">Document Info</h3>
+<span class="material-symbols-outlined text-sm text-outline" data-icon="info">info</span>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">VERSION CONTROL</span>
+<span class="text-body-md font-body-md font-bold">4.2.0-Alpha (Build 88)</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">LAST MODIFIED</span>
+<span class="text-body-md font-body-md text-on-surface">Oct 24, 2023 · 14:32 PM</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">CONTRIBUTORS</span>
+<div class="flex -space-x-2 mt-1">
+<img alt="User 1" class="w-8 h-8 rounded-full border-2 border-surface" data-alt="A portrait of a male professional in his late 30s, wearing glasses and a smart casual sweater, set against a neutral, high-key studio background that feels modern and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4Yn3ObfCbG8cW7dtWCvWR8moUcEHwQrn2jZ75Vbxgmy1r_f0Y3DezQiQHYbcWtxG99wjThrhpIIzEhsKWmN_Zs3Y6sbtuHqIUpLcevpNsGEm3TFercjw70YNhQEoMXQ9bmKnum9P_L5XoP9jBQKaYB8tquA7ywdCOyZ4jOjHScz4gB34A8Hm5VmBNDMYRA49RCVzV2TJZPhoEfFge6epOMLK3SF2eXa1_STcPRREpWvkgApeaT4I_rwyn9vsscvFV5lYZmGzKyMs"/>
+<img alt="User 2" class="w-8 h-8 rounded-full border-2 border-surface" data-alt="A portrait of a confident female executive in a professional setting, with soft lighting and a clean, minimalist aesthetic. Her expression is focused and capable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAupAqr8bbjIkvfntBKTYzsukDVCj9JwzldkO8qudpPEAcRciTPTbiROvMk3fVKsQH6TAGqUIIKB32GI4uC92gBAsZ4e0tPf-EsSzromcYKFkpFdoFHPTQ6k_OPAyDHi1Pld1rlnwixOnr57q5YTpFxtG0Q5QKazo0KuHPlmHjK0QlXkmE7CgsgSVZjYKlstYiD2tDl64_2jx23TCLqMc9DN_iBDqvR3FW0hkkFTltG6n8LnyJ2yT-TVqPWQH1GFDStycXpIaMDzBE"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container-high flex items-center justify-center text-[10px] font-bold">+4</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: Records Management -->
+<div class="p-gutter border-b border-outline-variant">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-label-md font-label-md text-primary tracking-widest uppercase">Records Management</h3>
+<span class="material-symbols-outlined text-sm text-outline" data-icon="verified_user">verified_user</span>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface-variant">CLASSIFICATION</label>
+<div class="relative">
+<select class="w-full bg-surface border border-outline rounded p-2 text-body-md appearance-none focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Highly Confidential</option>
+<option selected="">Internal Strategic</option>
+<option>Public Domain</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-label-sm font-label-sm text-on-surface-variant">RETENTION POLICY</label>
+<div class="p-3 bg-surface-container-low rounded border border-outline-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="event_repeat">event_repeat</span>
+<div>
+<p class="text-body-md font-bold text-on-surface">7 Year standard</p>
+<p class="text-[11px] text-on-surface-variant">Expires Dec 2030</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons Cluster -->
+<div class="p-gutter flex flex-col gap-3">
+<button class="w-full py-2 px-4 rounded border border-primary text-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="history">history</span>
+                        Audit Trail
+                    </button>
+<button class="w-full py-2 px-4 rounded border border-primary text-primary font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="picture_as_pdf">picture_as_pdf</span>
+                        Download PDF
+                    </button>
+<button class="w-full py-2 px-4 rounded border border-error text-error font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-error/5 transition-colors mt-4">
+<span class="material-symbols-outlined text-lg" data-icon="archive">archive</span>
+                        Archive Record
+                    </button>
+</div>
+<!-- System Working indicator -->
+<div class="mt-auto p-gutter bg-secondary/5 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</div>
+<span class="text-label-sm font-label-sm text-on-secondary-container">SYNC ACTIVE</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-secondary" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="text-[10px] font-mono text-secondary">ID_772-X</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Contextual FAB - Suppression Rule applied for Details/Editor screens, however, as a high-precision workspace, a 'Quick Action' or 'AI Assistant' is helpful -->
+<button class="fixed bottom-margin right-margin w-14 h-14 bg-inverse-surface text-inverse-on-surface rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform z-50 group" id="ai-assistant-fab">
+<span class="material-symbols-outlined" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<div class="absolute right-16 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded-lg text-label-md font-label-md opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity shadow-lg">
+            Suggest Content
+        </div>
+</button>
+<script>
+        // Micro-interaction for Toolbar buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 100);
+            });
+        });
+
+        // Simple typing effect for AI FAB (Atmospheric)
+        const fab = document.getElementById('ai-assistant-fab');
+        let pulseState = false;
+        setInterval(() => {
+            pulseState = !pulseState;
+            fab.style.boxShadow = pulseState ? '0 0 15px rgba(255, 255, 255, 0.3)' : '0 10px 25px -5px rgba(0, 0, 0, 0.3)';
+        }, 2000);
+    </script>
+</body></html>

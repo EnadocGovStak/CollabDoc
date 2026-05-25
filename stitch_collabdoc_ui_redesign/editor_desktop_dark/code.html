@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Editor Workspace | Evia Collab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            background-color: #131313;
+            color: #e5e2e1;
+            margin: 0;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .editor-canvas {
+            scrollbar-width: thin;
+            scrollbar-color: #424753 #131313;
+        }
+        .rim-light {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Custom cursor for editor focus */
+        .editor-content:focus {
+            outline: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#cabeff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "surface-tint": "#afc6ff",
+                      "outline": "#8c909f",
+                      "on-secondary-fixed": "#002113",
+                      "surface-container": "#201f1f",
+                      "on-tertiary": "#31009a",
+                      "surface-dim": "#131313",
+                      "surface-bright": "#393939",
+                      "error": "#ffb4ab",
+                      "on-background": "#e5e2e1",
+                      "background": "#131313",
+                      "secondary-fixed": "#48ffb6",
+                      "tertiary-fixed": "#e6deff",
+                      "surface": "#131313",
+                      "on-primary-fixed": "#001a43",
+                      "on-surface": "#e5e2e1",
+                      "error-container": "#93000a",
+                      "on-surface-variant": "#c2c6d6",
+                      "primary-container": "#528dff",
+                      "tertiary": "#cabeff",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container-high": "#2a2a2a",
+                      "on-secondary-container": "#00311e",
+                      "inverse-surface": "#e5e2e1",
+                      "on-tertiary-fixed-variant": "#4717ca",
+                      "on-secondary": "#003824",
+                      "surface-container-highest": "#353534",
+                      "on-primary": "#002d6c",
+                      "primary": "#afc6ff",
+                      "secondary-fixed-dim": "#00e29c",
+                      "outline-variant": "#424753",
+                      "on-tertiary-container": "#2a0088",
+                      "secondary": "#00e29c",
+                      "on-tertiary-fixed": "#1c0062",
+                      "surface-container-low": "#1c1b1b",
+                      "inverse-on-surface": "#313030",
+                      "primary-fixed-dim": "#afc6ff",
+                      "tertiary-container": "#937dff",
+                      "on-primary-fixed-variant": "#004398",
+                      "inverse-primary": "#0059c6",
+                      "on-error-container": "#ffdad6",
+                      "secondary-container": "#00a571",
+                      "on-error": "#690005",
+                      "on-primary-container": "#00275f",
+                      "surface-variant": "#353534",
+                      "primary-fixed": "#d9e2ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "desktop-max-width": "1440px",
+                      "container-margin": "24px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "headline-xl-mobile": ["Hanken Grotesk"],
+                      "label-md": ["Hanken Grotesk"],
+                      "label-sm": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "headline-xl": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden flex h-screen">
+<!-- SideNavBar Component -->
+<aside class="bg-surface-container dark:bg-surface-container h-screen w-64 fixed left-0 top-0 flex flex-col py-gutter border-r border-outline-variant/10 shadow-sm z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">Evia Collab</h1>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-70">Professional Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md text-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-md text-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-primary font-bold border-l-4 border-primary hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-body-md text-body-md">Editor</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full bg-primary-container text-on-primary-container py-3 rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 shadow-lg hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Project
+            </button>
+<div class="pt-4 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-label-md text-label-md">Support</span>
+</a>
+</div>
+<div class="flex items-center gap-3 px-4 py-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-xs overflow-hidden">
+<img alt="User Workspace Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKOU8dmDJ5Od1IC222Lv5f9b-Uq3IyihhMqU5wBGy8FCZcNHxMH5CkYVIOphjNFXwjh__I5QzuHGbPTmwFIoXi02thosWRpyP4Zedqhfw8b8VR82sJvN-PLn9CrwdSU8o3kpQhXeKT8NzLJh4NUdjUlOwVCw_6NF0tXeOemZRcimoydFCEGYRCXFna7G4e1gcKwPK4fEKuWUrzvycB_2jsQHn7P6beL66bNZt1xMcSDNVcmhN3Zg3eedfQ488-ukVT8jUILNCd7wA"/>
+</div>
+<div class="flex flex-col">
+<span class="text-label-sm font-bold">John Doe</span>
+<span class="text-[10px] opacity-50 uppercase tracking-widest">Admin</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Workspace Area -->
+<main class="flex-1 ml-64 flex flex-col relative">
+<!-- TopAppBar Component -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 z-40 flex justify-between items-center px-gutter">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="article">article</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary">Q3 Operations Strategy.doc</span>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="#">Recent</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="#">Shared</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" href="#">Favorites</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm" data-icon="search">search</span>
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-full py-1.5 pl-10 pr-4 text-label-md focus:outline-none focus:border-primary transition-all w-64" placeholder="Search workspace..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Editor Viewport (Split Pane) -->
+<div class="flex flex-1 mt-16 overflow-hidden">
+<!-- Central Document Canvas -->
+<section class="flex-1 flex flex-col bg-background relative overflow-hidden">
+<!-- Rich Text Toolbar -->
+<div class="h-12 bg-surface-container-low border-b border-outline-variant/10 flex items-center px-6 gap-1">
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_bold">format_bold</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_italic">format_italic</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_underlined">format_underlined</span>
+</button>
+<div class="w-px h-6 bg-outline-variant/30 mx-2"></div>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_align_left">format_align_left</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_align_center">format_align_center</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="format_list_bulleted">format_list_bulleted</span>
+</button>
+<div class="w-px h-6 bg-outline-variant/30 mx-2"></div>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="link">link</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container-highest rounded text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span>
+</button>
+<div class="ml-auto flex items-center gap-3">
+<span class="text-[10px] text-outline uppercase font-bold tracking-widest">Auto-saved 2m ago</span>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-background bg-primary-container text-[8px] flex items-center justify-center font-bold">AS</div>
+<div class="w-6 h-6 rounded-full border-2 border-background bg-secondary-container text-[8px] flex items-center justify-center font-bold">MK</div>
+</div>
+</div>
+</div>
+<!-- Editor Scrollable Area -->
+<div class="flex-1 overflow-y-auto editor-canvas bg-background py-12 flex justify-center">
+<article class="w-full max-w-3xl glass-panel rim-light min-h-[1100px] p-16 shadow-2xl">
+<header class="mb-12">
+<div class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-label-sm w-fit mb-4">Strategic Document</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-4 leading-tight">Q3 Operations Strategy &amp; Global Alignment</h2>
+<div class="flex items-center gap-4 text-on-surface-variant text-body-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="calendar_today">calendar_today</span> Oct 24, 2023</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="timer">timer</span> 12 min read</span>
+</div>
+</header>
+<div class="editor-content font-body-lg text-body-lg text-on-surface-variant space-y-6 leading-relaxed" contenteditable="true">
+<p>To achieve the scale required for the upcoming fiscal year, our operational framework must pivot from a reactive model to a predictive one. This shift involves integrating deep-learning insights directly into the workflow management lifecycle.</p>
+<h3 class="font-headline-md text-headline-md text-on-surface pt-4">Core Objectives</h3>
+<ul class="list-disc pl-6 space-y-3">
+<li><strong>Global Sync:</strong> Ensure all localized workspaces are operating on a single source of truth (SSoT) by the end of Q3.</li>
+<li><strong>Automation Efficiency:</strong> Reduce manual entry in the Field Library by 45% through schema-aware auto-population.</li>
+<li><strong>Security Compliance:</strong> Implement zero-trust architecture across all collaborative record management portals.</li>
+</ul>
+<div class="my-8 rounded-xl overflow-hidden relative group aspect-video">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="A sophisticated data visualization dashboard showing complex network connections and performance metrics in a dark mode UI style. The interface uses deep grays and blacks with vibrant neon blue and electric green accent lines. Soft ambient lighting glows from the screen, reflecting a high-tech, professional analytics environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUJSjZ0RvwuKTRaRxqh1sxrtW9dh1fhN-p7CegImFLZOFLrGvUxa47gGxwB_cgQI39MIC8GB-qIiOAX0h6MY58-5sCRbhyZzDKGoV5bnh-aX1K5jY5Qnim1N1nBOZQdeQThjG5kwDdS8K-_AvG8PR-EmigU2oNdVQnl1X_qdjHQNQMcOeITV2Zx7IA3Ko6qvgzYdcpIacnx-PtGC9HeVfh1JptbwXyZRJzsJrvig7lUYqG9wP8yuyvFxaTcSbpYJmTqoj6ZB97p_o"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 text-white text-xs font-medium">Figure 1.1: Proposed Q4 Projection Mapping</div>
+</div>
+<p>Initial testing of the <strong>Evia Engine</strong> has shown promising results in low-latency environments. The upcoming sprint will focus specifically on the "Editor" experience, ensuring that large-scale documents (100+ pages) remain performant during simultaneous multi-user editing sessions.</p>
+</div>
+</article>
+</div>
+</section>
+<!-- Right Sidebar: Info & Records -->
+<aside class="w-80 bg-surface-container-low border-l border-outline-variant/10 flex flex-col">
+<!-- Sidebar Tabs -->
+<div class="flex border-b border-outline-variant/10">
+<button class="flex-1 py-4 text-label-sm font-bold border-b-2 border-primary text-primary">INFO</button>
+<button class="flex-1 py-4 text-label-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">RECORDS</button>
+</div>
+<div class="p-6 space-y-8 overflow-y-auto">
+<!-- Document Info Section -->
+<section>
+<h4 class="text-label-sm font-bold text-outline uppercase tracking-widest mb-4">Metadata</h4>
+<div class="space-y-4">
+<div>
+<label class="text-[10px] text-outline font-bold uppercase mb-1 block">Project Owner</label>
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-primary/20 text-primary text-[10px] flex items-center justify-center font-bold">JD</div>
+<span class="text-label-md">John Doe</span>
+</div>
+</div>
+<div>
+<label class="text-[10px] text-outline font-bold uppercase mb-1 block">Workspace</label>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="work">work</span>
+<span class="text-label-md">Operations Strategy</span>
+</div>
+</div>
+<div>
+<label class="text-[10px] text-outline font-bold uppercase mb-1 block">Status</label>
+<div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                                    IN REVIEW
+                                </div>
+</div>
+</div>
+</section>
+<!-- Records Management Section -->
+<section>
+<div class="flex justify-between items-center mb-4">
+<h4 class="text-label-sm font-bold text-outline uppercase tracking-widest">Version History</h4>
+<button class="text-primary text-[10px] font-bold hover:underline">VIEW ALL</button>
+</div>
+<div class="space-y-3">
+<div class="p-3 rounded-lg bg-surface-container-high border border-outline-variant/10 hover:border-primary/30 transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-bold text-on-surface">v2.4.0 Final</span>
+<span class="text-[10px] text-outline">Today, 2:15 PM</span>
+</div>
+<p class="text-[11px] text-on-surface-variant line-clamp-1">Updated objectives based on client feedback...</p>
+</div>
+<div class="p-3 rounded-lg bg-surface-container/50 border border-outline-variant/10 opacity-70 hover:opacity-100 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-bold text-on-surface">v2.3.9 Draft</span>
+<span class="text-[10px] text-outline">Yesterday, 10:04 AM</span>
+</div>
+<p class="text-[11px] text-on-surface-variant line-clamp-1">Initial structure for Q3 mapping...</p>
+</div>
+</div>
+</section>
+<!-- Activity Feed -->
+<section>
+<h4 class="text-label-sm font-bold text-outline uppercase tracking-widest mb-4">Recent Activity</h4>
+<div class="space-y-4 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-outline-variant/20">
+<div class="flex gap-4 relative">
+<div class="w-4 h-4 rounded-full bg-primary flex-shrink-0 z-10 border-4 border-surface-container-low"></div>
+<div>
+<p class="text-label-md text-on-surface leading-tight"><span class="font-bold">Sarah King</span> added a comment</p>
+<p class="text-[10px] text-outline mt-1">5 minutes ago</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-4 h-4 rounded-full bg-secondary flex-shrink-0 z-10 border-4 border-surface-container-low"></div>
+<div>
+<p class="text-label-md text-on-surface leading-tight"><span class="font-bold">System</span> auto-saved version</p>
+<p class="text-[10px] text-outline mt-1">12 minutes ago</p>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-4 h-4 rounded-full bg-tertiary flex-shrink-0 z-10 border-4 border-surface-container-low"></div>
+<div>
+<p class="text-label-md text-on-surface leading-tight"><span class="font-bold">Marcus</span> changed status to 'In Review'</p>
+<p class="text-[10px] text-outline mt-1">1 hour ago</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Action -->
+<div class="mt-auto p-6 border-t border-outline-variant/10 bg-surface-container">
+<button class="w-full py-2 bg-secondary text-on-secondary rounded font-label-md text-label-md flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="share">share</span>
+                        Share Document
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Contextual Floating Action -->
+<!-- Suppressed on Editor/Settings/Profile screens as per instructions, but adding a specialized "Outline" FAB for Editor UX -->
+<button class="fixed bottom-8 right-88 w-12 h-12 rounded-full bg-primary-container text-on-primary-container shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50 md:hidden lg:flex" id="outline-fab" style="right: 340px;">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+</button>
+<script>
+        // Micro-interaction: Toolbar button active state
+        const toolbarButtons = document.querySelectorAll('.rich-text-toolbar button');
+        toolbarButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('bg-primary/20');
+                btn.classList.toggle('text-primary');
+            });
+        });
+
+        // Simple typing effect simulation or visual focus
+        const editor = document.querySelector('.editor-content');
+        editor.addEventListener('focus', () => {
+            editor.parentElement.style.borderColor = 'rgba(175, 198, 255, 0.3)';
+        });
+        editor.addEventListener('blur', () => {
+            editor.parentElement.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        });
+
+        // Pulse the "In Review" badge for emphasis
+        const statusBadge = document.querySelector('.animate-pulse');
+        setInterval(() => {
+            statusBadge.classList.toggle('opacity-50');
+        }, 1000);
+    </script>
+</body></html>

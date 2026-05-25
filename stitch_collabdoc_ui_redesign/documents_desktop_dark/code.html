@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evia Collab | Documents Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#cabeff",
+                        "on-secondary-fixed-variant": "#005236",
+                        "surface-tint": "#afc6ff",
+                        "outline": "#8c909f",
+                        "on-secondary-fixed": "#002113",
+                        "surface-container": "#201f1f",
+                        "on-tertiary": "#31009a",
+                        "surface-dim": "#131313",
+                        "surface-bright": "#393939",
+                        "error": "#ffb4ab",
+                        "on-background": "#e5e2e1",
+                        "background": "#131313",
+                        "secondary-fixed": "#48ffb6",
+                        "tertiary-fixed": "#e6deff",
+                        "surface": "#131313",
+                        "on-primary-fixed": "#001a43",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "on-surface-variant": "#c2c6d6",
+                        "primary-container": "#528dff",
+                        "tertiary": "#cabeff",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-container": "#00311e",
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#4717ca",
+                        "on-secondary": "#003824",
+                        "surface-container-highest": "#353534",
+                        "on-primary": "#002d6c",
+                        "primary": "#afc6ff",
+                        "secondary-fixed-dim": "#00e29c",
+                        "outline-variant": "#424753",
+                        "on-tertiary-container": "#2a0088",
+                        "secondary": "#00e29c",
+                        "on-tertiary-fixed": "#1c0062",
+                        "surface-container-low": "#1c1b1b",
+                        "inverse-on-surface": "#313030",
+                        "primary-fixed-dim": "#afc6ff",
+                        "tertiary-container": "#937dff",
+                        "on-primary-fixed-variant": "#004398",
+                        "inverse-primary": "#0059c6",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#00a571",
+                        "on-error": "#690005",
+                        "on-primary-container": "#00275f",
+                        "surface-variant": "#353534",
+                        "primary-fixed": "#d9e2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "desktop-max-width": "1440px",
+                        "container-margin": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-xl-mobile": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #121212;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+        .glass-card {
+            background: rgba(26, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container border-r border-outline-variant/10 shadow-sm flex flex-col h-full py-gutter z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">Evia Collab</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Professional Workspace</p>
+</div>
+<button class="mx-4 mb-8 py-3 bg-primary text-on-primary rounded-xl font-label-md flex items-center justify-center gap-2 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined">add</span>
+            New Project
+        </button>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Active State: Templates maps closest to Document Dashboard context -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md text-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-md text-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-body-md text-body-md">Editor</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant/10 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Shell -->
+<main class="ml-64 min-h-screen relative bg-background overflow-y-auto h-screen">
+<!-- TopAppBar Anchor -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 flex justify-between items-center px-gutter h-full w-full z-40">
+<div class="flex items-center gap-8">
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary">Documents</h2>
+<nav class="flex gap-6">
+<a class="font-label-md text-label-md text-primary dark:text-primary border-b-2 border-primary pb-1 cursor-pointer" href="#">Recent</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface cursor-pointer" href="#">Shared</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface cursor-pointer" href="#">Favorites</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant material-symbols-outlined">search</span>
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-full py-2 pl-10 pr-4 w-64 focus:outline-none focus:border-primary transition-all font-body-md text-on-surface" placeholder="Search documents..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="flex items-center gap-2 border border-outline-variant/30 rounded-full p-1 pr-3 hover:bg-surface-container-high transition-colors">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A professional headshot of a creative director in a high-tech studio environment. The lighting is moody with cool blue and cyan rim lighting, reflecting a modern corporate aesthetic. The person has a confident expression and is dressed in sleek, dark attire against a blurred digital backdrop of glass and metallic surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB75Z6eKmIGaABxJIoq8UF9JDX4XDIioYkH6kr7Jy6J_IDNUcW_4dMB3nCvJT1Na1cjk9BBU7rtbqzS79Yij_0MCjWbtK2oxC40qgcC0b-yfgtOd_ujQEJco06vpt0w-0187-prtRc55tdRcI4psIdrOxkHHS-aJbPI5FI2uRqehrtBVGsg4v0090Z4qwSa9YcLZn3hbZfxT5t1Sc_-UX0NGVMZCJBkjHvIQCNLN6azCdBBmZedH975dpcgcrIzNMN3MySoNc1QHZs"/>
+<span class="font-label-md text-label-md" data-icon="account_circle">Alex Rivera</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="pt-24 px-gutter pb-12 max-w-desktop-max-width mx-auto">
+<!-- Filters & Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Asset Library</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and collaborate on your technical documentation.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-lg flex items-center gap-2 font-label-md hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">filter_list</span>
+                        Filter
+                    </button>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface rounded-lg flex items-center gap-2 font-label-md hover:bg-surface-container-highest transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">sort</span>
+                        Last Modified
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Document Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Card 1: Main Project -->
+<div class="glass-card col-span-1 md:col-span-2 rounded-xl overflow-hidden group hover:ring-2 hover:ring-primary/40 transition-all duration-300 flex flex-col">
+<div class="h-48 relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" data-alt="An abstract 3D visualization of flowing blue and purple silk ribbons suspended in a dark, atmospheric void. The scene is illuminated by soft, cinematic lighting that highlights the elegant curves and high-tech textures. The mood is sophisticated and futuristic, perfectly matching a premium dark-mode interface with a touch of glassmorphism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt_vg3wYaDp-FxlHTo3RSs_c9Q60BnM59EWSwCkrVtWTiLDzz7PqGWtYOgVow4hcPwfYQb9KvNnyAdMp0wrLcGLjc6WhxH96FbKqxtN8G2gzbim5YIGgsYbi4QsJMNDoKrrKpwT95GjFotwyDoPRBBk4h4LDZr97IjH37f4q2PwIzkNu1r72rCvim0ST3KVOHixMjsIU1NioJo-MBlTiWYIdNDKpPQ0OAn64vV7n0kGDSz566Va93oUmzahRkGZTuDzQVsDl0dkm0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#1A1C1E] to-transparent"></div>
+<div class="absolute top-4 left-4 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-label-sm">
+                            LIVE PROJECT
+                        </div>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-md text-headline-md text-on-surface">Quantum Infrastructure V2</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Technical Specifications &amp; Deployment Roadmap</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex items-center gap-4 mb-6">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface" data-alt="A portrait of a tech professional in a modern office with natural light. The style is crisp and clear, emphasizing professionalism and high-energy productivity in a corporate setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyHVJE3k_OeLvKkKz6cljo7a0dFfDPDeo7zAFfXiKnMiknBq6Geqs7f8ccljyTbGW30P_rwcOCqb0v3SH1mQWOCccoHcsT4SSnZdqXoBs0nO4HAiNQFJ6TIxPEYktbxpmBowQ6Panrlvyp7oo-4NyVnJhiGAasUSWR2Wc6W-xjtqHGrEPiDGEJLm58GWogvlDIeR64dgq21bbUGlvslIQKKGEfFBaUXqAeVU71YIJMpzjWE2eFMD_AoXUwd06f4sEb2wk72XrlmDw"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface" data-alt="A profile of a software engineer working in a dim room with multiple glowing monitors. The aesthetic is focused and tech-centric, featuring deep contrasts and sharp lighting effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9QCORpIzvxrTnd72uDi55fMGGcM6oELBJ0MxlqFrd9oZOSMEO4rpmqGHmYUPirQplOw7SYlVYFVOSgYt3KZUg0VZd-R-P_ulqhe67sKvRyPIroZi3FwdkIcm-gotXziPCJBXzb7mAmzn-eGvd_gEJBP511ahNfSNPGytokkvSgCcOlOUCWRMH1fipvrPknGp-s4QPhgAzmeEkvTcFLO1UhwhRljzBIuqE6i4z1Afucfd7XU-9nNW_BFlPSEbuxlt27Y4HmBK0Umc"/>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-surface flex items-center justify-center text-[10px] font-bold">+4</div>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4 animate-pulse"></div>
+</div>
+<span class="font-label-sm text-label-sm text-primary">75%</span>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-outline-variant/10">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Updated 2h ago</span>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">attachment</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">12 files</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Document Card 2 -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant/10 group hover:bg-surface-container-high transition-all">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<h4 class="font-headline-sm text-on-surface mb-2">API Documentation</h4>
+<p class="font-body-md text-on-surface-variant mb-6 line-clamp-2">Standard protocols for external integration modules and auth layers.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-surface-container-highest rounded text-label-sm text-on-surface-variant">v1.4.0</span>
+<span class="px-2 py-1 bg-surface-container-highest rounded text-label-sm text-on-surface-variant">REST</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-sm">Modified Oct 12</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">download</span></button>
+</div>
+</div>
+<!-- Document Card 3 -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant/10 group hover:bg-surface-container-high transition-all">
+<div class="w-12 h-12 bg-tertiary-container/10 rounded-lg flex items-center justify-center text-tertiary mb-6">
+<span class="material-symbols-outlined text-3xl">brush</span>
+</div>
+<h4 class="font-headline-sm text-on-surface mb-2">Design System UI</h4>
+<p class="font-body-md text-on-surface-variant mb-6 line-clamp-2">Core component library and brand guidelines for Evia products.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-2 py-1 bg-surface-container-highest rounded text-label-sm text-on-surface-variant">Figma</span>
+<span class="px-2 py-1 bg-surface-container-highest rounded text-label-sm text-on-surface-variant">Styles</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-sm">Modified Oct 10</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">open_in_new</span></button>
+</div>
+</div>
+<!-- Card 4: Analytics (Tall) -->
+<div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/10 md:row-span-2 flex flex-col">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-6">Workload Stats</h4>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="text-headline-xl font-headline-xl text-primary mb-1">1,240</div>
+<div class="font-body-md text-on-surface-variant mb-8">Total commits this week</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-label-sm mb-1">
+<span>Frontend Docs</span>
+<span>88%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 88%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-sm mb-1">
+<span>Backend Logic</span>
+<span>42%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 42%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-label-sm mb-1">
+<span>QA Reports</span>
+<span>65%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 p-4 bg-surface rounded-lg border border-outline-variant/5">
+<p class="font-label-sm text-on-surface-variant italic">"Team efficiency increased by 14% since the new template rollout."</p>
+</div>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant/10 group hover:bg-surface-container-high transition-all">
+<div class="w-12 h-12 bg-error-container/10 rounded-lg flex items-center justify-center text-error mb-6">
+<span class="material-symbols-outlined text-3xl">priority_high</span>
+</div>
+<h4 class="font-headline-sm text-on-surface mb-2">Q4 Compliance</h4>
+<p class="font-body-md text-on-surface-variant mb-6 line-clamp-2">Mandatory security audits and regulatory compliance checklists.</p>
+<div class="flex justify-between items-center">
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-[10px] font-bold uppercase">URGENT</span>
+<span class="font-label-sm text-on-surface-variant">Due in 2 days</span>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant/10 group hover:bg-surface-container-high transition-all">
+<div class="w-12 h-12 bg-secondary-container/10 rounded-lg flex items-center justify-center text-secondary mb-6">
+<span class="material-symbols-outlined text-3xl">folder</span>
+</div>
+<h4 class="font-headline-sm text-on-surface mb-2">Archive 2023</h4>
+<p class="font-body-md text-on-surface-variant mb-6 line-clamp-2">Consolidated project files from previous fiscal year cycles.</p>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-label-sm">2.4 GB</span>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined">folder_zip</span></button>
+</div>
+</div>
+<!-- Card 7: User Feedback -->
+<div class="glass-card p-6 rounded-xl border border-primary/20 flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-primary">Priority Task</span>
+</div>
+<h4 class="font-headline-sm text-on-surface mb-2">Mobile App Refresh</h4>
+<p class="font-body-md text-on-surface-variant">Reviewing the new navigation paradigms with the stakeholders tomorrow at 9 AM.</p>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex -space-x-1">
+<div class="w-6 h-6 rounded-full bg-primary-container"></div>
+<div class="w-6 h-6 rounded-full bg-secondary-container"></div>
+</div>
+<button class="text-primary font-label-md hover:underline">View Task</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Atmospheric effect: Subtle mouse-following glow on glass cards
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evia Collab - Document Templates</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#00522f",
+                    "primary-container": "#2b6cb0",
+                    "secondary-fixed": "#91f8b8",
+                    "on-background": "#121c2c",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#d0daf0",
+                    "tertiary-fixed": "#ffdad7",
+                    "tertiary": "#a70819",
+                    "outline-variant": "#c1c7d2",
+                    "inverse-on-surface": "#ebf1ff",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed-dim": "#a2c9ff",
+                    "on-primary-fixed-variant": "#004881",
+                    "secondary": "#006d40",
+                    "on-secondary-fixed": "#002110",
+                    "primary-fixed": "#d3e4ff",
+                    "on-tertiary-container": "#ffe6e3",
+                    "surface-tint": "#1960a3",
+                    "surface-bright": "#f9f9ff",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "on-primary-fixed": "#001c38",
+                    "on-surface": "#121c2c",
+                    "inverse-primary": "#a2c9ff",
+                    "on-primary-container": "#e1ecff",
+                    "surface-variant": "#d9e3f9",
+                    "secondary-container": "#8ef5b5",
+                    "surface-container-highest": "#d9e3f9",
+                    "on-surface-variant": "#414750",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-low": "#f0f3ff",
+                    "secondary-fixed-dim": "#74db9d",
+                    "on-secondary-container": "#007243",
+                    "error-container": "#ffdad6",
+                    "surface": "#f9f9ff",
+                    "inverse-surface": "#273141",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#dee8ff",
+                    "on-tertiary-fixed-variant": "#930013",
+                    "on-tertiary-fixed": "#410004",
+                    "surface-container": "#e7eeff",
+                    "on-error": "#ffffff",
+                    "outline": "#727782",
+                    "primary": "#005394",
+                    "tertiary-container": "#ca2a2e",
+                    "background": "#f9f9ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin": "32px",
+                    "unit": "4px",
+                    "container-max": "1440px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #f9f9ff;
+            color: #121c2c;
+            -webkit-font-smoothing: antialiased;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c7d2;
+            border-radius: 10px;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant dark:border-outline flex flex-col py-6">
+<div class="px-6 mb-8">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">Evia Collab</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Professional Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-inverse-surface" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<!-- ACTIVE TAB: Templates -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-label-md font-label-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-inverse-surface" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="text-label-md font-label-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-inverse-surface" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="text-label-md font-label-md">Editor</span>
+</a>
+<div class="mt-auto pt-6 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-inverse-surface" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="text-label-md font-label-md">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-inverse-surface" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-[280px] z-40 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flex justify-between items-center h-16 px-gutter w-full">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-2 focus:ring-primary focus:bg-surface transition-all" placeholder="Search templates, categories, or keywords..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-container-highest rounded-full transition-transform duration-150 scale-95">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline">
+<img alt="User Profile" data-alt="A professional headshot of a corporate executive in a neutral studio setting. The lighting is crisp and even, reflecting a high-precision business environment. The style is clean, modern, and trustworthy, with a soft-focus background that keeps the attention on the person's friendly yet professional expression. The overall aesthetic is minimalist and polished." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAoJlrHT7MNbnx0fwKhoaLyDPFE57Z80z2a7gFCVECgl-PzoDQbtrKlLNt0nzvDW2NL06STgfaEryw-rhEZA3FaLCzVhv4vw3yVJI8nrSOH8dGhLlXHwAUgZScXVmuzwjnpPRwQmXxbMfcalqenAulPa0cJvtxVumrQsuRQYg2UC7XsfNxZ7SMLfENuMBka_goJYYP2pSj1b4WU1t1M3Oyezjw0klyVjQwyJYkKlqO5Yu3YthdypZ-g-WTDEIjiFTRUhNWpDOivEQ"/>
+</div>
+<span class="text-label-md font-label-md hidden lg:block group-hover:text-primary transition-colors">Alex Morgan</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 h-screen overflow-y-auto custom-scrollbar bg-background">
+<div class="p-margin max-w-container-max mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div>
+<h2 class="text-headline-xl font-headline-xl text-on-surface mb-2">Document Templates</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Standardize your document workflow with pre-configured high-precision templates.</p>
+</div>
+<button class="bg-primary text-on-primary px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-primary-container transition-all shadow-sm active:scale-95">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'FILL' 0, 'wght' 600;">add</span>
+<span class="font-label-md text-label-md">Create New Template</span>
+</button>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 border-b border-outline-variant/30">
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary text-label-md font-label-md transition-all">All</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant text-label-md font-label-md transition-all">General</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant text-label-md font-label-md transition-all">Business</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant text-label-md font-label-md transition-all">Human Resources</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant text-label-md font-label-md transition-all">Legal</button>
+<button class="px-4 py-2 rounded-full hover:bg-surface-container-high text-on-surface-variant text-label-md font-label-md transition-all">Engineering</button>
+<button class="ml-auto text-primary text-label-md font-label-md flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                    Advanced Filters
+                </button>
+</div>
+<!-- Grid Layout: Templates -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Template Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group hover:border-primary hover:shadow-lg transition-all flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500" data-alt="A high-fidelity document preview of a modern corporate business proposal. The layout features elegant typography, subtle blue accent lines, and organized data tables. The image captures a clean, professional aesthetic within a bright, daylight-filled studio setting, conveying systematic precision and collaborative trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf2MyD--5bVFrOrU1WjaGhD8UtI0pHRrh4B4EmXOoriJkjVZALS3nao8yTsN1aS5bOLYmTgnEyk_nmbn7zIVRL2urs8vaugVqxZjLnziRDwPEpVz95m-BHs6Xnl8JG260V26B15lRgKFPvWbbIE5yf3wP4Ne-4j3KUwMg2s8OzMpc0qRYiXbTecFcwnD-Gs47CN5PtYfCsGIXtyTxpCduHdpDFIVm7Q8maONY74rrearaM394p26N34Ad-feeQXy5d4ACvmCPM8P0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Business
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2 line-clamp-1">Quarterly Performance Review</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-4 line-clamp-2">A standardized framework for assessing employee achievements and setting upcoming goals with automated metric calculations.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Updated 2d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>7 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Small circular avatar of a professional woman with a soft background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8plFSDKFPitY5Kv2HzQpIzEbQIQ5ifdBLTK5_t1YJTR4-cPOv3N5ugxcxZ7zyKRmL4JcRKHAU1jJ_bizfmysuykv4aqbS7b9VJMbNDAj6Z6BfJd4EDy8RWGBBZOVZz6dsYl3JjaurSo9uGKi3t0m7O0d3aOUMn_8mm1Qh4xjzu58y42kzNVvbktgmfXPUYcTBnqdVGuS3PA6BfDW82NUMWHkynxHX7_39leVBJJLi0MpQT6d6SOc1QCJzi3z7TLpBWV6a3Zc8ngQ"/>
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Small circular avatar of a professional man in high-key lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxD0oIkH9j2Tb7tD2PMUmpXg65Rz6JPeXwwAJgDdYQk0E-gIvlc12-pTjHxQk1TgE8XlhwT_6rr0t8QOEcu1WvwJ9R1UfO6zAMz32DVt6d7OACQPfDEGu-JQsJ2-tXQuHiD3sDbgrsCJkYI1KlEa0lZwzJgPhazv9W03EuYmkL-5B1X2Couf9e4m5d1rzlzHJG6a5NqS-oXvcVGOe-Zm5Kl-1T1givqi15yTD93h58AvrHkW0zJ6p28hsRpwcEpP2suRUFQItRvws"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">+3 Contributors</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group hover:border-primary hover:shadow-lg transition-all flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500" data-alt="A clean, minimalist template for a legal contract. The design emphasizes structured blocks of text with clear headers and a sophisticated grey and white color palette. The image conveys institutional trust and systematic reliability through its high-contrast and orderly appearance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARoa-_vNWwksO_KXnCS7ec1CuIh-gwKYBYNqyJRPNQSxapFVuBCdhccWE0hNRlURy91qFezim06WQNPjfRcbmM29kjdDEFICNxa0NZY0-aYkigmmuyA0oTJOyQEcgKotGm6eRvV7fk0K9vysQ0BSrDQBjXxqwEd5jHiVfS9EE1U96pg0rBGRXuZcTUfPnjgvqBJ1PyuBsz-aRirKCWf1jjxKLORCZMUmxh7qpRLL9j4bk2HKft-h2ebByTQeXcisG84LHTRskyRP8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Legal
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2 line-clamp-1">Service Level Agreement (SLA)</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-4 line-clamp-2">Standard vendor agreement covering uptime, response times, and dispute resolution for cloud services.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Updated 1w ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>Permanent Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Avatar of a male professional in a corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_VR3WYBpVdfwk-FI_YHWdNtEQ0MdqnTYfIYzndoFj58c5wWx9GyrEIdmDTUn7WUWrncbs7cl3fylRL3FnCT8O7nPQwPR1YsAllpecMKdzfkMU9LS6P8ysnzl2L8sJ4_syAS6X3jhvzLh6NxdBC_tyU8nylrmdrWxjCfBpB5DYvtmWCW2Jlw1LjdpmebfUvXDLFBezvGEYt76P9g2jMxF24y6EROG9xln6OqqOTf3TyDPCdVGRs11GSKU6NXQfC0qLM0WhsyprUWw"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">Legal Team</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group hover:border-primary hover:shadow-lg transition-all flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500" data-alt="A systematic HR onboarding checklist displayed on a digital screen. The layout uses progress bars and checkboxes to illustrate a collaborative workflow. The lighting is bright and airy, consistent with a modern workspace aesthetic that values clarity and efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3taXm490qlZuWNedus0Io5eYnsEW5oNM_328Z8kKdd_BtJUG5tNekk12JFu9wLuiUfsMpc8RVTJrzsZogIQ1lOh-9mINFpyNqriokSAqgqO8CE_7vuwjpf1Zn4qqc_8pyNSYUtIPKC_9N4sPIt9S_kegxsU9l-3ImJIZiGuJJfgtlb8KwWuYflzW81Dmp84Kaub30WmYctgSN2Dgi8H1jeSr5BVstiO1dQD6ElnMF2xz-LZSMdXhTnIMl70VFpD3Af63YSdDrSrk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-primary-fixed text-on-primary-fixed-variant text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> HR
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2 line-clamp-1">Employee Onboarding Kit</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-4 line-clamp-2">Comprehensive welcome guide including policy sign-offs, equipment requests, and team introductions.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Updated 3d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>3 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Avatar of a professional woman." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9FsTaHcBM6dE1kR5IWojh6iwaX6kFedguM0INY5CXs_wxwaWRngeJbPfpmEiphAXaVNCpPHFrREvkJIJXkS1hENz6g5t7h7XrccwWYsfO1LgkMo0kxbU0i_q-suq1Jl0OReELLER-gDQodU_MSPhZxIt6zOYikck-eKcgsr4F9pFjNFhr_zmt9kpRRi71Zsk8AmpEpBciHBdyFhLHaJjtoypgsjbokzDXw10eGwFij2iRZt14yx00d_nU_3ORNTaj7Kqu5TkYTYs"/>
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Avatar of a professional man." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVdeHPMebCDiAea8D6Io_rWDFYdL80-p72ycVBl9-JzeVMPx72JWrnHrgiiE5ajOWa1_4QtZUgnJcqj9B8ArNAfPGYbk5ivtSPTf6S7d1NbjW5xoDFzvnykl0WxoWeZ5H9LWzz9R3OwQRBMREnMF1tb5k7_7tzqGr5-ILXrqQ5rIwG4L4Ruav7k8MgPZ1mONXzLHU_pTLaTfssVgK4PspepNWr6JHksFfV8mc7BPVsGB6qwddqd9dtNotBadnsybSy-iyi3CQ1MUQ"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">+5 Others</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group hover:border-primary hover:shadow-lg transition-all flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500" data-alt="A technical engineering specification template with blueprint-style accents. The design is structured for high data density, featuring diagrams and tables. The lighting is crisp and cool-toned, creating a laboratory or high-tech workspace atmosphere that emphasizes engineering precision and systematic workflow." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK-7Ch_MeV4EuMtq-9fWfgbXIMshA5dYXz92yjw8W386OjMhDQLE8B51SVqqgD50pseqaepuNgOrqnmViIkWkMkE7U6e4Ko_G_1YVRSgk2ea2s1spuGl7PFjO_LVR8bkhGqyallqbo0sXZ0BaPlpHTDImsxzAB9ciGTqu329hLcP1dRdz0oJf2MHQ0Y8wgdedvCNIQ9Is9aI8h9FLXyPdnbt_nziOZAzz2uFSuhJYuhsTKd36FBExn7EHY-wLfA6NeNVYfnb9RNFU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> General
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2 line-clamp-1">Product Requirements Doc (PRD)</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-4 line-clamp-2">Standardized blueprint for defining product features, user stories, and technical constraints for engineering teams.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Updated 10h ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>5 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Small circular avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_Yxjb74TtWzu5mHBxMcIyyJnrC01iv3oehCppHF2eQYnW2qV86SETt3llMdJxnOjDJqO4RcRPdzsRUrFwVPWIhk0MeTyeXYngL66FkLafrJ8HMlM71tZApUOi8dtN2LGyVjBQVW8Fm5OI2cQpk1xdHRio7vfxaCt-g4E_t14t_AjPQzLWO2hyeKFKjgcDiNei7bd3L6hCMJ6ywOuo7bJvDRveExK-mREHW1-IRVsWP-VrXqUDUCHkuCI6CG8wgadoftS1L_po4eA"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">Product Org</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Template Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden group hover:border-primary hover:shadow-lg transition-all flex flex-col cursor-pointer">
+<div class="h-48 bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 group-hover:grayscale-0 transition-all duration-500" data-alt="A systematic marketing strategy template with colorful data visualization charts and strategic planning grids. The style is collaborative and high-energy, with bright lighting and a clean, minimalist layout. The overarching palette is professional blue and white with vibrant secondary green accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQTJluGRvU0SCZm8bW-aen9gL9cl_pje8aA4m6ke3HCSg3b6xrsM4rjPnEeag3zGEDPbvle5cjdaJZjKzX5wWGEzo8K0tdbcln1LEwf7HWv9S2vZQisQ4o_5VEBKe4YtN_k-xlVD18R0_AOJmRDrdDG10-2oR0FDypKl879zPeJlSeB8t6V1QvgxUrNC3cyYQVgy_2GSUEU4swHu1oMim9l9HeNnL2rns5YP6MCFVmOkViGTLuWzbi4-262VDmItPblKrIaOINOMA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+<button class="bg-white text-primary p-2 rounded-full shadow-md hover:bg-primary-container hover:text-white transition-colors">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<div class="absolute top-3 left-3">
+<span class="bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Business
+                            </span>
+</div>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-md font-headline-md text-on-surface mb-2 line-clamp-1">Annual Marketing Strategy</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-4 line-clamp-2">High-level strategic planning document for annual campaigns, budget allocation, and KPI tracking.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center justify-between text-label-sm font-label-sm text-outline">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="calendar_today">calendar_today</span>
+<span>Updated 4d ago</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>2 Years Retention</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-surface-container-lowest" data-alt="Avatar of a male professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkgyiYBwCMUlhY1vMyayYwXSKCpDQEYAuE7yxV_G1a4RpJEDPiXm9ixQAGFX2AdVaPVYzDYJ9PUXZFre5IjvX5X_zP5AczGt_s4GTtEK1PVOaH6vm-aPFHLjh9ucDv2ZZIqGUWV3h1EUWiZipaJydbnCRHs_Sy6dRpvwmalIs0LC6ytrDYYTbt_RecasjkzjGVkHxcW5d0_vukyL5Mb0ywn1xksPqKWiYO3z3WgDOXtlzxSaPTGWcDzfmwm0yKx9KDbOotVdyVsEo"/>
+</div>
+<span class="text-label-sm text-on-surface-variant">Growth Team</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Create New Card (Bento Style Placeholder) -->
+<div class="border-2 border-dashed border-outline-variant rounded-xl overflow-hidden flex flex-col items-center justify-center p-8 bg-surface-container-low/30 hover:bg-surface-container hover:border-primary transition-all group cursor-pointer h-full min-h-[400px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="add_circle">add_circle</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface-variant group-hover:text-primary transition-colors">Start from Blank</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-center mt-2">Create a custom template with the Evia editor from scratch.</p>
+</div>
+</div>
+<!-- Footer Meta Information -->
+<div class="mt-16 pt-8 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-4 text-on-surface-variant opacity-60">
+<p class="text-label-md font-label-md">Viewing 1-12 of 48 Templates</p>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded font-label-md">3</button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for filter tabs
+        const filterButtons = document.querySelectorAll('.flex.items-center.gap-2 button');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary');
+                    b.classList.add('hover:bg-surface-container-high', 'text-on-surface-variant');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary');
+                btn.classList.remove('hover:bg-surface-container-high', 'text-on-surface-variant');
+            });
+        });
+
+        // Search bar interaction
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-primary');
+        });
+    </script>
+</body></html>

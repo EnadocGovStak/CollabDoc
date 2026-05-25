@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evia Collab | Professional Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#cabeff",
+                      "on-secondary-fixed-variant": "#005236",
+                      "surface-tint": "#afc6ff",
+                      "outline": "#8c909f",
+                      "on-secondary-fixed": "#002113",
+                      "surface-container": "#201f1f",
+                      "on-tertiary": "#31009a",
+                      "surface-dim": "#131313",
+                      "surface-bright": "#393939",
+                      "error": "#ffb4ab",
+                      "on-background": "#e5e2e1",
+                      "background": "#131313",
+                      "secondary-fixed": "#48ffb6",
+                      "tertiary-fixed": "#e6deff",
+                      "surface": "#131313",
+                      "on-primary-fixed": "#001a43",
+                      "on-surface": "#e5e2e1",
+                      "error-container": "#93000a",
+                      "on-surface-variant": "#c2c6d6",
+                      "primary-container": "#528dff",
+                      "tertiary": "#cabeff",
+                      "surface-container-lowest": "#0e0e0e",
+                      "surface-container-high": "#2a2a2a",
+                      "on-secondary-container": "#00311e",
+                      "inverse-surface": "#e5e2e1",
+                      "on-tertiary-fixed-variant": "#4717ca",
+                      "on-secondary": "#003824",
+                      "surface-container-highest": "#353534",
+                      "on-primary": "#002d6c",
+                      "primary": "#afc6ff",
+                      "secondary-fixed-dim": "#00e29c",
+                      "outline-variant": "#424753",
+                      "on-tertiary-container": "#2a0088",
+                      "secondary": "#00e29c",
+                      "on-tertiary-fixed": "#1c0062",
+                      "surface-container-low": "#1c1b1b",
+                      "inverse-on-surface": "#313030",
+                      "primary-fixed-dim": "#afc6ff",
+                      "tertiary-container": "#937dff",
+                      "on-primary-fixed-variant": "#004398",
+                      "inverse-primary": "#0059c6",
+                      "on-error-container": "#ffdad6",
+                      "secondary-container": "#00a571",
+                      "on-error": "#690005",
+                      "on-primary-container": "#00275f",
+                      "surface-variant": "#353534",
+                      "primary-fixed": "#d9e2ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "desktop-max-width": "1440px",
+                      "container-margin": "24px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "body-lg": ["Hanken Grotesk"],
+                      "headline-xl-mobile": ["Hanken Grotesk"],
+                      "label-md": ["Hanken Grotesk"],
+                      "label-sm": ["Hanken Grotesk"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "headline-xl": ["Hanken Grotesk"],
+                      "body-md": ["Hanken Grotesk"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-xl-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Hanken Grotesk', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(26, 28, 30, 0.7);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .rim-light {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .primary-glow:hover {
+            box-shadow: 0 0 20px rgba(77, 139, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="dark bg-background text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container flex flex-col h-full py-gutter shadow-sm border-r border-outline-variant/10 z-50">
+<div class="px-6 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary">Evia Collab</h1>
+<p class="font-label-sm text-on-surface-variant opacity-70">Professional Workspace</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-primary font-bold border-l-4 border-primary bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Templates</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="font-body-md text-body-md">Field Library</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-body-md text-body-md">Editor</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md flex items-center justify-center gap-2 primary-glow transition-all">
+<span class="material-symbols-outlined">add</span>
+                New Project
+            </button>
+<div class="pt-4 border-t border-outline-variant/20">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="font-label-md">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Anchor -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 flex justify-between items-center px-gutter h-full w-full z-40">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-6">
+<a class="font-label-md text-primary dark:text-primary border-b-2 border-primary pb-1" href="#">Recent</a>
+<a class="font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Shared</a>
+<a class="font-label-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Favorites</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border border-outline-variant/30 rounded-full pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:border-primary w-64 transition-all" placeholder="Search workspace..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                JD
+            </div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 pt-16 min-h-screen bg-background">
+<div class="max-w-desktop-max-width mx-auto px-container-margin py-12">
+<!-- Hero Section -->
+<section class="grid grid-cols-12 gap-gutter items-center mb-24">
+<div class="col-span-12 lg:col-span-5 space-y-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container/10 border border-secondary-container/20 text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm uppercase tracking-widest">Version 4.0 Live</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface leading-tight">
+                        Collaborate with <span class="text-primary">Atmospheric Precision</span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                        A high-performance workspace designed for technical teams. Reduce cognitive load with tonal layering, glassmorphism, and lightning-fast collaboration tools.
+                    </p>
+<div class="flex items-center gap-4 pt-4">
+<button class="px-8 py-4 bg-primary text-on-primary rounded-xl font-label-md primary-glow transition-all active:scale-95">
+                            Get Started Free
+                        </button>
+<button class="px-8 py-4 bg-transparent border border-outline-variant text-on-surface rounded-xl font-label-md hover:bg-surface-container transition-all">
+                            View Demo
+                        </button>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-7 relative">
+<!-- Laptop Mockup -->
+<div class="relative z-10 p-4 rounded-2xl bg-gradient-to-br from-outline-variant/20 to-transparent border border-outline-variant/10 shadow-2xl">
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden aspect-[16/10] relative rim-light">
+<img alt="Workspace Interface" class="w-full h-full object-cover opacity-80" data-alt="A ultra-modern high-fidelity software interface displayed on a sleek laptop screen within a moody dark-themed office environment. The UI features deep charcoal backgrounds, neon blue accents, and vibrant data visualizations like glowing line charts and glassmorphism panels. The lighting is low and atmospheric with a soft blue key light hitting the side of the device. Professional and highly technical aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQzIou4qQivv8xGvBHD6V9olUgUwmDXFZBzoR4Yk1MawvsqLm2NAzIKJFfsdgqwMKdjDWGxZvMZv7iytKv4BbGDAJxNh6P3uqlhgD9ifGHj3JE679qdgm6vXrwk0v38o2WOsGU6xfeyNrWy5XXOA9rWPzChPmWdRqplgygAxqTtfejwhLSRXPMUmuCmo5clMUTVfHCyTTlS8YGQXb1E6-4WvXjQSlGUPdRLC6iZU41L_JAnDEIQTEr8jUhThf3zjmdPumBNHPMQdo"/>
+<!-- Overlay Glass Elements -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-1/2 h-1/2 glass-panel rounded-2xl border border-white/10 shadow-xl flex flex-col p-4 scale-90 -rotate-2">
+<div class="h-2 w-12 bg-primary/40 rounded mb-4"></div>
+<div class="space-y-2">
+<div class="h-1.5 w-full bg-on-surface-variant/20 rounded"></div>
+<div class="h-1.5 w-3/4 bg-on-surface-variant/20 rounded"></div>
+<div class="h-1.5 w-1/2 bg-on-surface-variant/20 rounded"></div>
+</div>
+<div class="mt-auto flex justify-between items-center">
+<div class="h-4 w-4 rounded-full bg-secondary"></div>
+<div class="h-4 w-12 bg-primary rounded"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Glow background -->
+<div class="absolute -top-20 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+<div class="absolute -bottom-20 -left-20 w-64 h-64 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+</div>
+</section>
+<!-- Feature Bento Grid -->
+<section class="grid grid-cols-12 gap-6 mb-24">
+<div class="col-span-12 lg:col-span-8 glass-panel rounded-3xl p-8 rim-light group cursor-default">
+<div class="flex justify-between items-start mb-12">
+<div>
+<span class="material-symbols-outlined text-primary text-4xl mb-4">analytics</span>
+<h3 class="font-headline-md text-headline-md mb-2">Real-time Performance Metrics</h3>
+<p class="font-body-md text-on-surface-variant max-w-md">Track every deployment and collaboration point with sub-second latency visualization.</p>
+</div>
+<div class="h-12 w-12 rounded-full border border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors">north_east</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 h-48">
+<div class="bg-surface-container-high rounded-xl relative overflow-hidden flex flex-col justify-end p-4">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+<span class="font-headline-md text-primary relative z-10">99.9%</span>
+<span class="font-label-sm text-on-surface-variant relative z-10">UPTIME</span>
+</div>
+<div class="bg-surface-container-high rounded-xl relative overflow-hidden flex flex-col justify-end p-4">
+<div class="absolute inset-0 bg-gradient-to-t from-secondary/20 to-transparent"></div>
+<span class="font-headline-md text-secondary relative z-10">14ms</span>
+<span class="font-label-sm text-on-surface-variant relative z-10">LATENCY</span>
+</div>
+<div class="bg-surface-container-high rounded-xl relative overflow-hidden flex flex-col justify-end p-4">
+<div class="absolute inset-0 bg-gradient-to-t from-tertiary/20 to-transparent"></div>
+<span class="font-headline-md text-tertiary relative z-10">2.4k</span>
+<span class="font-label-sm text-on-surface-variant relative z-10">COMMITS</span>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-surface-container rounded-3xl p-8 rim-light flex flex-col">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">lock</span>
+<h3 class="font-headline-md text-headline-md mb-2">Enterprise Shield</h3>
+<p class="font-body-md text-on-surface-variant mb-8">Military-grade encryption for all your workspace assets and private discussions.</p>
+<div class="mt-auto space-y-3">
+<div class="flex items-center gap-3 p-3 bg-background rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span class="font-label-md">SSO Integration</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-background rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span class="font-label-md">256-bit AES</span>
+</div>
+<div class="flex items-center gap-3 p-3 bg-background rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span class="font-label-md">Audit Logs</span>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-surface-container rounded-3xl p-8 rim-light">
+<span class="material-symbols-outlined text-tertiary text-4xl mb-4">auto_awesome</span>
+<h3 class="font-headline-md text-headline-md mb-2">AI Field Assistant</h3>
+<p class="font-body-md text-on-surface-variant">Automate repetitive documentation tasks with our integrated neural engine.</p>
+</div>
+<div class="col-span-12 lg:col-span-8 glass-panel rounded-3xl p-1 relative overflow-hidden rim-light">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent"></div>
+<div class="p-8 relative z-10 flex flex-col h-full">
+<h3 class="font-headline-md text-headline-md mb-6">Connect Your Ecosystem</h3>
+<div class="flex flex-wrap gap-4">
+<div class="px-6 py-4 bg-background rounded-2xl border border-outline-variant/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">hub</span>
+<span class="font-label-md">GitHub</span>
+</div>
+<div class="px-6 py-4 bg-background rounded-2xl border border-outline-variant/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">cloud</span>
+<span class="font-label-md">AWS</span>
+</div>
+<div class="px-6 py-4 bg-background rounded-2xl border border-outline-variant/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">chat</span>
+<span class="font-label-md">Slack</span>
+</div>
+<div class="px-6 py-4 bg-background rounded-2xl border border-outline-variant/20 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">storage</span>
+<span class="font-label-md">Notion</span>
+</div>
+</div>
+<p class="mt-8 font-label-md text-on-surface-variant flex items-center gap-2">
+                            Explore 200+ integrations <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</p>
+</div>
+</div>
+</section>
+<!-- Call to Action -->
+<section class="relative rounded-[2rem] bg-primary overflow-hidden p-16 text-center">
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="relative z-10 max-w-2xl mx-auto">
+<h2 class="font-headline-xl text-headline-xl text-on-primary mb-6">Ready to elevate your team's output?</h2>
+<p class="font-body-lg text-on-primary/80 mb-10">Join over 1,500 teams building the future on Evia Collab. Deploy faster, think clearer, and collaborate without borders.</p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<button class="px-10 py-5 bg-on-primary text-primary font-bold rounded-2xl hover:scale-105 transition-transform">Start Your 14-Day Trial</button>
+<button class="px-10 py-5 bg-primary-container text-on-primary-container font-bold rounded-2xl border border-white/20 hover:bg-white/10 transition-colors">Talk to Sales</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="max-w-desktop-max-width mx-auto px-container-margin py-12 border-t border-outline-variant/10">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+<div class="space-y-4">
+<h4 class="font-headline-sm text-headline-sm text-primary">Evia Collab</h4>
+<p class="font-label-sm text-on-surface-variant">© 2024 Evia Technologies Inc. All rights reserved.</p>
+</div>
+<div class="flex gap-12">
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-on-surface">Product</span>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Features</a>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Security</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-on-surface">Resources</span>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Docs</a>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Community</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-on-surface">Legal</span>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Privacy</a>
+<a class="font-label-sm text-on-surface-variant hover:text-primary" href="#">Terms</a>
+</div>
+</div>
+</div>
+</footer>
+</main>
+<script>
+        // Simple micro-interaction for the bento cards
+        document.querySelectorAll('.glass-panel').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+</body></html>

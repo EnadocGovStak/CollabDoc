@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Evia Collab - Invoice Editor</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "secondary-fixed": "#91f8b8",
+                "on-tertiary": "#ffffff",
+                "surface-bright": "#f9f9ff",
+                "on-secondary-fixed": "#002110",
+                "inverse-on-surface": "#ebf1ff",
+                "primary": "#005394",
+                "surface": "#f9f9ff",
+                "on-surface": "#121c2c",
+                "secondary": "#006d40",
+                "on-error-container": "#93000a",
+                "inverse-primary": "#a2c9ff",
+                "on-surface-variant": "#414750",
+                "inverse-surface": "#273141",
+                "surface-variant": "#d9e3f9",
+                "on-primary-fixed": "#001c38",
+                "surface-container": "#e7eeff",
+                "surface-container-low": "#f0f3ff",
+                "on-background": "#121c2c",
+                "outline": "#727782",
+                "on-tertiary-fixed-variant": "#930013",
+                "on-primary-container": "#e1ecff",
+                "on-error": "#ffffff",
+                "primary-fixed": "#d3e4ff",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed-variant": "#004881",
+                "tertiary-fixed": "#ffdad7",
+                "on-tertiary-container": "#ffe6e3",
+                "tertiary-container": "#ca2a2e",
+                "primary-fixed-dim": "#a2c9ff",
+                "surface-container-highest": "#d9e3f9",
+                "secondary-fixed-dim": "#74db9d",
+                "secondary-container": "#8ef5b5",
+                "surface-tint": "#1960a3",
+                "on-primary": "#ffffff",
+                "tertiary": "#a70819",
+                "error": "#ba1a1a",
+                "surface-container-high": "#dee8ff",
+                "on-secondary-fixed-variant": "#00522f",
+                "primary-container": "#2b6cb0",
+                "error-container": "#ffdad6",
+                "tertiary-fixed-dim": "#ffb3ad",
+                "surface-dim": "#d0daf0",
+                "outline-variant": "#c1c7d2",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-fixed": "#410004",
+                "background": "#f9f9ff",
+                "on-secondary-container": "#007243"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+            },
+            "spacing": {
+                "gutter": "24px",
+                "unit": "4px",
+                "margin": "32px",
+                "container-max": "1440px"
+            },
+            "fontFamily": {
+                "headline-xl": ["Hanken Grotesk"],
+                "label-md": ["Inter"],
+                "body-md": ["Inter"],
+                "headline-lg": ["Hanken Grotesk"],
+                "headline-md": ["Hanken Grotesk"],
+                "body-lg": ["Inter"],
+                "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            user-select: none;
+        }
+        .canvas-bg {
+            background-image: radial-gradient(#d9e3f9 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        #infoPanel {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .panel-hidden {
+            transform: translateX(100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col overflow-x-hidden">
+<!-- Shared TopAppBar -->
+<header class="bg-surface dark:bg-on-background w-full top-0 sticky border-b border-outline-variant dark:border-outline z-40 transition-colors duration-200">
+<div class="flex justify-between items-center h-16 px-4 w-full">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full transition-colors duration-200 text-on-surface-variant dark:text-outline-variant">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed leading-tight">Evia Collab</h1>
+<span class="text-label-sm font-label-sm text-on-surface-variant truncate max-w-[140px]">Invoice Template - Generated</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-200 text-on-surface-variant" onclick="toggleInfo()">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a person with a friendly expression, captured in high-detail with soft studio lighting. The background is a clean, neutral grey, emphasizing a corporate and reliable aesthetic. The lighting is balanced and modern, fitting for a sophisticated document management system profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIT9J3V19dFM6cWWb8eHluVc8plEtRd33vjqWLzdGHVnZDQzCixugVPKuH5bVdZR7_VNdsTOq_Kbm9CGGp4FJ6KgBKSs-WvefMOd02gZ6zJOjIVvIUaaHSGeSp3wJKPWJd3GTcN17X6_zinJM8NerEWpTixIYwZJxAT_ssZvbdGtF5oa2iCZIhm1JHJCY5MECA0UKIWmxG9ZUCKNYY8usz5dmR0p-0PfKK6JO1gZSQq_tF326DqRaov4Y7AXO3mULu5bvJYHbV5u0"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Simplified Toolbar -->
+<div class="sticky top-16 bg-surface-container-lowest z-30 border-b border-outline-variant px-4 py-2 flex items-center justify-between gap-4 hide-scrollbar overflow-x-auto">
+<div class="flex items-center gap-1">
+<button class="p-2 rounded hover:bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="undo">undo</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="redo">redo</span>
+</button>
+<div class="w-px h-6 bg-outline-variant mx-1"></div>
+<button class="p-2 rounded hover:bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="format_bold">format_bold</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="format_italic">format_italic</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="format_list_bulleted">format_list_bulleted</span>
+</button>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded font-label-md text-label-md hover:opacity-90 transition-opacity whitespace-nowrap" id="saveBtn">
+<span class="material-symbols-outlined text-[18px]" data-icon="save">save</span>
+            SAVE DOCUMENT
+        </button>
+</div>
+<!-- Main Canvas Area -->
+<main class="flex-grow canvas-bg p-4 flex flex-col items-center">
+<!-- Invoice Document Card -->
+<article class="bg-surface-container-lowest w-full max-w-2xl border border-outline-variant shadow-sm rounded-lg p-6 md:p-10 flex flex-col gap-8 min-h-[842px]">
+<!-- Header section -->
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">INVOICE</h2>
+<p class="text-label-sm font-label-sm text-outline">#INV-2024-001</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-on-surface">Evia Collab Systems</p>
+<p class="text-body-md text-on-surface-variant">123 Workspace Ave<br/>Tech Hub, CA 94043</p>
+</div>
+</div>
+<!-- Billing Details -->
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Bill To</p>
+<p class="font-bold">Acme Corporation</p>
+<p class="text-body-md text-on-surface-variant">456 Industry Way<br/>Business Park, NY 10001</p>
+</div>
+<div class="space-y-1 text-right">
+<p class="text-label-sm font-label-sm text-outline uppercase tracking-wider">Dates</p>
+<p class="text-body-md">Issued: <span class="text-on-surface font-medium">May 12, 2024</span></p>
+<p class="text-body-md">Due: <span class="text-on-surface font-medium">June 11, 2024</span></p>
+</div>
+</div>
+<!-- Table -->
+<div class="flex flex-col">
+<div class="flex border-b border-on-surface py-2">
+<div class="flex-grow font-bold text-label-md">DESCRIPTION</div>
+<div class="w-16 text-center font-bold text-label-md">QTY</div>
+<div class="w-24 text-right font-bold text-label-md">AMOUNT</div>
+</div>
+<div class="flex border-b border-outline-variant py-4 items-center">
+<div class="flex-grow">
+<p class="font-medium">Annual Subscription - Professional</p>
+<p class="text-label-sm text-on-surface-variant">Collaborative Document Workspace</p>
+</div>
+<div class="w-16 text-center text-body-md">1</div>
+<div class="w-24 text-right text-body-md">$1,200.00</div>
+</div>
+<div class="flex border-b border-outline-variant py-4 items-center">
+<div class="flex-grow">
+<p class="font-medium">Data Migration Services</p>
+<p class="text-label-sm text-on-surface-variant">Standard record batch migration</p>
+</div>
+<div class="w-16 text-center text-body-md">5</div>
+<div class="w-24 text-right text-body-md">$750.00</div>
+</div>
+</div>
+<!-- Total Section -->
+<div class="mt-auto flex flex-col items-end gap-2 border-t border-on-surface pt-4">
+<div class="flex w-48 justify-between">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="font-medium">$1,950.00</span>
+</div>
+<div class="flex w-48 justify-between">
+<span class="text-on-surface-variant">Tax (8%)</span>
+<span class="font-medium">$156.00</span>
+</div>
+<div class="flex w-48 justify-between mt-2 pt-2 border-t border-outline-variant">
+<span class="font-bold text-headline-md">TOTAL</span>
+<span class="font-bold text-headline-md text-primary">$2,106.00</span>
+</div>
+</div>
+<!-- Footer -->
+<div class="mt-12 bg-surface-container-low p-4 rounded text-center">
+<p class="text-label-sm text-on-surface-variant">Payment is due within 30 days. Please include invoice number on all correspondence.</p>
+</div>
+</article>
+</main>
+<!-- Side Panel: Document Info -->
+<aside class="fixed top-0 right-0 h-screen w-[320px] bg-surface-container-lowest border-l border-outline-variant shadow-xl z-50 panel-hidden flex flex-col" id="infoPanel">
+<div class="p-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">Document Info</h3>
+<button class="p-2 hover:bg-surface-container-low rounded-full" onclick="toggleInfo()">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="flex-grow overflow-y-auto p-4 space-y-8">
+<!-- Basic Meta -->
+<section class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase">Version</label>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded text-label-sm font-bold">V 2.4.0</span>
+<span class="text-body-md text-on-surface-variant">Stable</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase">Last Modified</label>
+<div class="flex items-center gap-2 text-on-surface">
+<span class="material-symbols-outlined text-[18px]" data-icon="history">history</span>
+<p class="text-body-md">Today at 10:42 AM</p>
+</div>
+<p class="text-label-sm text-on-surface-variant ml-7">By Alex Chen</p>
+</div>
+</section>
+<hr class="border-outline-variant"/>
+<!-- Records Management -->
+<section class="space-y-6">
+<h4 class="font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary" data-icon="folder_managed">folder_managed</span>
+                    Records Management
+                </h4>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase">Classification</label>
+<div class="flex items-center gap-2 p-2 bg-surface-container-low border border-outline-variant rounded">
+<span class="material-symbols-outlined text-[18px] text-secondary" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-medium text-body-md">Confidential - Financial</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-outline uppercase">Retention Period</label>
+<div class="flex items-center justify-between p-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="event">event</span>
+<span class="text-body-md">7 Years (Permanent)</span>
+</div>
+<span class="text-label-sm font-bold text-primary">ACTIVE</span>
+</div>
+</div>
+</div>
+</section>
+<hr class="border-outline-variant"/>
+<!-- Actions in Panel -->
+<section class="space-y-3">
+<button class="w-full flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="history_edu">history_edu</span>
+<span class="text-body-md font-medium">Audit Trail</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary" data-icon="download">download</span>
+<span class="text-body-md font-medium">Download PDF</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</section>
+</div>
+<div class="p-4 bg-surface-container-low border-t border-outline-variant">
+<p class="text-[10px] text-center text-outline-variant uppercase tracking-widest font-bold">Secure Collaborative Environment</p>
+</div>
+</aside>
+<!-- Overlay -->
+<div class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 hidden" id="overlay" onclick="toggleInfo()"></div>
+<script>
+        function toggleInfo() {
+            const panel = document.getElementById('infoPanel');
+            const overlay = document.getElementById('overlay');
+            panel.classList.toggle('panel-hidden');
+            overlay.classList.toggle('hidden');
+        }
+
+        // Micro-interaction for Save Button
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.addEventListener('click', () => {
+            const originalContent = saveBtn.innerHTML;
+            saveBtn.innerHTML = `
+                <span class="material-symbols-outlined animate-spin text-[18px]" data-icon="progress_activity">progress_activity</span>
+                SAVING...
+            `;
+            saveBtn.classList.add('opacity-75');
+            saveBtn.disabled = true;
+
+            setTimeout(() => {
+                saveBtn.innerHTML = `
+                    <span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+                    SAVED
+                `;
+                saveBtn.classList.remove('bg-primary');
+                saveBtn.classList.add('bg-secondary');
+
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalContent;
+                    saveBtn.classList.remove('bg-secondary', 'opacity-75');
+                    saveBtn.classList.add('bg-primary');
+                    saveBtn.disabled = false;
+                }, 2000);
+            }, 1200);
+        });
+
+        // Toggle text styles in canvas (simulation)
+        document.querySelectorAll('article [contenteditable="true"]').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.classList.add('ring-1', 'ring-primary/30', 'bg-primary/5', 'outline-none');
+            });
+            el.addEventListener('blur', () => {
+                el.classList.remove('ring-1', 'ring-primary/30', 'bg-primary/5');
+            });
+        });
+
+        // Make fields editable for the demo
+        const editableElements = [
+            'h2', 'p.font-bold', 'p.text-body-md', '.flex-grow p', '.w-24.text-right'
+        ];
+        editableElements.forEach(selector => {
+            document.querySelectorAll(`article ${selector}`).forEach(el => {
+                el.setAttribute('contenteditable', 'true');
+                el.classList.add('transition-all', 'duration-200', 'rounded', 'px-1', '-mx-1');
+            });
+        });
+    </script>
+</body></html>

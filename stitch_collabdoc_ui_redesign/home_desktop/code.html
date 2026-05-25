@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Evia Collab - Professional Workspace</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#00522f",
+                        "primary-container": "#2b6cb0",
+                        "secondary-fixed": "#91f8b8",
+                        "on-background": "#121c2c",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d0daf0",
+                        "tertiary-fixed": "#ffdad7",
+                        "tertiary": "#a70819",
+                        "outline-variant": "#c1c7d2",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#a2c9ff",
+                        "on-primary-fixed-variant": "#004881",
+                        "secondary": "#006d40",
+                        "on-secondary-fixed": "#002110",
+                        "primary-fixed": "#d3e4ff",
+                        "on-tertiary-container": "#ffe6e3",
+                        "surface-tint": "#1960a3",
+                        "surface-bright": "#f9f9ff",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-primary-fixed": "#001c38",
+                        "on-surface": "#121c2c",
+                        "inverse-primary": "#a2c9ff",
+                        "on-primary-container": "#e1ecff",
+                        "surface-variant": "#d9e3f9",
+                        "secondary-container": "#8ef5b5",
+                        "surface-container-highest": "#d9e3f9",
+                        "on-surface-variant": "#414750",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "secondary-fixed-dim": "#74db9d",
+                        "on-secondary-container": "#007243",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9ff",
+                        "inverse-surface": "#273141",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#dee8ff",
+                        "on-tertiary-fixed-variant": "#930013",
+                        "on-tertiary-fixed": "#410004",
+                        "surface-container": "#e7eeff",
+                        "on-error": "#ffffff",
+                        "outline": "#727782",
+                        "primary": "#005394",
+                        "tertiary-container": "#ca2a2e",
+                        "background": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin": "32px",
+                        "unit": "4px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-xl": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9ff;
+            color: #121c2c;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e2e8f0;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #005394 0%, #2b6cb0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .laptop-frame {
+            perspective: 1000px;
+        }
+        .laptop-screen {
+            transform: rotateX(5deg);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-background">
+<!-- SideNavBar (Authority: JSON) -->
+<nav class="fixed left-0 top-0 h-full w-[280px] z-50 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant dark:border-outline flex flex-col py-6">
+<div class="px-6 mb-10">
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary">Evia Collab</h1>
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest mt-1">Professional Workspace</p>
+</div>
+<div class="flex-1 space-y-1">
+<!-- Dashboard (Active) -->
+<a class="flex items-center gap-3 px-6 py-3 text-primary dark:text-inverse-primary font-bold border-l-4 border-primary bg-primary-container/10 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<!-- Templates -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary hover:bg-surface-variant dark:hover:bg-inverse-surface transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-label-md font-label-md">Templates</span>
+</a>
+<!-- Field Library -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary hover:bg-surface-variant dark:hover:bg-inverse-surface transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="text-label-md font-label-md">Field Library</span>
+</a>
+<!-- Editor -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary hover:bg-surface-variant dark:hover:bg-inverse-surface transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="text-label-md font-label-md">Editor</span>
+</a>
+<!-- Profile -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary hover:bg-surface-variant dark:hover:bg-inverse-surface transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="text-label-md font-label-md">Profile</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-surface-variant hover:text-primary hover:bg-surface-variant dark:hover:bg-inverse-surface transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+<div class="px-6 mt-auto">
+<div class="p-4 bg-surface-container-low rounded-xl flex items-center gap-3">
+<img alt="User Profile" class="w-8 h-8 rounded-full bg-primary-container/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCffVONWtofmXs9BGtBTOFGkIdloplFAqZcyzLDBbaWWgiI7MpDQUWAj79V42ATwS7MoIo9VZULbKb6DFmGM9DASMvfEHGMehatlhlPwqifzlhZIqi0CvbODpAH9aJerJgfgJ3Ps5o0ZhzOds5G6t55w9JQtyOszNqzB23iDEyy9L7Asy7rfUSVF31cebJ2ZM03FsAfr1N8JU9v2j25XeAqlUtEMbiUQPO0dWFZE-jYgPeAWGeT4a00l4l_bNxPVHsjwS7CfssBrs4"/>
+<div class="overflow-hidden">
+<p class="text-label-md font-label-md text-on-surface truncate">Alex Sterling</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant truncate">Lead Editor</p>
+</div>
+</div>
+</div>
+</nav>
+<!-- TopAppBar (Authority: JSON) -->
+<header class="fixed top-0 right-0 left-[280px] z-40 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline h-16 flex items-center px-gutter">
+<div class="flex-1 flex items-center">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-full py-1.5 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary transition-all" placeholder="Search workspace..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-transform duration-150 active:scale-95">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-transform duration-150 active:scale-95">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-label-md font-label-md transition-transform duration-150 active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                Create Document
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-16 pb-24 px-gutter">
+<div class="max-w-container-max mx-auto grid lg:grid-cols-2 gap-12 items-center">
+<div class="relative z-10">
+<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container text-label-md font-label-md rounded-full mb-6">
+                        Systematic • Collaborative • Reliable
+                    </span>
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-6 leading-tight">
+                        Precision Control for <br/>
+<span class="text-gradient">Professional Documents</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-lg">
+                        Manage complex document lifecycles with a high-precision workspace built for institutional trust and collaborative speed.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-lg shadow-primary/20 hover:translate-y-[-2px] transition-all">
+                            Launch Workspace
+                        </button>
+<button class="px-8 py-4 border border-outline text-primary rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-all">
+                            View Documentation
+                        </button>
+</div>
+</div>
+<!-- Laptop Mockup -->
+<div class="relative laptop-frame flex justify-center items-center">
+<div class="absolute w-[120%] h-[120%] bg-primary-fixed/20 rounded-full blur-3xl -z-10"></div>
+<div class="laptop-screen relative w-full max-w-[600px] aspect-[16/10] bg-surface-container-lowest border-4 border-on-surface-variant rounded-xl overflow-hidden shadow-2xl">
+<div class="w-full h-6 bg-surface-container-high flex items-center px-3 gap-1.5 border-b border-outline-variant">
+<div class="w-2.5 h-2.5 rounded-full bg-error/30"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary-fixed-dim"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-secondary-fixed-dim"></div>
+</div>
+<img class="w-full h-full object-cover" data-alt="A clean, professional document editing interface shown on a high-resolution laptop screen mockup. The software features a structured dashboard with data visualizations, a left-hand navigation sidebar, and a central editing pane showing a multi-page document. The lighting is bright and corporate, emphasizing a modern light-mode design with primary blue accents. The scene is shot from a slight isometric angle against a minimalist studio background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAgid1zYwQFfTP5YVr68ptHsv9iZ6F3mXV7IKkAfrz81V2EXmLDU6Jwga1GE57t2V-qOdO_w3cEHZI6GVqjzGqJDE1G_aNZTQ97nbilpjkYB_-kPyvqr4PNplB4WLmaIEp6_UKvDpoTaSRLJ5oSr8MuZ_P8IL7cJB7McKRJ8mWhfsMIk79aXJvbzmoEz-BtKGtVZtYo-2VKgLA-lpAM4mwix62j1fG-DdOuKsSrq-tK0tNNI_482fXv_bhbhZbjr4ismI4Sb5IC7s"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Precision Tools Section (Bento Grid) -->
+<section class="py-24 px-gutter bg-surface-container-low/50">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-4">Precision tools for precision work</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">
+                        Engineered to reduce cognitive load in data-dense environments, ensuring you remain in complete control of every document lifecycle.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<!-- Centralized Field Library (Large) -->
+<div class="md:col-span-2 lg:col-span-2 glass-card rounded-xl p-8 hover:border-primary transition-all group">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Centralized Field Library</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                            Manage all data variables from a single source of truth. Update once, reflect everywhere across your entire document suite.
+                        </p>
+<img class="w-full h-40 object-cover rounded-lg border border-outline-variant" data-alt="A detailed UI component showcasing a structured library of data fields and variables. Each field is listed with clear labels, data types, and status indicators like 'Active' or 'In Review'. The visual style is highly organized with plenty of whitespace, using a corporate blue and grey palette. The mood is functional, precise, and professional, reflecting institutional trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJebMvCVt0Fgqn3LHCnwjfNmjs4ojOt66QMA-UqvuptxQ5pie0TchSwESr-d51V4wrdrHGl2PT3uBzzoVM4Wq9XqzDNr8BaSo1GwX83GkAniwl7JMYq4js5PnSooqLcpg-crckwSBHIVnk9xjCLjmPDLFqXZ9qUuKu-nD8cvMRuZ0ATX38fM5qbCNVtcCJgpzmYJ5Jp9JtbaMC6rpLy8V4PinL5Vd4brwjPrdY6-6Vw04rN4JUZnMAPDpRx9j7Y7KyJadU6BJ6IzQ"/>
+</div>
+<!-- Real-time Sync -->
+<div class="glass-card rounded-xl p-8 hover:border-primary transition-all group">
+<div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Real-time Sync</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Collaborate effortlessly with instant updates. Experience sub-millisecond latency for global team coordination.
+                        </p>
+</div>
+<!-- Institutional Trust -->
+<div class="glass-card rounded-xl p-8 hover:border-primary transition-all group">
+<div class="w-12 h-12 rounded-lg bg-tertiary/10 flex items-center justify-center text-tertiary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Institutional Trust</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Enterprise-grade security with audit trails for every edit. Compliant with international document standards.
+                        </p>
+</div>
+<!-- Collaborative Review (Full Width on small, 2 col on large) -->
+<div class="md:col-span-3 lg:col-span-4 glass-card rounded-xl p-8 flex flex-col md:flex-row gap-8 items-center hover:border-primary transition-all group">
+<div class="md:w-2/3">
+<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-3">Collaborative Review</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                                Streamline the approval process with integrated review tools. Comments, annotations, and version history are baked into the core experience, allowing for seamless sign-offs and faster delivery.
+                            </p>
+</div>
+<div class="md:w-1/3 w-full">
+<div class="p-6 bg-surface-container-high rounded-lg space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-label-md font-label-md text-on-surface">Legal Review Approved</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-label-md font-label-md text-on-surface">Draft Updated by Sarah</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-label-md font-label-md text-on-surface">Compliance Note Added</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-gutter">
+<div class="max-w-container-max mx-auto">
+<div class="bg-primary rounded-3xl p-12 lg:p-24 relative overflow-hidden text-center text-on-primary">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary-container/40 via-transparent to-transparent"></div>
+<div class="relative z-10 max-w-3xl mx-auto">
+<h2 class="font-headline-xl text-headline-xl mb-6">Ready to transform your document lifecycle?</h2>
+<p class="font-body-lg text-body-lg text-on-primary/80 mb-12">
+                            Join thousands of professionals who have already optimized their workspace for maximum precision and institutional efficiency.
+                        </p>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="px-10 py-5 bg-white text-primary rounded-lg font-label-md text-label-md hover:bg-on-primary-container transition-all">
+                                Get Started Now
+                            </button>
+<button class="px-10 py-5 border border-white/30 text-white rounded-lg font-label-md text-label-md hover:bg-white/10 transition-all">
+                                Contact Sales
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="py-12 px-gutter border-t border-outline-variant bg-surface">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div>
+<span class="text-headline-md font-headline-md font-bold text-primary">Evia Collab</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">© 2024 Evia Collab Systems Inc. All rights reserved.</p>
+</div>
+<div class="flex gap-8">
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">System Status</a>
+</div>
+<div class="flex gap-4">
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="language">language</span>
+</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="public">public</span>
+</button>
+</div>
+</div>
+</footer>
+</main>
+<!-- Interactions -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Micro-interaction: Scale effect on cards
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Smooth scrolling for navigation if needed
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body></html>
