@@ -1,13 +1,7 @@
-# Deploy Backend to Azure Web App
-name: Deploy Backend to Azure Web App
+# Legacy Backend Web App Deploy
+name: Legacy Backend Web App Deploy
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - '.github/workflows/backend-deploy.yml'
   workflow_dispatch:
 
 jobs:
