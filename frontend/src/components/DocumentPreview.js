@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { DocumentEditorContainerComponent } from '@syncfusion/ej2-react-documenteditor';
 import { registerLicense } from '@syncfusion/ej2-base';
+import config from '../config';
 import './DocumentPreview.css';
 
 // Register Syncfusion license
 try {
-  registerLicense('Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpfeXRWRWZcVEB2V0tWYUs=');
+  if (config.syncfusion.licenseKey) {
+    registerLicense(config.syncfusion.licenseKey);
+  }
 } catch (error) {
   console.warn('Error registering Syncfusion license:', error);
 }
@@ -85,7 +88,7 @@ const DocumentPreview = ({ document, mergeData, isLoading = false }) => {
             // Wait a moment to ensure document is fully loaded
             setTimeout(() => {
               try {
-                const mailMerge = editorRef.current.documentEditor.mailMerge;
+                const { mailMerge } = editorRef.current.documentEditor;
                 
                 // Prepare and execute mail merge
                 const prepareData = () => {

@@ -63,7 +63,8 @@ Backend environment configuration:
 AUTH_REQUIRED=true
 AUTH_ISSUER=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
 AUTH_JWKS_URI=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks
-AUTH_AUDIENCE=<collabdoc-api-audience-from-sflow>
+AUTH_AUDIENCE=govstack.workflow
+AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa
 ```
 
 Frontend environment configuration:
@@ -71,12 +72,29 @@ Frontend environment configuration:
 ```env
 REACT_APP_AUTH_PROVIDER=sflow
 REACT_APP_SFLOW_AUTHORITY=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
-REACT_APP_SFLOW_CLIENT_ID=<collabdoc-spa-client-id-from-sflow>
-REACT_APP_SFLOW_SCOPE=openid profile email
-REACT_APP_SFLOW_REDIRECT_URI=http://localhost:3001/
+REACT_APP_SFLOW_CLIENT_ID=collabdoc-ui-spa
+REACT_APP_SFLOW_SCOPE=openid profile email roles offline_access govstack.workflow
+REACT_APP_SFLOW_REDIRECT_URI=https://collabdocweb-fresh.azurewebsites.net/auth/callback
 ```
 
-`AUTH_AUDIENCE` and `REACT_APP_SFLOW_CLIENT_ID` must come from SFlow Identity Admin. Do not guess these values in source code.
+Interim SFlow decision on May 26, 2026: reuse the existing `govstack.workflow` audience/scope for the CollabDoc demo instead of adding a new `govstack.collabdoc` scope. This is acceptable for a controlled demo, but it is not a final production boundary because any token with the Workflow audience could otherwise look valid to CollabDoc. To reduce that risk, the backend supports `AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa`; when SFlow includes `azp`, `client_id`, `clientId`, or `appid` in the token, CollabDoc rejects tokens issued to other clients.
+
+Local SFlow Docker equivalents:
+
+```env
+AUTH_ISSUER=http://localhost:8000/identity
+AUTH_JWKS_URI=http://localhost:8000/identity/.well-known/jwks
+AUTH_AUDIENCE=govstack.workflow
+AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa
+REACT_APP_SFLOW_AUTHORITY=http://localhost:8000/identity
+REACT_APP_SFLOW_CLIENT_ID=collabdoc-ui-spa
+REACT_APP_SFLOW_SCOPE=openid profile email roles offline_access govstack.workflow
+REACT_APP_SFLOW_REDIRECT_URI=http://localhost:3001/auth/callback
+```
+
+The `collabdoc-ui-spa` SPA client was registered in Azure SFlow Identity through the client-management API with Authorization Code + PKCE, client type Public, redirect URIs `http://localhost:3000/auth/callback`, `http://localhost:3001/auth/callback`, and `https://collabdocweb-fresh.azurewebsites.net/auth/callback`, scope `govstack.workflow`, and audience `govstack.workflow`. A previous `collabdoc-ui` attempt should be ignored because the SFlow update endpoint can rewrite redirect URIs in a format that breaks OpenIddict authorization.
+
+Azure validation found one SFlow Identity service bug: API-created public SPA clients were missing OpenIddict `response_type:code` permission, so `/identity/connect/authorize` returned `unauthorized_client` for `collabdoc-ui-spa`. On May 26, 2026, Azure SFlow Identity was updated to `sflow-identity:collabdoc-pkce-fix-20260526a`, the stale `FORCE_RESEED_USERS` production environment variable was removed, and `scripts/register-sflow-collabdoc-client.ps1 -UpdateExisting` repaired `collabdoc-ui-spa`. Authorize probes now return `302 Found` to SFlow login for both local and fresh Azure callback URLs.
 
 Recommended identity contract:
 
@@ -95,9 +113,11 @@ Implementation steps:
 3. Partial - Send bearer tokens on collaboration API calls when a token exists in `window.authContext`, `window.sflowIdentity`, or OIDC browser storage.
 4. Partial - Add backend JWT validation using SFlow/AD issuer and JWKS; enable with `AUTH_REQUIRED=true`.
 5. Done for collaboration API - Derive collaborator identity from verified token claims in the backend when JWT auth is active.
-6. Enforce document room authorization before join, state, snapshot, and leave actions.
-7. Map SFlow/AD roles or groups to document permissions: owner, editor, viewer.
-8. Keep `?user=` support only as a local demo fallback when auth is disabled.
+6. Done for interim audience reuse - Add optional client-id validation through `AUTH_ALLOWED_CLIENT_IDS` to reduce audience-confusion risk while using `govstack.workflow`.
+7. Done - Register and repair Azure SFlow client `collabdoc-ui-spa` with Authorization Code + PKCE, refresh tokens, local callbacks, and `https://collabdocweb-fresh.azurewebsites.net/auth/callback`.
+8. Enforce document room authorization before join, state, snapshot, and leave actions.
+9. Map SFlow/AD roles or groups to document permissions: owner, editor, viewer.
+10. Keep `?user=` support only as a local demo fallback when auth is disabled.
 
 ## Acceptance Criteria
 
@@ -117,6 +137,7 @@ Implementation steps:
 - Conflict handling must be designed before production use.
 - Snapshot sync is vulnerable to last-writer-wins overwrites during true simultaneous editing.
 - SFlow/AD JWT validation support exists, but enforcement is disabled until `AUTH_REQUIRED=true` and the correct API audience are configured.
+- Reusing `govstack.workflow` is a demo bridge. Production should register a first-class CollabDoc API audience/scope, for example `govstack.collabdoc`, to avoid coupling CollabDoc access to Workflow tokens.
 - Document-level permissions are not enforced on the collaboration API yet.
 
 ## Validation

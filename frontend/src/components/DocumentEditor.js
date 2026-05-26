@@ -5,7 +5,9 @@ import config from '../config';
 import './DocumentEditor.css';
 
 // Register Syncfusion license
-registerLicense(config.syncfusion.licenseKey);
+if (config.syncfusion.licenseKey) {
+  registerLicense(config.syncfusion.licenseKey);
+}
 
 const DocumentEditor = ({ document, onContentChange }) => {
   const editorRef = useRef(null);

@@ -28,6 +28,11 @@ This guide explains how to deploy the CollabDoc application to Azure Web Apps us
 - `REACT_APP_AZURE_AD_CLIENT_ID` - Azure AD client ID
 - `REACT_APP_AZURE_AD_TENANT_ID` - Azure AD tenant ID
 - `REACT_APP_AZURE_AD_REDIRECT_URI` - Azure AD redirect URI (e.g., `https://your-frontend-app.azurewebsites.net`)
+- `REACT_APP_AUTH_PROVIDER` - Use `sflow` for SFlow Identity login
+- `REACT_APP_SFLOW_AUTHORITY` - SFlow OIDC authority, e.g. `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity`
+- `REACT_APP_SFLOW_CLIENT_ID` - `collabdoc-ui-spa`
+- `REACT_APP_SFLOW_SCOPE` - `openid profile email roles offline_access govstack.workflow`
+- `REACT_APP_SFLOW_REDIRECT_URI` - `https://collabdocweb-fresh.azurewebsites.net/auth/callback`
 
 ## Setting Up GitHub Secrets
 
@@ -101,6 +106,10 @@ TEMPLATES_PATH=D:\home\site\wwwroot\templates
 MAX_FILE_SIZE=50mb
 JWT_SECRET=your_jwt_secret
 CORS_ORIGIN=https://your-frontend-app.azurewebsites.net
+AUTH_ISSUER=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+AUTH_JWKS_URI=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks
+AUTH_AUDIENCE=govstack.workflow
+AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa
 ```
 
 ### Frontend Environment Variables

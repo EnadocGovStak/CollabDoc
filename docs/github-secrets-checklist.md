@@ -2,9 +2,11 @@
 
 ## Web App Details
 - **Backend Web App**: collabdoc-backend
-- **Frontend Web App**: collabdoc-frontend
-- **Resource Group**: GovBrunei_RG
-- **App Service Plan**: GovBrinei-ASP
+- **Frontend Web App**: collabdocweb-fresh
+- **Resource Group**: collabdoc
+- **App Service Plan**: collabdocwebapp
+
+> Azure check on May 26, 2026 found `collabdocweb-fresh`, `collabdocstorage`, and `collabdocwebapp` in the `collabdoc` resource group. Create `collabdoc-backend` before running the backend/full-stack workflow.
 
 ## Required GitHub Secrets
 
@@ -29,7 +31,22 @@
   - Value: Your Azure AD tenant ID
   
 - [ ] REACT_APP_AZURE_AD_REDIRECT_URI
-  - Value: https://collabdoc-frontend.azurewebsites.net
+  - Value: https://collabdocweb-fresh.azurewebsites.net
+
+- [ ] REACT_APP_AUTH_PROVIDER
+  - Value: sflow
+
+- [ ] REACT_APP_SFLOW_AUTHORITY
+  - Value: https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+
+- [ ] REACT_APP_SFLOW_CLIENT_ID
+  - Value: collabdoc-ui-spa
+
+- [ ] REACT_APP_SFLOW_SCOPE
+  - Value: openid profile email roles offline_access govstack.workflow
+
+- [ ] REACT_APP_SFLOW_REDIRECT_URI
+  - Value: https://collabdocweb-fresh.azurewebsites.net/auth/callback
 
 ## Azure Web App Environment Variables
 
@@ -40,13 +57,17 @@ Add these in Azure Portal > Web App > Configuration > Application Settings:
 - [ ] AZURE_AD_TENANT_ID - Your Azure AD tenant ID  
 - [ ] AZURE_AD_CLIENT_SECRET - Your Azure AD client secret
 - [ ] JWT_SECRET - Your JWT secret key
-- [ ] CORS_ORIGIN - https://collabdoc-frontend.azurewebsites.net
+- [ ] CORS_ORIGIN - https://collabdocweb-fresh.azurewebsites.net
+- [ ] AUTH_ISSUER - https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+- [ ] AUTH_JWKS_URI - https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks
+- [ ] AUTH_AUDIENCE - govstack.workflow
+- [ ] AUTH_ALLOWED_CLIENT_IDS - collabdoc-ui-spa
 
-### Frontend Web App (collabdoc-frontend)
+### Frontend Web App (collabdocweb-fresh)
 No additional environment variables needed - configured through GitHub build process.
 
 ## Deployment URLs
-- **Frontend**: https://collabdoc-frontend.azurewebsites.net
+- **Frontend**: https://collabdocweb-fresh.azurewebsites.net
 - **Backend**: https://collabdoc-backend.azurewebsites.net
 
 ## Next Steps

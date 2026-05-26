@@ -5,6 +5,8 @@ import './styles/index.css';
 import router from './router';
 import reportWebVitals from './reportWebVitals';
 import { registerLicense } from '@syncfusion/ej2-base';
+import { AuthProvider } from './contexts/AuthContext';
+import config from './config';
 
 // Initialize Syncfusion modules globally before anything else
 import './utils/syncfusionModules';
@@ -26,7 +28,9 @@ import '@syncfusion/ej2-react-navigations/styles/material.css';
 import '@syncfusion/ej2-icons/styles/material.css';
 
 // Register Syncfusion license
-registerLicense(process.env.REACT_APP_SYNCFUSION_KEY || 'Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=');
+if (config.syncfusion.licenseKey) {
+  registerLicense(config.syncfusion.licenseKey);
+}
 
 // Font loading function with local fallbacks (no CDN)
 const ensureFontsLoaded = () => {
@@ -79,7 +83,9 @@ ensureFontsLoaded();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );
 

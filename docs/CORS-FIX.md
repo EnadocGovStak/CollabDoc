@@ -16,7 +16,7 @@ Your frontend is getting blocked by CORS policy when trying to access the backen
 4. Add this environment variable:
    ```
    Name: CORS_ORIGIN
-   Value: https://collabdoc-frontend.azurewebsites.net
+   Value: https://collabdocweb-fresh.azurewebsites.net
    ```
 5. Click **Save**
 6. **Restart** the backend app

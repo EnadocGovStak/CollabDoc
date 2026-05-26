@@ -126,6 +126,11 @@ jobs:
           REACT_APP_AZURE_AD_CLIENT_ID: ${{ secrets.REACT_APP_AZURE_AD_CLIENT_ID }}
           REACT_APP_AZURE_AD_TENANT_ID: ${{ secrets.REACT_APP_AZURE_AD_TENANT_ID }}
           REACT_APP_AZURE_AD_REDIRECT_URI: ${{ secrets.REACT_APP_AZURE_AD_REDIRECT_URI }}
+          REACT_APP_AUTH_PROVIDER: ${{ secrets.REACT_APP_AUTH_PROVIDER }}
+          REACT_APP_SFLOW_AUTHORITY: ${{ secrets.REACT_APP_SFLOW_AUTHORITY }}
+          REACT_APP_SFLOW_CLIENT_ID: ${{ secrets.REACT_APP_SFLOW_CLIENT_ID }}
+          REACT_APP_SFLOW_SCOPE: ${{ secrets.REACT_APP_SFLOW_SCOPE }}
+          REACT_APP_SFLOW_REDIRECT_URI: ${{ secrets.REACT_APP_SFLOW_REDIRECT_URI }}
 
       - name: Create frontend deployment package
         run: |
@@ -217,7 +222,7 @@ jobs:
       - name: Deploy Frontend to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'collabdoc-frontend'  # Frontend app name
+          app-name: 'collabdocweb-fresh'  # Frontend app name
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND }}

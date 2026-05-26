@@ -22,6 +22,11 @@
 - [ ] Add `REACT_APP_AZURE_AD_CLIENT_ID`
 - [ ] Add `REACT_APP_AZURE_AD_TENANT_ID`
 - [ ] Add `REACT_APP_AZURE_AD_REDIRECT_URI`
+- [ ] Add `REACT_APP_AUTH_PROVIDER=sflow`
+- [ ] Add `REACT_APP_SFLOW_AUTHORITY=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity`
+- [ ] Add `REACT_APP_SFLOW_CLIENT_ID=collabdoc-ui-spa`
+- [ ] Add `REACT_APP_SFLOW_SCOPE=openid profile email roles offline_access govstack.workflow`
+- [ ] Add `REACT_APP_SFLOW_REDIRECT_URI=https://collabdocweb-fresh.azurewebsites.net/auth/callback`
 
 ### 4. Azure Web App Configuration
 
@@ -34,7 +39,11 @@
 - [ ] `STORAGE_PATH=D:\home\site\wwwroot\uploads`
 - [ ] `TEMPLATES_PATH=D:\home\site\wwwroot\templates`
 - [ ] `JWT_SECRET`
-- [ ] `CORS_ORIGIN` (frontend URL)
+- [ ] `CORS_ORIGIN=https://collabdocweb-fresh.azurewebsites.net`
+- [ ] `AUTH_ISSUER=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity`
+- [ ] `AUTH_JWKS_URI=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks`
+- [ ] `AUTH_AUDIENCE=govstack.workflow`
+- [ ] `AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa`
 
 #### Frontend Configuration
 - [ ] Runtime: Node.js 18.x
@@ -51,7 +60,7 @@
 
 ### 2. Verify Deployment
 - [ ] Test backend health endpoint: `https://your-backend-app.azurewebsites.net/health`
-- [ ] Test frontend loading: `https://your-frontend-app.azurewebsites.net`
+- [ ] Test frontend loading: `https://collabdocweb-fresh.azurewebsites.net`
 - [ ] Test document creation and editing
 - [ ] Test template functionality
 - [ ] Test authentication flow

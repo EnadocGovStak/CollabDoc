@@ -22,13 +22,15 @@ Go to your GitHub repository → **Settings** → **Secrets and variables** → 
    - `AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND`
    - `AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND`
 
+   Azure check on May 26, 2026 found `collabdocweb-fresh`, `collabdocstorage`, and `collabdocwebapp` in the `collabdoc` resource group. Create `collabdoc-backend` and refresh `AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND` before running the backend/full-stack workflow.
+
 2. **Frontend Environment Variables** (Add These Now)
    ```
    REACT_APP_API_BASE_URL
    Value: https://collabdoc-backend.azurewebsites.net
    
    REACT_APP_SYNCFUSION_LICENSE_KEY
-   Value: Ngo9BigBOggjHTQxAR8/V1NGaF1cXGFCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpeeXVXRGFZUk1zXUJWYUs=
+   Value: [Your Syncfusion license key]
    
    REACT_APP_AZURE_AD_CLIENT_ID
    Value: [Your Azure AD Client ID]
@@ -37,7 +39,22 @@ Go to your GitHub repository → **Settings** → **Secrets and variables** → 
    Value: [Your Azure AD Tenant ID]
    
    REACT_APP_AZURE_AD_REDIRECT_URI
-   Value: https://collabdoc-frontend.azurewebsites.net
+   Value: https://collabdocweb-fresh.azurewebsites.net
+
+   REACT_APP_AUTH_PROVIDER
+   Value: sflow
+
+   REACT_APP_SFLOW_AUTHORITY
+   Value: https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+
+   REACT_APP_SFLOW_CLIENT_ID
+   Value: collabdoc-ui-spa
+
+   REACT_APP_SFLOW_SCOPE
+   Value: openid profile email roles offline_access govstack.workflow
+
+   REACT_APP_SFLOW_REDIRECT_URI
+   Value: https://collabdocweb-fresh.azurewebsites.net/auth/callback
    ```
 
 ### Step 2: Configure Backend Environment Variables in Azure
@@ -49,7 +66,11 @@ Go to your GitHub repository → **Settings** → **Secrets and variables** → 
    AZURE_AD_TENANT_ID = [Your Azure AD Tenant ID]
    AZURE_AD_CLIENT_SECRET = [Your Azure AD Client Secret]
    JWT_SECRET = [Generate a secure random string]
-   CORS_ORIGIN = https://collabdoc-frontend.azurewebsites.net
+   CORS_ORIGIN = https://collabdocweb-fresh.azurewebsites.net
+   AUTH_ISSUER = https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+   AUTH_JWKS_URI = https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks
+   AUTH_AUDIENCE = govstack.workflow
+   AUTH_ALLOWED_CLIENT_IDS = collabdoc-ui-spa
    ```
 
 ### Step 3: Deploy Using GitHub Actions
@@ -97,7 +118,7 @@ curl https://collabdoc-backend.azurewebsites.net/health
 Expected: JSON response with status
 
 #### Test Frontend Application
-Visit: https://collabdoc-frontend.azurewebsites.net
+Visit: https://collabdocweb-fresh.azurewebsites.net
 Expected: CollabDoc application loads successfully
 
 ### Step 6: Configure Azure AD (If Not Done Already)
@@ -107,8 +128,8 @@ Expected: CollabDoc application loads successfully
 3. **Authentication** → **Platform configurations**
 4. **Add Single-page application platform**
 5. **Add redirect URIs**:
-   - `https://collabdoc-frontend.azurewebsites.net`
-   - `https://collabdoc-frontend.azurewebsites.net/redirect`
+   - `https://collabdocweb-fresh.azurewebsites.net`
+   - `https://collabdocweb-fresh.azurewebsites.net/auth/callback`
 
 ## 🔧 Available Workflows
 
@@ -148,7 +169,7 @@ Expected: CollabDoc application loads successfully
    - Verify environment variables in Azure Portal
 
 ### Deployment URLs
-- **Frontend**: https://collabdoc-frontend.azurewebsites.net
+- **Frontend**: https://collabdocweb-fresh.azurewebsites.net
 - **Backend**: https://collabdoc-backend.azurewebsites.net
 
 ## 🎉 Ready to Deploy!

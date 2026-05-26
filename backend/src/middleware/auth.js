@@ -10,14 +10,27 @@ function isEnabled(value) {
     return String(value || '').toLowerCase() === 'true';
 }
 
+function toList(value) {
+    return String(value || '')
+        .split(/[\s,]+/)
+        .map(item => item.trim())
+        .filter(Boolean);
+}
+
 function getAuthConfig() {
     const issuer = process.env.AUTH_ISSUER || process.env.SFLOW_AUTH_ISSUER || DEFAULT_SFLOW_ISSUER;
+    const allowedClientIds = toList(
+        process.env.AUTH_ALLOWED_CLIENT_IDS ||
+        process.env.AUTH_CLIENT_ID ||
+        process.env.SFLOW_AUTH_CLIENT_ID
+    );
 
     return {
         required: isEnabled(process.env.AUTH_REQUIRED),
         issuer,
         audience: process.env.AUTH_AUDIENCE || process.env.SFLOW_AUTH_AUDIENCE || undefined,
-        jwksUri: process.env.AUTH_JWKS_URI || process.env.SFLOW_AUTH_JWKS_URI || DEFAULT_SFLOW_JWKS_URI
+        jwksUri: process.env.AUTH_JWKS_URI || process.env.SFLOW_AUTH_JWKS_URI || DEFAULT_SFLOW_JWKS_URI,
+        allowedClientIds
     };
 }
 
@@ -73,7 +86,24 @@ async function verifyAccessToken(token, config) {
     }
 
     const result = await jwtVerify(token, getRemoteJwks(config.jwksUri), verifyOptions);
-    return result.payload;
+    const claims = result.payload;
+
+    if (config.allowedClientIds.length > 0) {
+        const tokenClientIds = [
+            ...toArray(claims.azp),
+            ...toArray(claims.client_id),
+            ...toArray(claims.clientId),
+            ...toArray(claims.appid)
+        ].filter(Boolean);
+
+        const hasAllowedClientId = config.allowedClientIds.some(clientId => tokenClientIds.includes(clientId));
+
+        if (!hasAllowedClientId) {
+            throw new Error('Token client is not allowed for this API');
+        }
+    }
+
+    return claims;
 }
 
 const auth = (options = {}) => async (req, res, next) => {

@@ -10,6 +10,7 @@ import DocumentFromTemplatePage from './pages/DocumentFromTemplatePage';
 import FieldLibraryPage from './pages/FieldLibraryPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import EditorTest from './EditorTest';
 
 const router = createBrowserRouter([
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
             {
                 path: '/settings',
                 element: <SettingsPage />,
+            },
+            {
+                path: '/auth/callback',
+                element: <AuthCallbackPage />,
             },
             {
                 path: '/templates/new',

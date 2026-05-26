@@ -12,13 +12,14 @@ const recordsRouter = require('./routes/records');
 const templatesRouter = require('./routes/templates');
 const fieldsRouter = require('./routes/fields');
 const collaborationRouter = require('./routes/collaboration');
+const sflowAuthRouter = require('./routes/sflowAuth');
 
 // Create Express app  
 const app = express();
 const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://collabdoc-frontend.azurewebsites.net',
+  'https://collabdocweb-fresh.azurewebsites.net',
   process.env.CORS_ORIGIN
 ].filter(Boolean);
 
@@ -55,6 +56,7 @@ app.use('/api/records', recordsRouter);
 app.use('/api/templates', templatesRouter);
 app.use('/api/fields', fieldsRouter);
 app.use('/api/collaboration', collaborationRouter);
+app.use('/api/auth/sflow', sflowAuthRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
