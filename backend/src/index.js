@@ -11,18 +11,28 @@ const documentsRouter = require('./routes/documents');
 const recordsRouter = require('./routes/records');
 const templatesRouter = require('./routes/templates');
 const fieldsRouter = require('./routes/fields');
+const collaborationRouter = require('./routes/collaboration');
 
 // Create Express app  
 const app = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://collabdoc-frontend.azurewebsites.net',
+  process.env.CORS_ORIGIN
+].filter(Boolean);
 
 // Middleware
 const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'https://collabdoc-frontend.azurewebsites.net',
-    process.env.CORS_ORIGIN
-  ].filter(Boolean),
+  origin(origin, callback) {
+    const isLocalDevOrigin = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || '');
+
+    if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -44,6 +54,7 @@ app.use('/api/documents', documentsRouter);
 app.use('/api/records', recordsRouter);
 app.use('/api/templates', templatesRouter);
 app.use('/api/fields', fieldsRouter);
+app.use('/api/collaboration', collaborationRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

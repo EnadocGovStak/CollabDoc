@@ -5,10 +5,26 @@ import '@syncfusion/ej2-react-documenteditor/styles/material.css';
 import '@syncfusion/ej2-react-buttons/styles/material.css';
 import '@syncfusion/ej2-react-popups/styles/material.css';
 import { documentService } from '../services/DocumentService';
+import { collaborationService, getCurrentCollaborationUser } from '../services/CollaborationService';
 import '../styles/design-system.css';
 import '../styles/components.css';
 import './DocumentEditorPage.css';
 import VersionHistory from '../components/VersionHistory';
+
+const getCollaboratorInitials = (name) => String(name || 'User')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map(part => part[0]?.toUpperCase())
+  .join('') || 'U';
+
+const collaborationStatusLabels = {
+  idle: 'Save first to start live editing',
+  connecting: 'Connecting live editing',
+  live: 'Live editing on',
+  syncing: 'Syncing changes',
+  error: 'Live editing interrupted'
+};
 
 
 const DocumentEditorPage = () => {
@@ -28,6 +44,13 @@ const DocumentEditorPage = () => {
   const [contentLoaded, setContentLoaded] = useState(false);
   const [sidebarHasFocus, setSidebarHasFocus] = useState(false);
   const sidebarRef = useRef(null);
+  const collaborationUserRef = useRef(getCurrentCollaborationUser());
+  const collaborationRevisionRef = useRef(0);
+  const collaborationPushTimeoutRef = useRef(null);
+  const applyingRemoteUpdateRef = useRef(false);
+  const [collaborationStatus, setCollaborationStatus] = useState('idle');
+  const [collaborators, setCollaborators] = useState([]);
+  const [lastRemoteUpdate, setLastRemoteUpdate] = useState(null);
 
   // Load reference data
   useEffect(() => {
@@ -170,9 +193,156 @@ const DocumentEditorPage = () => {
     return document?.recordsManagement?.isFinal === true;
   }, [document]);
 
+  const handleCollaborationState = useCallback((state) => {
+    if (!state) return;
+
+    const incomingRevision = Number(state.revision || 0);
+    const currentRevision = collaborationRevisionRef.current;
+    const currentUser = collaborationUserRef.current;
+    const hasRemoteContent = state.content !== undefined &&
+      incomingRevision > currentRevision &&
+      state.updatedBy &&
+      state.updatedBy !== currentUser.clientId;
+
+    collaborationRevisionRef.current = Math.max(currentRevision, incomingRevision);
+    setCollaborators(state.collaborators || []);
+
+    if (!hasRemoteContent) {
+      return;
+    }
+
+    applyingRemoteUpdateRef.current = true;
+
+    try {
+      if (editorRef.current) {
+        editorRef.current.setContent(state.content);
+      }
+
+      setDocument(prev => prev ? {
+        ...prev,
+        content: state.content,
+        lastModified: state.updatedAt || new Date().toISOString()
+      } : prev);
+
+      setLastRemoteUpdate({
+        userName: state.updatedByName || 'Another editor',
+        updatedAt: state.updatedAt || new Date().toISOString()
+      });
+    } finally {
+      window.setTimeout(() => {
+        applyingRemoteUpdateRef.current = false;
+      }, 800);
+    }
+  }, []);
+
+  const queueCollaborativeSnapshot = useCallback((content) => {
+    const documentId = id || document?.id;
+
+    if (!documentId || selectedVersion || isDocumentFinal() || applyingRemoteUpdateRef.current) {
+      return;
+    }
+
+    if (collaborationPushTimeoutRef.current) {
+      clearTimeout(collaborationPushTimeoutRef.current);
+    }
+
+    setCollaborationStatus('syncing');
+
+    collaborationPushTimeoutRef.current = window.setTimeout(async () => {
+      try {
+        const user = collaborationUserRef.current;
+        const result = await collaborationService.pushSnapshot(documentId, {
+          ...user,
+          title: document?.title || 'Untitled',
+          content
+        });
+
+        collaborationRevisionRef.current = Math.max(
+          collaborationRevisionRef.current,
+          Number(result.revision || 0)
+        );
+        setCollaborators(result.collaborators || []);
+        setCollaborationStatus('live');
+      } catch (error) {
+        console.error('Error syncing collaborative snapshot:', error);
+        setCollaborationStatus('error');
+      }
+    }, 1000);
+  }, [document?.id, document?.title, id, isDocumentFinal, selectedVersion]);
+
+  useEffect(() => {
+    const documentId = id || document?.id;
+
+    if (!documentId || selectedVersion) {
+      setCollaborationStatus('idle');
+      setCollaborators([]);
+      return undefined;
+    }
+
+    let isMounted = true;
+    let pollInterval = null;
+    const user = getCurrentCollaborationUser();
+    collaborationUserRef.current = user;
+    collaborationRevisionRef.current = 0;
+
+    const pollState = async () => {
+      try {
+        const state = await collaborationService.getState(documentId, user, collaborationRevisionRef.current);
+
+        if (!isMounted) return;
+
+        handleCollaborationState(state);
+        setCollaborationStatus(prev => prev === 'syncing' ? prev : 'live');
+      } catch (error) {
+        console.error('Error polling collaborative state:', error);
+        if (isMounted) {
+          setCollaborationStatus('error');
+        }
+      }
+    };
+
+    const joinSession = async () => {
+      try {
+        setCollaborationStatus('connecting');
+        const state = await collaborationService.joinSession(documentId, user);
+
+        if (!isMounted) return;
+
+        collaborationRevisionRef.current = Math.max(
+          collaborationRevisionRef.current,
+          Number(state.revision || 0)
+        );
+        setCollaborators(state.collaborators || []);
+        setCollaborationStatus('live');
+        pollInterval = window.setInterval(pollState, 2000);
+      } catch (error) {
+        console.error('Error joining collaborative session:', error);
+        if (isMounted) {
+          setCollaborationStatus('error');
+        }
+      }
+    };
+
+    joinSession();
+
+    return () => {
+      isMounted = false;
+
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
+
+      if (collaborationPushTimeoutRef.current) {
+        clearTimeout(collaborationPushTimeoutRef.current);
+      }
+
+      collaborationService.leaveSession(documentId, user).catch(() => {});
+    };
+  }, [document?.id, handleCollaborationState, id, selectedVersion]);
+
   // Stable content change handler that doesn't recreate on every render
   const handleContentChange = useCallback((content) => {
-    if (content) {
+    if (content && !applyingRemoteUpdateRef.current) {
       // Update document without triggering editor refresh
       setDocument(prev => {
         // Don't update if document is final
@@ -186,8 +356,10 @@ const DocumentEditorPage = () => {
           lastModified: new Date().toISOString()
         };
       });
+
+      queueCollaborativeSnapshot(content);
     }
-  }, []); // No dependencies to prevent callback recreation
+  }, [queueCollaborativeSnapshot]);
 
   // Handle title changes
   const handleTitleChange = useCallback((e) => {
@@ -451,6 +623,14 @@ const DocumentEditorPage = () => {
     setVersionHistoryExpanded(!versionHistoryExpanded);
   };
 
+  const currentCollaborationUser = collaborationUserRef.current;
+  const visibleCollaborators = collaborators.slice(0, 5);
+  const extraCollaboratorCount = Math.max(collaborators.length - visibleCollaborators.length, 0);
+  const collaborationLabel = collaborationStatusLabels[collaborationStatus] || collaborationStatusLabels.idle;
+  const remoteUpdateLabel = lastRemoteUpdate
+    ? `${lastRemoteUpdate.userName} updated ${new Date(lastRemoteUpdate.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+    : null;
+
   return (
     <div className="document-editor-page">
       <div className="document-editor-header">
@@ -466,6 +646,26 @@ const DocumentEditorPage = () => {
             <div className="status-badge status-badge-success">
               <span className="status-icon">🔒</span>
               Final Document
+            </div>
+          )}
+          <div className={`collaboration-status collaboration-status-${collaborationStatus}`} title={remoteUpdateLabel || collaborationLabel}>
+            <span className="collaboration-status-dot" aria-hidden="true" />
+            <span>{collaborationLabel}</span>
+          </div>
+          {visibleCollaborators.length > 0 && (
+            <div className="collaboration-presence" aria-label="Active collaborators">
+              {visibleCollaborators.map(collaborator => (
+                <span
+                  key={collaborator.clientId}
+                  className={`collaboration-avatar${collaborator.clientId === currentCollaborationUser.clientId ? ' self' : ''}`}
+                  title={`${collaborator.userName}${collaborator.clientId === currentCollaborationUser.clientId ? ' (you)' : ''}`}
+                >
+                  {getCollaboratorInitials(collaborator.userName)}
+                </span>
+              ))}
+              {extraCollaboratorCount > 0 && (
+                <span className="collaboration-avatar more" title={`${extraCollaboratorCount} more active`}>+{extraCollaboratorCount}</span>
+              )}
             </div>
           )}
         </div>
@@ -546,6 +746,12 @@ const DocumentEditorPage = () => {
                     {document?.lastModified ? new Date(document.lastModified).toLocaleString() : 'Unknown'}
                   </span>
                 </div>
+                {remoteUpdateLabel && (
+                  <div className="info-item info-item-live">
+                    <span className="info-label">Live Update</span>
+                    <span className="info-value text-xs">{remoteUpdateLabel}</span>
+                  </div>
+                )}
               </div>
               {selectedVersion && (
                 <button 

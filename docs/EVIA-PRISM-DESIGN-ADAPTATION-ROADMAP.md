@@ -1,6 +1,6 @@
 # Evia Prism Design Adaptation Roadmap
 
-Last updated: May 21, 2026.
+Last updated: May 26, 2026.
 
 This roadmap reviews the Stitch design package against the current CollabDoc implementation and turns the remaining design adaptation work into planned, testable sprints.
 
@@ -19,7 +19,7 @@ This roadmap reviews the Stitch design package against the current CollabDoc imp
 | Sprint 01 - Stabilization | Exit Candidate | Route shadowing, create/generate flows, preview normalization, editor route-change crash, first card cleanup, smoke coverage, and warning noise were stabilized. | No open Sprint 01 blocker remains; deeper design, records enforcement, and production readiness are later work. |
 | Sprint 02 - Template Foundation | In Progress | Managed field-library backend, first Field Library Prism pass, template analysis, generation metadata, first guided generation pass, direct field insertion, UI/API governed-save readiness enforcement, and save-time `mergeFields` enrichment exist. | Field Library import/usage/migration polish, richer unknown-placeholder migration, richer field validation, and template authoring polish remain. |
 | Sprint 03 - Records Lifecycle | Not Started | Records metadata fields exist in UI and template lifecycle policy is surfaced. | Server-side lifecycle enforcement, required classification before save, final immutability, deterministic retention, audit/version UX, and records-first editor/sidebar design remain. |
-| Sprint 04 - Real-Time Collaboration | Not Started | No proven real-time collaboration path yet. | Collaboration engine spike, presence, reconnect/conflict behavior, permissions, and collaborative save/version model remain. |
+| Sprint 04 - Real-Time Collaboration | Demo MVP | Two-user collaboration path is proven with room presence and SFDT snapshot sync. | Production coauthoring still needs AD-backed authorization, conflict handling, reconnect hardening, permissions, and collaborative save/version model. |
 | Sprint 05 - Production Hardening | Not Started | Docker/local development and smoke coverage exist. | Auth, authorization, audit logs, production storage, CI gates, environment hardening, deployment readiness, and permission-state UX remain. |
 
 ## Design Adaptation Status
