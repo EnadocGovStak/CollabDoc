@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const fs = require('fs');
 const path = require('path');
 // const { auth } = require('./middleware/auth');
 
@@ -65,7 +66,13 @@ app.get('/health', (req, res) => {
 
 // Catch all handler: send back React's index.html file for any non-API routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+  const indexPath = path.join(__dirname, '../public/index.html');
+
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+
+  return res.status(404).json({ error: 'Not found' });
 });
 
 // Error handling middleware

@@ -4,7 +4,8 @@
  * accessing process.env directly to ensure easier maintenance.
  */
 
-const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+const productionApiBaseUrl = 'https://collabdoc-backend.salmonwave-4030412c.southeastasia.azurecontainerapps.io';
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? productionApiBaseUrl : 'http://localhost:5000');
 
 const config = {
   syncfusion: {

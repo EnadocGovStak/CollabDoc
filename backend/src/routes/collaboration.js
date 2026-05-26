@@ -2,10 +2,10 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const { auth } = require('../middleware/auth');
+const { documentsDir: DOCUMENTS_DIR } = require('../config/storagePaths');
 
 const router = express.Router();
 
-const DOCUMENTS_DIR = path.join(__dirname, '../../uploads/documents');
 const PRESENCE_TTL_MS = 30000;
 const rooms = new Map();
 

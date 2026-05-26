@@ -77,6 +77,19 @@ REACT_APP_SFLOW_SCOPE=openid profile email roles offline_access govstack.workflo
 REACT_APP_SFLOW_REDIRECT_URI=https://collabdocweb-fresh.azurewebsites.net/auth/callback
 ```
 
+Azure demo backend deployment on May 26, 2026:
+
+| Setting | Value |
+| --- | --- |
+| Runtime | Azure Container Apps Consumption |
+| Backend URL | `https://collabdoc-backend.salmonwave-4030412c.southeastasia.azurecontainerapps.io` |
+| Image | `sflowacr3c07cf.azurecr.io/collabdoc-backend:alpine-20260526d` |
+| Base image | `node:22-alpine` |
+| Scale | `minReplicas=0`, `maxReplicas=1` |
+| Persistent data | Azure Files share `collabdocstorage/collabdoc-backend` mounted at `/app/data` |
+
+The frontend `collabdocweb-fresh` should build with `REACT_APP_API_BASE_URL=https://collabdoc-backend.salmonwave-4030412c.southeastasia.azurecontainerapps.io`. The backend uses `STORAGE_PATH=/app/data/uploads` and `TEMPLATES_PATH=/app/data/templates` so documents and runtime-created templates survive Container Apps cold starts.
+
 Interim SFlow decision on May 26, 2026: reuse the existing `govstack.workflow` audience/scope for the CollabDoc demo instead of adding a new `govstack.collabdoc` scope. This is acceptable for a controlled demo, but it is not a final production boundary because any token with the Workflow audience could otherwise look valid to CollabDoc. To reduce that risk, the backend supports `AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa`; when SFlow includes `azp`, `client_id`, `clientId`, or `appid` in the token, CollabDoc rejects tokens issued to other clients.
 
 Local SFlow Docker equivalents:

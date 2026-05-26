@@ -1,12 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID: uuidv4 } = require('crypto');
 const templateService = require('../services/templateService');
 const fieldLibraryService = require('../services/fieldLibraryService');
-
-// Path constants
-const templatesDir = path.join(__dirname, '../../templates');
-const documentsDir = path.join(__dirname, '../../uploads/documents');
+const { documentsDir, templatesDir } = require('../config/storagePaths');
 
 // Ensure directories exist
 if (!fs.existsSync(templatesDir)) {

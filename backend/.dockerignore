@@ -1,6 +1,11 @@
 node_modules
 npm-debug.log*
+*.log
 .env
 .env.*
+Dockerfile
+.dockerignore
+public
+uploads
+tests
 coverage
-uploads/temp

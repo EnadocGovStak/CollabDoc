@@ -2,18 +2,16 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID: uuidv4 } = require('crypto');
 const multer = require('multer');
 const templatesController = require('../controllers/templates');
 const templateService = require('../services/templateService');
 const { requireRole } = require('../middleware/auth');
+const { templatesDir: TEMPLATES_DIR } = require('../config/storagePaths');
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-// Directory for storing templates
-const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 
 // Ensure templates directory exists
 async function ensureTemplatesDirExists() {
