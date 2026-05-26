@@ -29,6 +29,7 @@ import {
   StylesDialog
 } from '@syncfusion/ej2-react-documenteditor';
 import DocumentEditorErrorBoundary from './DocumentEditorErrorBoundary';
+import { getEditorIdentity } from '../utils/editorIdentity';
 import './DocumentEditor.css';
 
 DocumentEditorContainer.Inject(
@@ -75,11 +76,13 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     onContentChange,
     onSave,
     enableToolbar = true,
-    sidebarHasFocus = false
+    sidebarHasFocus = false,
+    editorUser
   } = props;
   const onContentChangeRef = useRef(onContentChange);
   const initialContentRef = useRef(initialContent);
   const isReadOnlyRef = useRef(isReadOnly);
+  const editorUserRef = useRef(getEditorIdentity(editorUser));
 
   useEffect(() => {
     onContentChangeRef.current = onContentChange;
@@ -92,6 +95,39 @@ const DocumentPageEditor = forwardRef((props, ref) => {
   useEffect(() => {
     isReadOnlyRef.current = isReadOnly;
   }, [isReadOnly]);
+
+  useEffect(() => {
+    editorUserRef.current = getEditorIdentity(editorUser);
+  }, [editorUser]);
+
+  const applyEditorIdentity = useCallback(() => {
+    const identity = editorUserRef.current || getEditorIdentity();
+    const userName = identity.userName || 'Authenticated User';
+    const userColor = identity.color;
+    const editor = containerRef.current?.documentEditor;
+
+    if (!editor) {
+      return;
+    }
+
+    editor.currentUser = userName;
+    editor.revisionAuthor = userName;
+
+    if (editor.editor) {
+      editor.editor.revisionAuthor = userName;
+    }
+
+    if (userColor) {
+      editor.userColor = userColor;
+    }
+
+    if (containerRef.current) {
+      containerRef.current.currentUser = userName;
+      if (userColor) {
+        containerRef.current.userColor = userColor;
+      }
+    }
+  }, []);
 
   // Show notification to user
   const showNotification = useCallback((message, type = 'info') => {
@@ -191,10 +227,13 @@ const DocumentPageEditor = forwardRef((props, ref) => {
     }
 
     try {
+      applyEditorIdentity();
+
       // Handle different content types
       if (!content || content === '') {
         console.log('Loading blank document - no content provided');
         containerRef.current.documentEditor.openBlank();
+        applyEditorIdentity();
         return;
       }
 
@@ -205,6 +244,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         if (isValidSfdt(content)) {
           console.log('Loading valid SFDT JSON content');
           safeOpenDocument(content);
+          applyEditorIdentity();
           return;
         }
         
@@ -217,6 +257,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           } else {
             containerRef.current.documentEditor.editor.insertText('Content too large to display as plain text');
           }
+          applyEditorIdentity();
           return;
         }
         
@@ -233,6 +274,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           console.log('Loading blank document - empty content');
           containerRef.current.documentEditor.openBlank();
         }
+        applyEditorIdentity();
       } else if (typeof content === 'object' && content !== null) {
         // Already an object, validate and stringify it
         console.log('Loading content as SFDT object');
@@ -244,14 +286,17 @@ const DocumentPageEditor = forwardRef((props, ref) => {
             console.warn('Object content is not valid SFDT, opening blank document');
             containerRef.current.documentEditor.openBlank();
           }
+          applyEditorIdentity();
         } catch (stringifyError) {
           console.error('Error stringifying object content:', stringifyError);
           containerRef.current.documentEditor.openBlank();
+          applyEditorIdentity();
         }
       } else {
         // Unknown content type, open blank
         console.log('Loading blank document - unknown content type');
         containerRef.current.documentEditor.openBlank();
+        applyEditorIdentity();
       }
     } catch (error) {
       console.error('Error in loadContent:', error);
@@ -262,7 +307,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         console.error('Critical error: Cannot even open blank document:', blankError);
       }
     }
-  }, [isValidSfdt, safeOpenDocument]);
+  }, [applyEditorIdentity, isValidSfdt, safeOpenDocument]);
 
   // Simple and effective focus protection
   useEffect(() => {
@@ -365,6 +410,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         // Set read-only mode
         containerRef.current.documentEditor.isReadOnly = isReadOnlyRef.current;
         containerRef.current.contentChange = handleContentChange;
+        applyEditorIdentity();
         
         // Override context menu methods to prevent them from being called
         if (containerRef.current.documentEditor.contextMenu) {
@@ -398,7 +444,7 @@ const DocumentPageEditor = forwardRef((props, ref) => {
         console.error('Error during DocumentEditor initialization:', error);
       }
     }, 100); // Small delay to ensure everything is ready
-  }, [handleContentChange, loadContent]);
+  }, [applyEditorIdentity, handleContentChange, loadContent]);
 
   const handleContainerContextMenu = useCallback((e) => {
     console.log('DocumentPageEditor: Blocking onContextMenu event');
@@ -455,6 +501,8 @@ const DocumentPageEditor = forwardRef((props, ref) => {
           enableLocalPaste: false,
           enableTooltip: true,
           serviceUrl: 'https://ej2services.syncfusion.com/production/web-services/api/documenteditor/',
+          currentUser: (editorUserRef.current || getEditorIdentity()).userName,
+          userColor: (editorUserRef.current || getEditorIdentity()).color,
           created: handleCreated
         });
 
@@ -495,8 +543,9 @@ const DocumentPageEditor = forwardRef((props, ref) => {
   useEffect(() => {
     if (isReady && containerRef.current?.documentEditor) {
       containerRef.current.documentEditor.isReadOnly = isReadOnly;
+      applyEditorIdentity();
     }
-  }, [isReadOnly, isReady]);
+  }, [applyEditorIdentity, editorUser, isReadOnly, isReady]);
 
   return (
     <DocumentEditorErrorBoundary>

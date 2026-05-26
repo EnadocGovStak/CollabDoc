@@ -77,6 +77,22 @@ function getCallbackPath() {
   return new URL(config.identity.redirectUri, window.location.origin).pathname;
 }
 
+function getSafeReturnPath(value) {
+  const fallbackPath = '/documents';
+
+  try {
+    const returnUrl = new URL(value || fallbackPath, window.location.origin);
+
+    if (returnUrl.origin !== window.location.origin || returnUrl.pathname === getCallbackPath()) {
+      return fallbackPath;
+    }
+
+    return `${returnUrl.pathname}${returnUrl.search}${returnUrl.hash}`;
+  } catch {
+    return fallbackPath;
+  }
+}
+
 async function getMetadata() {
   const metadataUrl = config.identity.metadataProxyUrl
     ? `${config.identity.metadataProxyUrl}?authority=${encodeURIComponent(config.identity.authority)}`
@@ -209,12 +225,12 @@ async function handleCallback() {
 
   const tokenResponse = await response.json();
   const auth = persistAuth(tokenResponse);
-  const returnPath = window.sessionStorage.getItem(RETURN_PATH_KEY) || '/documents';
+  const returnPath = getSafeReturnPath(window.sessionStorage.getItem(RETURN_PATH_KEY));
 
   window.sessionStorage.removeItem(VERIFIER_KEY);
   window.sessionStorage.removeItem(STATE_KEY);
   window.sessionStorage.removeItem(RETURN_PATH_KEY);
-  window.history.replaceState({}, document.title, returnPath);
+  window.location.replace(returnPath);
 
   return auth;
 }

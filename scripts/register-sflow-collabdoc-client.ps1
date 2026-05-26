@@ -152,6 +152,7 @@ if ($existingClient) {
             redirectUris = $RedirectUris
             scopes = $Scopes
             grantTypes = $GrantTypes
+            type = 1
             isActive = $true
         } | Out-Null
 

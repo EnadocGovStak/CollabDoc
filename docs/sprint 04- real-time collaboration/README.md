@@ -14,6 +14,7 @@ The first two-user happy path is implemented as a lightweight snapshot-sync coll
 
 - Backend room API at `/api/collaboration/:documentId/*` for join, state polling, snapshot sync, and leave.
 - Frontend collaboration service that resolves a current user from SFlow-style identity globals, `window.authContext`, stored identity, or `?user=` for local demo sessions.
+- Signed-in SFlow identity is now forwarded into collaboration presence and Syncfusion editor author metadata so authenticated users do not appear as Guest.
 - Active document editor presence indicators, live connection state, collaborator avatars, and remote-update status.
 - Debounced SFDT snapshot publishing from the editor and polling-based remote snapshot application.
 - Local demo stack verified on alternate ports: backend `http://localhost:5001`, frontend `http://localhost:3001`.
@@ -125,8 +126,8 @@ Recommended identity contract:
 Implementation steps:
 
 1. Done - Confirm the runtime OIDC discovery URL for SFlow identity behind Kong.
-2. Partial - Configure frontend identity settings for the SFlow/AD authority.
-3. Partial - Send bearer tokens on collaboration API calls when a token exists in `window.authContext`, `window.sflowIdentity`, or OIDC browser storage.
+2. Done for demo - Configure frontend identity settings for the SFlow/AD authority.
+3. Done for demo - Send bearer tokens on collaboration API calls when a token exists in `window.authContext`, `window.sflowIdentity`, or OIDC browser storage.
 4. Partial - Add backend JWT validation using SFlow/AD issuer and JWKS; enable with `AUTH_REQUIRED=true`.
 5. Done for collaboration API - Derive collaborator identity from verified token claims in the backend when JWT auth is active.
 6. Done for interim audience reuse - Add optional client-id validation through `AUTH_ALLOWED_CLIENT_IDS` to reduce audience-confusion risk while using `govstack.workflow`.
@@ -134,6 +135,7 @@ Implementation steps:
 8. Enforce document room authorization before join, state, snapshot, and leave actions.
 9. Map SFlow/AD roles or groups to document permissions: owner, editor, viewer.
 10. Keep `?user=` support only as a local demo fallback when auth is disabled.
+11. Done - Apply the authenticated SFlow user to Syncfusion `currentUser`, `revisionAuthor`, and collaborator color metadata in the active editor.
 
 ## Acceptance Criteria
 
@@ -144,6 +146,7 @@ Implementation steps:
 - Pending - Viewers cannot edit.
 - Final documents cannot start editable collaboration sessions.
 - Done for demo - Collaboration UX does not crowd or destabilize the document editor.
+- Done for demo - Signed-in SFlow users are shown by authenticated identity in collaboration presence and editor author metadata, not as Guest.
 - Done - `PROGRAM-STATUS.md` reflects collaboration workflow health after validation.
 
 ## Risks
@@ -165,6 +168,7 @@ Implementation steps:
 - `AUTH_REQUIRED=true` collaboration smoke confirmed missing bearer tokens are rejected with `401`.
 - API smoke passed for join, snapshot, state polling, and collaborator presence on port `5001`.
 - Browser sanity check confirmed Alice/Bob presence in two editor sessions and a remote update notification.
+- Frontend build compiled successfully after wiring SFlow user identity into collaboration presence and Syncfusion editor author fields.
 
 ## Sprint Exit
 

@@ -6,6 +6,7 @@
 
 const productionApiBaseUrl = 'https://collabdoc-backend.salmonwave-4030412c.southeastasia.azurecontainerapps.io';
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === 'production' ? productionApiBaseUrl : 'http://localhost:5000');
+const authProvider = process.env.REACT_APP_AUTH_PROVIDER || (process.env.NODE_ENV === 'production' ? 'sflow' : 'mock');
 
 const config = {
   syncfusion: {
@@ -17,7 +18,7 @@ const config = {
     redirectUri: `${window.location.origin}/`,
   },
   identity: {
-    provider: process.env.REACT_APP_AUTH_PROVIDER || 'mock',
+    provider: authProvider,
     authority: process.env.REACT_APP_SFLOW_AUTHORITY || 'https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity',
     clientId: process.env.REACT_APP_SFLOW_CLIENT_ID || 'collabdoc-ui-spa',
     scope: process.env.REACT_APP_SFLOW_SCOPE || 'openid profile email roles offline_access govstack.workflow',

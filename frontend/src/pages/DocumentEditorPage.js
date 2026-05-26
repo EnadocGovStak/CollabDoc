@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DocumentPageEditor from '../components/DocumentPageEditor';
 import '@syncfusion/ej2-react-documenteditor/styles/material.css';
@@ -10,6 +10,7 @@ import '../styles/design-system.css';
 import '../styles/components.css';
 import './DocumentEditorPage.css';
 import VersionHistory from '../components/VersionHistory';
+import { useAuth } from '../contexts/AuthContext';
 
 const getCollaboratorInitials = (name) => String(name || 'User')
   .split(/\s+/)
@@ -30,6 +31,8 @@ const collaborationStatusLabels = {
 const DocumentEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
+  const editorIdentity = useMemo(() => getCurrentCollaborationUser(authUser), [authUser]);
   const editorRef = useRef(null);
   const [document, setDocument] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,13 +47,17 @@ const DocumentEditorPage = () => {
   const [contentLoaded, setContentLoaded] = useState(false);
   const [sidebarHasFocus, setSidebarHasFocus] = useState(false);
   const sidebarRef = useRef(null);
-  const collaborationUserRef = useRef(getCurrentCollaborationUser());
+  const collaborationUserRef = useRef(editorIdentity);
   const collaborationRevisionRef = useRef(0);
   const collaborationPushTimeoutRef = useRef(null);
   const applyingRemoteUpdateRef = useRef(false);
   const [collaborationStatus, setCollaborationStatus] = useState('idle');
   const [collaborators, setCollaborators] = useState([]);
   const [lastRemoteUpdate, setLastRemoteUpdate] = useState(null);
+
+  useEffect(() => {
+    collaborationUserRef.current = editorIdentity;
+  }, [editorIdentity]);
 
   // Load reference data
   useEffect(() => {
@@ -281,7 +288,7 @@ const DocumentEditorPage = () => {
 
     let isMounted = true;
     let pollInterval = null;
-    const user = getCurrentCollaborationUser();
+    const user = editorIdentity;
     collaborationUserRef.current = user;
     collaborationRevisionRef.current = 0;
 
@@ -338,7 +345,7 @@ const DocumentEditorPage = () => {
 
       collaborationService.leaveSession(documentId, user).catch(() => {});
     };
-  }, [document?.id, handleCollaborationState, id, selectedVersion]);
+  }, [document?.id, editorIdentity, handleCollaborationState, id, selectedVersion]);
 
   // Stable content change handler that doesn't recreate on every render
   const handleContentChange = useCallback((content) => {
@@ -623,7 +630,7 @@ const DocumentEditorPage = () => {
     setVersionHistoryExpanded(!versionHistoryExpanded);
   };
 
-  const currentCollaborationUser = collaborationUserRef.current;
+  const currentCollaborationUser = editorIdentity;
   const visibleCollaborators = collaborators.slice(0, 5);
   const extraCollaboratorCount = Math.max(collaborators.length - visibleCollaborators.length, 0);
   const collaborationLabel = collaborationStatusLabels[collaborationStatus] || collaborationStatusLabels.idle;
@@ -945,6 +952,7 @@ const DocumentEditorPage = () => {
             <DocumentPageEditor
               ref={editorRef}
               initialContent={document.content}
+              editorUser={editorIdentity}
               onContentChange={handleContentChange}
               onSave={handleSave}
               isReadOnly={!!selectedVersion || isDocumentFinal()}

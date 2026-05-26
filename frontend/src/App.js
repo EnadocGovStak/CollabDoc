@@ -14,6 +14,7 @@ import {
     Sun,
     UserCircle
 } from 'lucide-react';
+import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './theme/ThemeContext';
 import './App.css';
 
@@ -29,6 +30,52 @@ const accountNavItems = [
     { to: '/profile', label: 'Profile', icon: UserCircle },
     { to: '/settings', label: 'Settings', icon: Settings }
 ];
+
+function getUserDisplayName(user) {
+    return user?.name || user?.email || 'Workspace User';
+}
+
+function getUserInitials(user) {
+    const source = getUserDisplayName(user);
+    const parts = source
+        .replace(/@.*/, '')
+        .split(/[\s._-]+/)
+        .filter(Boolean);
+
+    return (parts.length > 1
+        ? `${parts[0][0]}${parts[1][0]}`
+        : source.slice(0, 2)
+    ).toUpperCase();
+}
+
+function getUserSubtitle(user) {
+    if (user?.email) {
+        return user.email;
+    }
+
+    if (user?.roles?.length) {
+        return user.roles.slice(0, 2).join(', ');
+    }
+
+    return 'Workspace member';
+}
+
+function AuthStatusScreen({ title, message, action }) {
+    return (
+        <main className="app-auth-screen">
+            <section className="app-auth-panel" aria-live="polite">
+                <div className="app-auth-kicker">Identity</div>
+                <h1>{title}</h1>
+                <p>{message}</p>
+                {action && (
+                    <button type="button" className="app-auth-action" onClick={action.onClick}>
+                        {action.label}
+                    </button>
+                )}
+            </section>
+        </main>
+    );
+}
 
 function ShellNavLink({ item, mobile = false }) {
     const Icon = item.icon;
@@ -49,7 +96,30 @@ function ShellNavLink({ item, mobile = false }) {
 
 function AppShell() {
     const { theme, setTheme } = useTheme();
+    const { user, isLoading, isAuthenticated, authError, login } = useAuth();
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    const displayName = getUserDisplayName(user);
+    const initials = getUserInitials(user);
+    const subtitle = getUserSubtitle(user);
+
+    if (isLoading) {
+        return (
+            <AuthStatusScreen
+                title="Signing you in"
+                message="Connecting your SFlow identity to the document workspace."
+            />
+        );
+    }
+
+    if (authError || !isAuthenticated) {
+        return (
+            <AuthStatusScreen
+                title="Sign in needs attention"
+                message={authError?.message || 'Your SFlow session could not be loaded.'}
+                action={{ label: 'Try again', onClick: () => login('/') }}
+            />
+        );
+    }
 
     return (
         <div className="app">
@@ -73,10 +143,10 @@ function AppShell() {
                         {accountNavItems.map(item => <ShellNavLink key={item.to} item={item} />)}
                     </nav>
                     <div className="app-user-card">
-                        <span className="app-user-avatar" aria-hidden="true">EC</span>
+                        <span className="app-user-avatar" aria-hidden="true">{initials}</span>
                         <span>
-                            <strong>Evia Collab User</strong>
-                            <small>Workspace member</small>
+                            <strong>{displayName}</strong>
+                            <small>{subtitle}</small>
                         </span>
                     </div>
                 </div>

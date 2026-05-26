@@ -164,6 +164,7 @@
 .account-placeholder-row span {
   color: var(--evia-on-surface-variant);
   font-size: 0.92rem;
+  overflow-wrap: anywhere;
 }
 
 .account-placeholder-setting {
@@ -195,6 +196,25 @@
   color: var(--evia-on-surface-variant);
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.account-action-button {
+  border: 1px solid var(--evia-outline-variant);
+  border-radius: 6px;
+  background: var(--evia-surface-container-lowest);
+  color: var(--evia-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  min-height: 36px;
+  padding: 0 14px;
+  white-space: nowrap;
+}
+
+.account-action-button:hover {
+  border-color: var(--evia-primary);
+  background: var(--evia-active-surface);
 }
 
 .account-placeholder-toggle {

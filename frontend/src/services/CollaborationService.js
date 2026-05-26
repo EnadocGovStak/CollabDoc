@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../config';
+import { getEditorIdentity } from '../utils/editorIdentity';
 
 const API_URL = config.api.baseUrl;
 const CLIENT_ID_KEY = 'collabdoc.collaboration.clientId';
@@ -97,13 +98,25 @@ function getInitials(name) {
     .join('') || 'U';
 }
 
-export function getCurrentCollaborationUser() {
-  const identityUser = getIdentityUser();
+export function getCurrentCollaborationUser(identityOverride) {
+  const identityUser = identityOverride || getIdentityUser();
+  const editorIdentity = getEditorIdentity(identityUser, 'Authenticated User');
   const queryUserName = getQueryUserName();
   const clientId = getClientId();
-  const identityName = identityUser?.name || identityUser?.displayName || identityUser?.username || identityUser?.email;
-  const userName = queryUserName || identityName || window.localStorage.getItem(USER_NAME_KEY) || `Editor ${clientId.slice(0, 4)}`;
-  const userId = identityUser?.id || identityUser?.oid || identityUser?.sub || identityUser?.email || userName;
+  const hasIdentityUser = editorIdentity.isAuthenticated || Boolean(identityUser && (
+    identityUser.id ||
+    identityUser.oid ||
+    identityUser.sub ||
+    identityUser.email ||
+    identityUser.preferred_username ||
+    identityUser.upn ||
+    identityUser.name ||
+    identityUser.displayName ||
+    identityUser.username
+  ));
+  const fallbackUserName = queryUserName || window.localStorage.getItem(USER_NAME_KEY) || `Editor ${clientId.slice(0, 4)}`;
+  const userName = hasIdentityUser ? editorIdentity.userName : fallbackUserName;
+  const userId = hasIdentityUser ? editorIdentity.userId : userName;
 
   if (queryUserName) {
     window.localStorage.setItem(USER_NAME_KEY, queryUserName);
@@ -113,7 +126,12 @@ export function getCurrentCollaborationUser() {
     clientId,
     userId: String(userId),
     userName: String(userName),
-    initials: getInitials(userName)
+    email: editorIdentity.email,
+    roles: editorIdentity.roles,
+    groups: editorIdentity.groups,
+    color: editorIdentity.color,
+    initials: getInitials(userName),
+    authenticated: hasIdentityUser
   };
 }
 
