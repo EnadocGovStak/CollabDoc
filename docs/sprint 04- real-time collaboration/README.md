@@ -87,8 +87,11 @@ Azure demo backend deployment on May 26, 2026:
 | Base image | `node:22-alpine` |
 | Scale | `minReplicas=0`, `maxReplicas=1` |
 | Persistent data | Azure Files share `collabdocstorage/collabdoc-backend` mounted at `/app/data` |
+| Lifecycle-ready Blob container | `collabdocstorage/collabdoc-content` |
 
 The frontend `collabdocweb-fresh` should build with `REACT_APP_API_BASE_URL=https://collabdoc-backend.salmonwave-4030412c.southeastasia.azurecontainerapps.io`. The backend uses `STORAGE_PATH=/app/data/uploads` and `TEMPLATES_PATH=/app/data/templates` so documents and runtime-created templates survive Container Apps cold starts.
+
+Blob lifecycle readiness was validated on May 26, 2026. Storage account `collabdocstorage` is `StorageV2`/Standard LRS, private Blob container `collabdoc-content` exists, and marker blob `system/lifecycle-supported.txt` was created as a `BlockBlob`. A disabled lifecycle-management template rule named `collabdoc-content-lifecycle-template` is configured for prefix `collabdoc-content/` with example actions to tier blobs to Cool after 30 days and delete after 365 days. The rule is intentionally disabled until retention and tiering requirements are approved.
 
 Interim SFlow decision on May 26, 2026: reuse the existing `govstack.workflow` audience/scope for the CollabDoc demo instead of adding a new `govstack.collabdoc` scope. This is acceptable for a controlled demo, but it is not a final production boundary because any token with the Workflow audience could otherwise look valid to CollabDoc. To reduce that risk, the backend supports `AUTH_ALLOWED_CLIENT_IDS=collabdoc-ui-spa`; when SFlow includes `azp`, `client_id`, `clientId`, or `appid` in the token, CollabDoc rejects tokens issued to other clients.
 
