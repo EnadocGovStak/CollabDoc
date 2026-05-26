@@ -1,12 +1,15 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const { auth } = require('../middleware/auth');
 
 const router = express.Router();
 
 const DOCUMENTS_DIR = path.join(__dirname, '../../uploads/documents');
 const PRESENCE_TTL_MS = 30000;
 const rooms = new Map();
+
+router.use(auth());
 
 function assertSafeDocumentId(documentId) {
   if (!/^[a-zA-Z0-9._-]+$/.test(documentId || '')) {
@@ -30,7 +33,21 @@ function getRoom(documentId) {
   return rooms.get(documentId);
 }
 
-function normalizeUser(input = {}) {
+function normalizeUser(input = {}, verifiedUser = null) {
+  if (verifiedUser) {
+    const clientId = String(input.clientId || verifiedUser.id || verifiedUser.sub || '').trim();
+
+    return {
+      clientId: clientId || verifiedUser.id,
+      userId: verifiedUser.id || verifiedUser.sub || verifiedUser.email,
+      userName: verifiedUser.name || verifiedUser.email || 'Authenticated User',
+      email: verifiedUser.email,
+      roles: verifiedUser.roles || [],
+      groups: verifiedUser.groups || [],
+      verified: true
+    };
+  }
+
   const clientId = String(input.clientId || input.userId || '').trim();
   const userId = String(input.userId || clientId || 'anonymous').trim();
   const userName = String(input.userName || input.name || 'Anonymous User').trim();
@@ -137,7 +154,7 @@ router.post('/:documentId/join', async (req, res, next) => {
     assertSafeDocumentId(documentId);
 
     const room = getRoom(documentId);
-    touchCollaborator(room, normalizeUser(req.body));
+    touchCollaborator(room, normalizeUser(req.body, req.user));
 
     res.json({
       documentId,
@@ -158,7 +175,7 @@ router.get('/:documentId/state', async (req, res, next) => {
     assertSafeDocumentId(documentId);
 
     const room = getRoom(documentId);
-    touchCollaborator(room, normalizeUser(req.query));
+    touchCollaborator(room, normalizeUser(req.query, req.user));
 
     const sinceRevision = Number(req.query.since || 0);
     const response = {
@@ -185,7 +202,7 @@ router.post('/:documentId/snapshot', async (req, res, next) => {
     const { documentId } = req.params;
     assertSafeDocumentId(documentId);
 
-    const user = normalizeUser(req.body);
+    const user = normalizeUser(req.body, req.user);
     const content = normalizeContent(req.body.content);
     const timestamp = new Date().toISOString();
     const documentPath = path.join(DOCUMENTS_DIR, `${documentId}.sfdt`);
@@ -235,7 +252,7 @@ router.post('/:documentId/leave', (req, res, next) => {
     assertSafeDocumentId(documentId);
 
     const room = getRoom(documentId);
-    const user = normalizeUser(req.body);
+    const user = normalizeUser(req.body, req.user);
 
     if (user.clientId) {
       room.collaborators.delete(user.clientId);

@@ -13,13 +13,15 @@ export const AuthProvider = ({ children }) => {
   
   // Auto-authenticate when the provider mounts (for testing)
   useEffect(() => {
+    const mockUser = { name: 'Test User', email: 'test@example.com' };
     setIsAuthenticated(true);
-    setUser({ name: 'Test User', email: 'test@example.com' });
+    setUser(mockUser);
     setAccessToken('mock-token-12345');
     setGraphToken('mock-graph-token-12345');
     
     // Make tokens available globally for components that don't use React context
     window.authContext = {
+      user: mockUser,
       accessToken: 'mock-token-12345',
       graphToken: 'mock-graph-token-12345'
     };
@@ -27,12 +29,14 @@ export const AuthProvider = ({ children }) => {
   
   // Login function (mock)
   const login = async () => {
+    const mockUser = { name: 'Test User', email: 'test@example.com' };
     setIsAuthenticated(true);
-    setUser({ name: 'Test User', email: 'test@example.com' });
+    setUser(mockUser);
     setAccessToken('mock-token-12345');
     setGraphToken('mock-graph-token-12345');
     
     window.authContext = {
+      user: mockUser,
       accessToken: 'mock-token-12345',
       graphToken: 'mock-graph-token-12345'
     };

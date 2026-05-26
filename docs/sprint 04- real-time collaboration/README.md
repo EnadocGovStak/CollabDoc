@@ -40,9 +40,43 @@ This is suitable for a controlled SFlow demo. It is not yet production-grade sim
 
 ## SFlow Identity And AD Path
 
-Current identity reference: `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identityadmin`.
+Current identity admin reference: `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identityadmin`.
+
+Runtime OIDC discovery endpoint verified on May 26, 2026: `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/openid-configuration`.
+
+Public OIDC metadata discovered:
+
+| Setting | Value |
+| --- | --- |
+| Issuer | `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity` |
+| Authorization endpoint | `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/connect/authorize` |
+| Token endpoint | `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/connect/token` |
+| JWKS URI | `https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks` |
 
 The `identityadmin` URL should be treated as the administration surface. For runtime collaboration identity, the app needs the SFlow/AD OIDC authority, issuer, JWKS, and token endpoints exposed by the identity service or Kong route. The collaboration service should not trust `?user=` or client-submitted user names outside local development.
+
+The backend now has optional JWT validation support through `backend/src/middleware/auth.js`. The collaboration API derives collaborator identity from verified token claims when a valid bearer token is present. Local demo fallback remains available when auth is disabled.
+
+Backend environment configuration:
+
+```env
+AUTH_REQUIRED=true
+AUTH_ISSUER=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+AUTH_JWKS_URI=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity/.well-known/jwks
+AUTH_AUDIENCE=<collabdoc-api-audience-from-sflow>
+```
+
+Frontend environment configuration:
+
+```env
+REACT_APP_AUTH_PROVIDER=sflow
+REACT_APP_SFLOW_AUTHORITY=https://sflow-kong.salmonwave-4030412c.southeastasia.azurecontainerapps.io/identity
+REACT_APP_SFLOW_CLIENT_ID=<collabdoc-spa-client-id-from-sflow>
+REACT_APP_SFLOW_SCOPE=openid profile email
+REACT_APP_SFLOW_REDIRECT_URI=http://localhost:3001/
+```
+
+`AUTH_AUDIENCE` and `REACT_APP_SFLOW_CLIENT_ID` must come from SFlow Identity Admin. Do not guess these values in source code.
 
 Recommended identity contract:
 
@@ -56,11 +90,11 @@ Recommended identity contract:
 
 Implementation steps:
 
-1. Confirm the runtime OIDC discovery URL for SFlow identity, such as a `/.well-known/openid-configuration` endpoint behind Kong.
-2. Configure the frontend auth provider to use the SFlow/AD authority instead of mock identity for the active JS router path.
-3. Send the access token on document and collaboration API calls.
-4. Re-enable backend API auth and validate JWTs using SFlow/AD issuer and JWKS.
-5. Derive collaborator identity from verified token claims in the backend, not from the request body.
+1. Done - Confirm the runtime OIDC discovery URL for SFlow identity behind Kong.
+2. Partial - Configure frontend identity settings for the SFlow/AD authority.
+3. Partial - Send bearer tokens on collaboration API calls when a token exists in `window.authContext`, `window.sflowIdentity`, or OIDC browser storage.
+4. Partial - Add backend JWT validation using SFlow/AD issuer and JWKS; enable with `AUTH_REQUIRED=true`.
+5. Done for collaboration API - Derive collaborator identity from verified token claims in the backend when JWT auth is active.
 6. Enforce document room authorization before join, state, snapshot, and leave actions.
 7. Map SFlow/AD roles or groups to document permissions: owner, editor, viewer.
 8. Keep `?user=` support only as a local demo fallback when auth is disabled.
@@ -82,12 +116,16 @@ Implementation steps:
 - SFDT serialization may require checkpoint-based collaboration rather than character-level CRDT edits.
 - Conflict handling must be designed before production use.
 - Snapshot sync is vulnerable to last-writer-wins overwrites during true simultaneous editing.
-- SFlow/AD user identity and document permissions are not enforced on the collaboration API yet.
+- SFlow/AD JWT validation support exists, but enforcement is disabled until `AUTH_REQUIRED=true` and the correct API audience are configured.
+- Document-level permissions are not enforced on the collaboration API yet.
 
 ## Validation
 
 - `npm --prefix frontend run build` compiled successfully.
 - Backend collaboration route loaded successfully in Node.
+- SFlow OIDC discovery endpoint was verified and public issuer/JWKS metadata were documented.
+- Auth-disabled collaboration smoke confirmed local demo identity still works.
+- `AUTH_REQUIRED=true` collaboration smoke confirmed missing bearer tokens are rejected with `401`.
 - API smoke passed for join, snapshot, state polling, and collaborator presence on port `5001`.
 - Browser sanity check confirmed Alice/Bob presence in two editor sessions and a remote update notification.
 

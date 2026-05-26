@@ -17,7 +17,7 @@ Reason: Sprint 01 stabilization is an exit candidate, Sprint 02 has moved into v
 | Sprint 01- Stabilization | Exit Candidate | Broken routes, services, previews, editor navigation/lifecycle, browser smoke, warning noise, and first-pass UX cleanup fixed | Template authoring fidelity and records enforcement remain for later sprints. |
 | Sprint 02- Template Foundation | In Progress | Managed reusable template fields, reliable guided generation, field migration review, UI/API governed-save readiness enforcement, and first Evia Prism shell/list/account rollout | Richer field validation rules, Template Editor authoring polish, and editor-safe chrome polish are still pending. |
 | Sprint 03- Records Lifecycle | Not Started | Classification and retention enforced before save | Current UI defaults/heuristics are not records-safe. |
-| Sprint 04- Real-Time Collaboration | Demo MVP | Two-user collaboration path proven with presence and SFDT snapshot sync | Snapshot sync is not production coauthoring; SFlow/AD authorization and conflict handling remain. |
+| Sprint 04- Real-Time Collaboration | Demo MVP | Two-user collaboration path proven with presence, SFDT snapshot sync, and optional SFlow JWT identity validation support | Snapshot sync is not production coauthoring; SFlow/AD enforcement, document permissions, and conflict handling remain. |
 | Sprint 05- Production Hardening | Not Started | Auth, audit, storage, CI, deployment readiness | Local file storage and disabled auth are not production-ready. |
 
 ## Design Adaptation Track
@@ -54,7 +54,7 @@ The comprehensive Stitch/Evia Prism review and planned design sprints are tracke
 | Editor test route | Contained | Known-crashing diagnostic route is no longer exposed in primary navigation. |
 | Save document | Partially Working | Saves content, but required records controls are not enforced. |
 | Version history | Partially Working | Basic versions exist, but metadata/comments/audit are incomplete. |
-| Real-time collaboration | Demo MVP | Two editor sessions can join the same document room, show collaborator presence, sync debounced SFDT snapshots, and surface remote-update status. |
+| Real-time collaboration | Demo MVP | Two editor sessions can join the same document room, show collaborator presence, sync debounced SFDT snapshots, surface remote-update status, and optionally derive collaborator identity from SFlow JWT claims. |
 
 ## Current Program Risks
 
@@ -63,7 +63,7 @@ The comprehensive Stitch/Evia Prism review and planned design sprints are tracke
 - Frontend production build now compiles successfully without ESLint warnings; CRA still reports dependency-age notices and bundle-size guidance.
 - Template schema is inconsistent across stored templates; Sprint 02 now has a managed field-library API, analysis bridge, editor-side unmanaged-field migration review, UI/API governed-save readiness enforcement, and save-time metadata enrichment, but richer field validation rules are still needed.
 - Records lifecycle rules are not enforced server-side.
-- Real-time collaboration has been technically validated as a demo-level SFDT snapshot-sync path. Production coauthoring still needs AD-backed authorization, conflict handling, collaborative checkpoints, and an operation-level engine or Syncfusion collaborative editing action integration.
+- Real-time collaboration has been technically validated as a demo-level SFDT snapshot-sync path. Optional SFlow JWT validation support exists, but production coauthoring still needs auth enforcement, document permission checks, conflict handling, collaborative checkpoints, and an operation-level engine or Syncfusion collaborative editing action integration.
 - Existing docs contain historical claims that can be mistaken for current truth; update `CURRENT-STATE.md` and this dashboard whenever a workflow changes.
 
 ## Next Gate
@@ -98,3 +98,4 @@ Sprint 02 should continue with debt-prioritized design work: finish D4 richer fi
 - May 21 D4 migration-review validation: `get_errors` reported no issues in the touched Template Editor files; `npm --prefix frontend run build` compiled successfully; `git diff --check` passed for the source diff; browser validation confirmed `/templates/business-letter-template` shows save-readiness notes, 8 review actions, 13 field rows, and an editable migration review form for `ServiceType`; `/templates/new` shows expected name/managed-field readiness notes. Both checked routes reported no page/console errors and no horizontal overflow. A focused Playwright smoke regression now verifies review-before-promotion behavior with a mocked field-library save so seed data is not mutated.
 - May 21 D4 governed-save validation: focused Playwright smoke now verifies Template Editor blocks governed saves when readiness notes remain, sends no `PUT` before the block, allows an explicit mocked draft save through the readiness panel, rejects incomplete governed API saves with readiness details, and accepts explicit draft API saves while enriching managed/unmanaged merge-field metadata. `get_errors` passed for the touched source/test/docs files, the backend service validation smoke passed, and `npm run smoke:browser -- --grep "template API|template save|template editor blocks"` passed 3 tests.
 - May 26 Sprint 04 collaboration demo validation: `get_errors` passed for the touched backend and frontend collaboration files; `npm --prefix frontend run build` compiled successfully; backend collaboration route loaded successfully in Node; API smoke passed for join, snapshot sync, state polling, and collaborator presence on temporary port `5001`; browser sanity check confirmed two active collaborators and remote-update status in the editor using `http://localhost:3001` against backend `http://localhost:5001`.
+- May 26 SFlow identity readiness validation: public OIDC discovery metadata was verified at `/identity/.well-known/openid-configuration`; backend JWT middleware loaded with the SFlow issuer and JWKS defaults; auth-disabled collaboration smoke accepted local demo identity; `AUTH_REQUIRED=true` collaboration smoke rejected a missing bearer token with `401`; `npm --prefix frontend run build` compiled successfully after frontend bearer-token forwarding support was added.

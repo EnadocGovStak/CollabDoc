@@ -41,6 +41,48 @@ function getIdentityUser() {
   return authUser || sflowUser || storedSflowUser || null;
 }
 
+function getStoredAccessToken(storage) {
+  for (let index = 0; index < storage.length; index += 1) {
+    const key = storage.key(index);
+
+    if (!key || !key.includes('oidc.user')) {
+      continue;
+    }
+
+    try {
+      const value = JSON.parse(storage.getItem(key));
+      if (value?.access_token) {
+        return value.access_token;
+      }
+    } catch {
+      // Ignore unrelated or malformed storage entries.
+    }
+  }
+
+  return null;
+}
+
+function getAccessToken() {
+  const token = window.authContext?.accessToken ||
+    window.sflowIdentity?.accessToken ||
+    getStoredAccessToken(window.sessionStorage) ||
+    getStoredAccessToken(window.localStorage);
+
+  if (!token || String(token).startsWith('mock-token')) {
+    return null;
+  }
+
+  return token;
+}
+
+function getAuthConfig() {
+  const token = getAccessToken();
+
+  return token
+    ? { headers: { Authorization: `Bearer ${token}` } }
+    : undefined;
+}
+
 function getQueryUserName() {
   const params = new URLSearchParams(window.location.search);
   return params.get('user') || params.get('collabUser') || params.get('name');
@@ -89,7 +131,7 @@ function toQuery(params) {
 
 export const collaborationService = {
   async joinSession(documentId, user) {
-    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/join`, user);
+    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/join`, user, getAuthConfig());
     return response.data;
   },
 
@@ -100,17 +142,17 @@ export const collaborationService = {
       userId: user.userId,
       userName: user.userName
     });
-    const response = await axios.get(`${API_URL}/api/collaboration/${documentId}/state?${query}`);
+    const response = await axios.get(`${API_URL}/api/collaboration/${documentId}/state?${query}`, getAuthConfig());
     return response.data;
   },
 
   async pushSnapshot(documentId, payload) {
-    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/snapshot`, payload);
+    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/snapshot`, payload, getAuthConfig());
     return response.data;
   },
 
   async leaveSession(documentId, user) {
-    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/leave`, user);
+    const response = await axios.post(`${API_URL}/api/collaboration/${documentId}/leave`, user, getAuthConfig());
     return response.data;
   }
 };
